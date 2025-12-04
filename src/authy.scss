@@ -1,0 +1,164 @@
+.authPage{
+    background-color: var(--primary);
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .loginPart{
+
+        
+        width: 500px;
+        height: max-content;
+        margin-top: -100px;
+
+        .errorZone{
+
+            position: absolute;
+            font-weight: 600;
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+
+            &.bad{
+                color: red;
+            }
+
+            &.ok{
+                color:  var(--lime);
+            }
+
+        }
+
+
+        .topicTitle{
+            font-size: 28px;
+            font-weight: 500;
+            line-height: 32px;
+            color: #fff;
+            margin-bottom: 35px;
+            width: 70%;
+        }
+
+        .form{
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            .submitBtn{
+                background-color: var(--lime2);
+                font-size: 13px;
+                font-weight: 600;
+                padding: 13px 30px;
+                cursor: pointer;
+            }
+
+            input{
+                outline: none;
+                border: none;
+                background-color: rgba(0, 0, 0, .1);
+                padding: 13px 20px;
+                width: 100%;
+                color: #fff;
+
+                &.bad{
+                    border-bottom: 1px solid red;
+                }
+
+                &.ok{
+                    border-bottom: 1px solid var(--lime);
+                }
+
+                &:focus{
+
+                border-bottom: 1px solid var(--lime);
+                }
+            }
+        }
+    }
+}
+
+@media (max-width : 600px){
+
+    .authPage{
+    
+        .loginPart{
+    
+            
+            width: 90%;
+            height: max-content;
+            margin-top: -100px;
+    
+            .errorZone{
+    
+                position: absolute;
+                font-weight: 600;
+                color: red;
+                font-size: 14px;
+                margin-top: 15px;
+    
+                &.bad{
+                    color: red;
+                }
+    
+                &.ok{
+                    color:  var(--lime);
+                }
+    
+            }
+    
+    
+            .topicTitle{
+                font-size: 28px;
+                font-weight: 500;
+                line-height: 35px;
+                color: #fff;
+                margin-bottom: 40px;
+                width: 100%;
+            }
+    
+            .form{
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                flex-direction: column;
+    
+                .submitBtn{
+                    background-color: var(--lime2);
+                    font-size: 13px;
+                    font-weight: 600;
+                    padding: 15px 30px;
+                    cursor: pointer;
+                    width: 100%;
+                    text-align: center;
+                }
+    
+                input{
+                    outline: none;
+                    border: none;
+                    background-color: rgba(0, 0, 0, .1);
+                    padding: 15px 20px;
+                    width: 100%;
+                    color: #fff;
+                    border-bottom: 1px solid transparent;
+    
+                    &.bad{
+                        border-bottom: 1px solid red;
+                    }
+    
+                    &.ok{
+                        border-bottom: 1px solid var(--lime);
+                    }
+    
+                    &:focus{
+    
+                    border-bottom: 1px solid var(--lime);
+                    }
+                }
+            }
+        }
+    }
+    
+
+}

@@ -1,0 +1,1256 @@
+.government_style{
+    
+    .openMdaModal{
+
+        position: fixed;
+        background-color: rgba($color: #000000, $alpha: .4);
+        height: 100vh;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .modal{
+
+            background-color: #fff;
+            width: 700px;
+            padding: 50px;
+            display: flex;
+            position: relative;
+            border-radius: 10px;
+            flex-direction: column;
+
+            .closeModal{
+
+                position: absolute;
+                right: 0;
+                top: 0;
+                margin: 40px;
+                cursor: pointer;
+
+            }
+
+            .logoPart{
+                display: flex;
+                margin-left: 10px;
+                margin-bottom: 40px;
+
+                img{
+                    scale: 1.8;
+                }
+            }
+
+            .tag{
+
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-weight: 500;
+                margin-bottom: 40px;
+                color: #777;
+
+            }
+
+            .name_mda{
+
+                font-size: 24px;
+                font-weight: 700;
+                //text-align: center;
+                margin-bottom: 30px;
+                width: 100%;
+                text-transform: capitalize;
+                line-height: 34px;
+
+            }
+
+            .short{
+                font-size: 15px;
+                line-height: 23px;
+                margin-bottom: 30px;
+                color: #777;
+                text-transform: capitalize;
+            }
+
+            .address_icon{
+
+                font-size: 9px;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 10px;
+                background-color: #fff5d2;
+                width: max-content;
+                padding: 5px;
+                border-radius: 3px;
+                color: #ff8820;
+
+            }
+
+            .address{
+
+                font-size: 15px;
+                line-height: 28px;
+                margin-bottom: 0px;
+                text-decoration: underline;
+
+            }
+
+            .getDirections{
+                font-size: 10px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-weight: 600;
+                margin-top: 10px;
+                margin-bottom: 50px;
+                text-decoration: underline;
+            }
+
+            .contactArea{
+
+                display: flex;
+                gap: 15px;
+                font-size: 14px;
+                margin-top: 50px;
+                
+                .icon{
+                    cursor: pointer;
+                }
+
+                .target__web{
+                    background-color: #1c3f3a;
+                    padding: 15px 25px;
+                    border-radius: 5px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    transition: all .3s ease-in-out;
+
+                    p{
+                        font-size: 11px;
+                        letter-spacing: 2px;
+                        text-transform: uppercase;
+                        color: #fff;
+                        font-weight: 500;
+                    }
+                    
+                    &:hover{
+                        background-color: hsl(171, 98%, 18%);
+                    }
+                }
+
+                .target__map{
+                    background-color: #fff;
+                    border: 1px solid #1c3f3a;
+                    color: #1c3f3a;
+                    
+                    p{
+                        color: #1c3f3a;
+                    }
+
+                    &:hover{
+                        background-color: #fff;
+                    }
+                }
+            }
+
+        }
+    }
+
+
+    padding-top: 190px;
+    padding-bottom: 150px;
+    margin: 0px 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #fdfdfd;
+
+    .topArea{
+
+        .mdaHeader{
+
+            margin-bottom: 60px;
+            min-width: 100%;
+            gap: 30px;
+            align-items: center;
+
+            .mdaTitle{
+
+                font-size: 55px;
+                width: 70%;
+                line-height: 65px;
+                letter-spacing: -1px;
+                font-weight: 600;
+                text-align: center;
+
+                span{
+                    color: #009C3E;
+                }
+
+            }
+
+            .mdaTitleSubs{
+
+                width: 50%;
+                line-height: 24px;
+                text-align: center;
+
+            }
+
+        }
+
+    }
+
+    .abcZone{
+
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        width: 70%;
+        margin: 0 auto;
+        justify-content: center;
+
+        .mdas_index{
+            height: 40px;
+            width: 40px;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            border: 1px solid var(--dark);
+            cursor: pointer;
+            border-radius: 4px;
+
+            &.index__active{
+
+                background-color: #009C3E;
+                color: #fff;
+                border-color: #fff;
+
+            }
+
+            &:hover{
+                background-color: #009C3E;
+                color: #fff;
+                border-color: #fff;
+            }
+        }
+
+    }
+
+    .abcAgain{
+
+        width: 100%;
+        position: fixed;
+        top: 120px;
+        left: 0;
+        background-color: #fff;       
+        border-top: 1px solid #dadada;
+        border-bottom: 1px solid #dadada;
+        z-index: 99;
+        padding: 20px 0;
+        z-index: 99;
+
+        .indexHeader{
+
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 20px;
+            width: 70%;
+            margin: 0 auto;
+            justify-content: flex-start;
+            overflow: hidden;
+            overflow-x: scroll;
+            scrollbar-width: none;
+    
+    
+            .mdas_index{
+                height: 40px;
+                min-width: 40px;
+                font-size: 15px;
+                background-color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                border: 1px solid var(--dark);
+                cursor: pointer;
+                border-radius: 4px;
+
+                &.index__active{
+
+                    background-color: #009C3E;
+                    color: #fff;
+                    border-color: #fff;
+    
+                }
+    
+                &:hover{
+                    background-color: #009C3E;
+                    color: #fff;
+                    border-color: #fff;
+                }
+            }
+    
+        }
+
+    }
+
+    .fixedTop{
+        margin-top: 20px !important;
+    }
+
+    .fixedTop_2{
+        margin: 40px 0 !important;
+        margin-bottom: 10px !important;
+    }
+
+    .searchField{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 40px;
+        position: relative;
+
+        .searchInput{
+
+            height: 50px;
+            outline: none;
+            border: none;
+            background-color: transparent;
+            width: 70%;
+            position: relative;
+            z-index: 5;
+            padding: 0 20px;
+            border: 1px solid #dadada;
+            border-radius: 4px;
+        }
+
+        .typeSide{
+
+            position: absolute;
+            width: 70%;
+            background: #fff;
+            z-index: 3;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            color: #777;
+
+            .Typewriter__cursor{
+                display: none;
+            }
+
+        }
+
+        input:focus ~ .typeSide{
+            display: none;
+        }
+
+    }
+
+    .mdas_sections{
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 50px;
+        margin-top: 50px;
+
+        .section{
+
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 2px;
+            cursor: pointer;
+
+            &:hover{
+
+                color: var(--primary25);
+
+            }
+
+        }
+
+    }
+
+    .resultArea{
+
+        margin-top:50px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 25px;
+
+        .mda_card{
+
+            background-color: #f6f6f6;
+            background-color: #fff;
+            border: 1px solid #eee;
+            color: var(--dark);
+            width: calc(33% - 25px);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 25px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+
+            .details__zone{
+                align-items: center;
+                gap: 20px;
+                height: 50px;
+            }
+
+            .logo{
+                width: 30px;
+                height: 30px;
+                overflow: hidden;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                img{
+                    height: 100%;
+                    width: 100%;
+                    object-fit: contain;
+                }
+            }
+            
+            .mda_name{
+
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 24px;
+
+            }
+
+            .mda_desc{
+
+                font-size: 14px;
+                line-height: 22px;
+                margin-top: 10px;
+                color: #777;
+            }
+
+            .arrowMai{
+
+                margin-left: auto;
+                margin-right: 10px;
+                color: var(--dark);
+                height: 50px;
+                width: 50px;
+                position: relative;
+                overflow: hidden;
+                display: none;
+
+                .arrowMe{
+
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    translate: -50% -50%;
+                    transition: all .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+                    &.bot{
+
+                        left: calc(-50% - 10px);
+                        top: calc(100% + 10px);
+                        translate: 50% -50%;
+
+                    }
+                    
+                }
+
+            }
+
+            &:hover{
+
+                border-color: #009C3E;
+
+                .mda_name{
+                    text-decoration: underline;
+                    color: #009C3E;
+                }
+
+            }
+
+
+        }
+
+    }
+
+
+}
+
+
+@media (max-width : 1200px) {
+
+    .government_style{
+
+        padding-top: 170px;
+
+        .abcAgain{
+            top: 115px;
+        }
+
+        .topArea{
+
+            .mdaHeader{
+
+                margin-bottom: 50px;
+
+                .mdaTitle{
+                    width: 100%;
+                }
+
+                .mdaTitleSubs{
+
+                    width: 80%;
+
+                }
+
+            }
+
+        }
+
+        .abcZone{
+
+            width: 90%;
+
+        }
+
+        .searchField{
+
+            margin: 0 auto;
+            margin-top: 50px;
+
+            .searchInput{
+
+                width: 80%;
+                
+            }
+
+            .typeSide{
+                width: 80%;
+            }
+
+        }
+
+        .resultArea{
+            .mda_card{
+                width: calc(50% - 20px);
+            }
+        }
+        
+    }
+
+}
+
+@media (max-width : 850px) {
+
+    .government_style{
+
+        .topArea{
+
+            .mdaHeader{
+
+                margin-bottom: 50px;
+
+                .mdaTitle{
+                    width: 100%;
+                    font-size: 50px;
+                    line-height: 60px;
+                }
+
+                .mdaTitleSubs{
+
+                    width: 90%;
+
+                }
+
+            }
+
+        }
+
+        .abcZone{
+
+            width: 100%;
+
+        }
+
+        .abcAgain{
+
+            padding-bottom: 0px;
+    
+            .indexHeader{
+    
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 20px;
+                width: calc(100% - 60px);
+        
+            }
+    
+        }
+
+        .searchField{
+
+            margin: 0 auto;
+            margin-top: 50px;
+
+            &.fixedTop{
+
+                width: calc(100% - 60px);
+
+            }
+
+            .searchInput{
+
+                width: 100%;
+                
+            }
+
+            .typeSide{
+                width: 100%;
+            }
+
+        }
+
+        .mdas_sections{
+
+            &.fixedTop_2{
+                margin: 30px 0 !important;
+            }
+
+        }
+    }
+
+}
+
+@media (max-width : 768px) {
+
+    .government_style{
+
+        .resultArea{
+            .mda_card{
+                width: 100%;
+            }
+        }
+        
+    }
+
+}
+
+
+@media (max-width : 600px) {
+
+    .government_style{
+
+        padding-top: 160px;
+
+        .topArea{
+
+            .mdaHeader{
+
+                margin-bottom: 50px;
+
+                .mdaTitle{
+                    width: 100%;
+                    font-size: 45px;
+                    line-height: 50px;
+                }
+
+                .mdaTitleSubs{
+
+                    width: 100%;
+                    font-size: 14px;
+
+                }
+
+            }
+
+        }
+
+        .abcZone{
+
+            width: 100%;
+
+        }
+
+        .abcAgain{
+
+            padding-bottom: 0px;
+            top: 90px;
+    
+            .indexHeader{
+    
+                display: flex;
+                flex-wrap: nowrap;
+                gap: 20px;
+                width: calc(100% - 30px);
+        
+            }
+    
+        }
+
+        .searchField{
+
+            margin: 0 auto;
+            margin-top: 30px;
+
+            &.fixedTop{
+
+                width: calc(100% - 30px);
+
+            }
+
+            .searchInput{
+
+                width: 100%;
+                
+            }
+
+            .typeSide{
+                width: 100%;
+            }
+
+        }
+
+        .mdas_sections{
+
+            margin-top: 30px;
+
+            &.fixedTop_2{
+                margin: 30px 0 !important;
+            }
+
+        }
+
+        .resultArea{
+
+            margin-top: 40px;
+            gap: 20px;
+
+            .mda_card{
+
+                gap: 0px;
+                padding: 20px 25px;
+                height: 100%;
+
+                .logo{
+                    width: 25px ;
+                    height: 25px ;
+                }
+
+                .mda_name{
+
+                    font-size: 15px;
+                    line-height: 24px;
+                    width: 100%;
+
+                }
+
+                .arrowMai{
+
+                    height: 40px;
+                    width: 40px;
+                    display: none;
+                    font-size: 11px;
+                    margin-right: 0;
+
+                }
+            }
+
+        }
+    }
+
+}
+
+
+@media (max-width : 1000px) {
+
+    .government_style{
+
+        .openMdaModal{
+
+            position: fixed;
+            background-color: rgba($color: #000000, $alpha: .4);
+            height: 100vh;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+    
+            .modal{
+    
+                background-color: #fff;
+                width: 90%;
+                padding: 70px;
+                display: flex;
+                position: relative;
+                //align-items: center;
+                flex-direction: column;
+                margin-top: -300px;
+    
+                .closeModal{
+    
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    margin: 40px;
+                    cursor: pointer;
+    
+                }
+    
+                .logoPart{
+                    display: flex;
+                    margin-left: 10px;
+                    margin-bottom: 40px;
+    
+                    img{
+                        scale: 1.8;
+                    }
+                }
+    
+                .tag{
+    
+                    font-size: 12px;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    font-weight: 500;
+                    margin-bottom: 40px;
+                    color: #777;
+    
+                }
+    
+                .name_mda{
+    
+                    font-size: 24px;
+                    font-weight: 700;
+                    //text-align: center;
+                    margin-bottom: 30px;
+                    width: 70%;
+                    text-transform: capitalize;
+    
+                }
+    
+                .short{
+                    font-size: 15px;
+                    line-height: 23px;
+                    margin-bottom: 30px;
+                    color: #777;
+                    width: 70%;
+                }
+    
+                .address_icon{
+    
+                    font-size: 9px;
+                    letter-spacing: 2px;
+                    text-transform: uppercase;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin-bottom: 20px;
+                    background-color: #fff5d2;
+                    width: max-content;
+                    padding: 5px;
+                    border-radius: 3px;
+                    color: #ff8820;
+    
+                }
+    
+                .address{
+    
+                    width: 50%;
+                    font-size: 15px;
+                    line-height: 28px;
+                    margin-bottom: 0px;
+                    text-decoration: underline;
+    
+                }
+    
+                .getDirections{
+                    font-size: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    font-weight: 600;
+                    margin-top: 10px;
+                    margin-bottom: 50px;
+                    text-decoration: underline;
+                }
+    
+                .contactArea{
+    
+                    display: flex;
+                    gap: 40px;
+                    font-size: 14px;
+                    
+                    .icon{
+                        cursor: pointer;
+                    }
+                }
+    
+            }
+        }
+
+    }
+
+
+}
+
+@media (max-width : 700px) {
+
+    .government_style{
+
+        .resultArea{
+            .mda_card{
+                width: 100%;
+            }
+        }
+
+        .openMdaModal{
+
+            position: fixed;
+            background-color: rgba($color: #000000, $alpha: .4);
+            height: 100vh;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 999999999;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+    
+            .modal{
+    
+                background-color: #fff;
+                width: 100%;
+                padding: 60px 35px;
+                display: flex;
+                position: relative;
+                //align-items: center;
+                flex-direction: column;
+                margin-top: 0px;
+                border-radius: 20px 20px 0 0;
+    
+                .closeModal{
+    
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    margin: 40px;
+                    cursor: pointer;
+    
+                }
+    
+                .logoPart{
+                    display: flex;
+                    margin-left: 10px;
+                    margin-bottom: 40px;
+    
+                    img{
+                        scale: 1.8;
+                    }
+                }
+    
+                .tag{
+    
+                    font-size: 12px;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    font-weight: 500;
+                    margin-bottom: 40px;
+                    color: #777;
+    
+                }
+    
+                .name_mda{
+    
+                    font-size: 24px;
+                    font-weight: 700;
+                    //text-align: center;
+                    margin-bottom: 30px;
+                    width: 90%;
+                    text-transform: capitalize;
+    
+                }
+    
+                .short{
+                    font-size: 15px;
+                    line-height: 23px;
+                    margin-bottom: 30px;
+                    color: #777;
+                    width: 80%;
+                }
+    
+                .address_icon{
+    
+                    font-size: 9px;
+                    letter-spacing: 2px;
+                    text-transform: uppercase;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin-bottom: 20px;
+                    background-color: #fff5d2;
+                    width: max-content;
+                    padding: 5px;
+                    border-radius: 3px;
+                    color: #ff8820;
+    
+                }
+    
+                .address{
+    
+                    width: 50%;
+                    font-size: 15px;
+                    line-height: 28px;
+                    margin-bottom: 0px;
+                    text-decoration: underline;
+    
+                }
+    
+                .getDirections{
+                    font-size: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    font-weight: 600;
+                    margin-top: 10px;
+                    margin-bottom: 50px;
+                    text-decoration: underline;
+                }
+    
+                .contactArea{
+    
+                    display: flex;
+                    gap: 40px;
+                    font-size: 14px;
+                    
+                    .icon{
+                        cursor: pointer;
+                    }
+                }
+    
+            }
+        }
+        
+    }
+
+}
+
+
+@media (max-width : 500px) {
+
+    .government_style{
+
+        padding-top: 120px;
+
+        .topArea{
+
+            .mdaHeader{
+
+                margin-bottom: 50px;
+
+                .mdaTitle{
+                    width: 100%;
+                    font-size: 45px;
+                    line-height: 48px;
+                }
+
+                .mdaTitleSubs{
+
+                    width: 100%;
+                    font-size: 14px;
+
+                }
+
+            }
+
+        }
+
+        .openMdaModal{
+
+            position: fixed;
+            background-color: rgba($color: #000000, $alpha: .4);
+            height: 100vh;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 999999999;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+    
+            .modal{
+    
+                background-color: #fff;
+                width: 100%;
+                padding: 60px 35px;
+                display: flex;
+                position: relative;
+                height: 500px;
+                //align-items: center;
+                flex-direction: column;
+                margin-top: 0px;
+                border-radius: 20px 20px 0 0;
+                overflow-y: auto;
+    
+                .closeModal{
+    
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    margin: 40px;
+                    cursor: pointer;
+    
+                }
+    
+                .logoPart{
+                    display: flex;
+                    margin-left: 10px;
+                    margin-bottom: 30px;
+    
+                    img{
+                        scale: 1.8;
+                    }
+                }
+    
+                .tag{
+    
+                    font-size: 12px;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    font-weight: 500;
+                    margin-bottom: 30px;
+                    color: #777;
+    
+                }
+    
+                .name_mda{
+    
+                    font-size: 24px;
+                    font-weight: 700;
+                    //text-align: center;
+                    margin-bottom: 20px;
+                    width: 100%;
+                    text-transform: capitalize;
+    
+                }
+    
+                .short{
+                    font-size: 15px;
+                    line-height: 23px;
+                    margin-bottom: 30px;
+                    color: #777;
+                    width: 100%;
+                }
+    
+                .address_icon{
+    
+                    font-size: 9px;
+                    letter-spacing: 2px;
+                    text-transform: uppercase;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin-bottom: 20px;
+                    background-color: #fff5d2;
+                    width: max-content;
+                    padding: 5px;
+                    border-radius: 3px;
+                    color: #ff8820;
+    
+                }
+    
+                .address{
+    
+                    width: 100%;
+                    font-size: 15px;
+                    line-height: 28px;
+                    margin-bottom: 0px;
+                    text-decoration: underline;
+    
+                }
+    
+                .getDirections{
+                    font-size: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                    font-weight: 600;
+                    margin-top: 10px;
+                    margin-bottom: 50px;
+                    text-decoration: underline;
+                }
+    
+                .contactArea{
+    
+                    display: flex;
+                    gap: 12px;
+                    font-size: 14px;
+                    flex-direction: column;
+                    
+                    .icon{
+                        cursor: pointer;
+
+                    }
+
+                    .target__web{
+                        justify-content: center;
+                    }
+                }
+    
+            }
+        }
+
+    }
+
+
+}
+
+@media (max-width : 450px) {
+
+    .government_style{
+
+        .topArea{
+
+            .mdaHeader{
+
+                margin-bottom: 50px;
+
+                .mdaTitle{
+                    width: 100%;
+                    font-size: 40px;
+                    line-height: 40px;
+                }
+
+                .mdaTitleSubs{
+
+                    width: 90%;
+
+                }
+
+            }
+
+        }
+
+        
+    }
+
+}
+

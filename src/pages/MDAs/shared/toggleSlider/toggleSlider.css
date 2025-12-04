@@ -1,0 +1,56 @@
+.switch {
+  width: 45px;
+  height: 28px;
+  border-radius: 100px;
+  position: relative;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  z-index: 1;
+}
+
+.toggle-ball {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.3s ease-in-out;
+  left: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  &.inactive {
+    left: 5px;
+    background-color: #333;
+  }
+
+  &.active {
+    left: 20px;
+    background-color: rgb(1, 176, 1);
+  }
+}
+
+/* Loading spinner */
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Disabled state */
+.switch.disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

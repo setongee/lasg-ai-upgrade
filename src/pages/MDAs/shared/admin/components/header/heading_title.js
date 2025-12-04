@@ -1,0 +1,16 @@
+export const HeadingTitle = {
+  dashboard: 'Dashboard',
+  published: 'Published Templates',
+  drafts: 'Draft Templates',
+  library: 'Template Library',
+  vision: 'Vision & Mission',
+  agencies: 'Agencies & Departments',
+  people: 'Principal Officers',
+  responsibility: 'Responsibilities',
+  resources: 'Resources',
+  contact_info: 'Contact Information',
+  services: 'Services',
+  messages: 'Messages',
+  subscribers: 'Subscribers',
+  settings: 'Settings',
+};

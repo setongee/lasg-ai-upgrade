@@ -1,0 +1,127 @@
+.cookieBanner {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 9999999;
+  padding: 0px;
+  z-index: 9999999;
+
+  .overt {
+    width: 100%;
+    height: 100vh;
+    background-color: #0000008b;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  .banner {
+    align-items: center;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0px;
+    position: relative;
+    background-color: #fff;
+    width: 100%;
+    padding: 25px 40px;
+
+    .para {
+      width: 70%;
+      line-height: 22px;
+      font-size: 14px;
+
+      span {
+        font-weight: 600;
+        font-size: 15px;
+      }
+
+      a {
+        color: #108a00;
+        font-weight: 600;
+        text-decoration: underline;
+      }
+
+      .poi {
+        margin-top: 3px;
+      }
+    }
+
+    .consent {
+      gap: 15px;
+      align-items: center;
+      width: max-content;
+      flex-shrink: 0;
+
+      .iconSet {
+        color: #fff;
+      }
+
+      .customize {
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .consent__buttons {
+        background-color: #108a00;
+        padding: 15px 30px;
+        border-radius: 3px;
+        color: #fff;
+        flex-shrink: 0;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        font-weight: 500;
+        cursor: pointer;
+
+        &.deny {
+          background-color: #fff;
+          color: #108a00;
+          border: 1px solid #108a00;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 980px) {
+  .cookieBanner {
+    .banner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 30px;
+
+      p {
+        width: 100%;
+      }
+    }
+  }
+}
+
+@media (max-width: 500px) {
+  .cookieBanner {
+    .banner {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 20px;
+
+      p {
+        .poi {
+          margin-top: 20px;
+        }
+      }
+
+      .consent {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+
+        .consent__buttons {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    }
+  }
+}

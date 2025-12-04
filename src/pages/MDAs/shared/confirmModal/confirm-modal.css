@@ -1,0 +1,39 @@
+.confirm-backdrop {
+  padding-top: 150px;
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+  z-index: 999999999999;
+
+  .modal_content {
+    background-color: #fff;
+    padding: 30px;
+    padding-top: 30px;
+    width: 500px;
+    height: max-content;
+    border-radius: 8px;
+    position: relative;
+    line-height: 24px;
+
+    .confirmTitle {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .btn-grp {
+      gap: 10px;
+      button {
+        padding: 10px 22px;
+        margin-top: 50px;
+        width: max-content;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+    }
+  }
+}

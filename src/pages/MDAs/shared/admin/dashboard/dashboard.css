@@ -1,0 +1,32 @@
+.dashboardHeader {
+  width: calc(100% - 280px);
+  border-bottom: 1px solid #eee;
+  /* padding: 0 50px; */
+  right: 0;
+  z-index: 9999999999999999;
+  position: fixed;
+}
+
+.dashboardPages {
+  width: calc(100% - 280px);
+  padding: 0 50px;
+  float: right;
+  margin-top: 80px;
+  padding-bottom: 80px;
+  padding-top: 30px;
+  background-color: #fff;
+  background-color: #f7f7f7;
+  background-color: #f9fbfc;
+  position: relative;
+}
+
+.dashboard-body {
+  background-color: #f9fbfc;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* .dashboard-admin {
+  background-color: #f9f9f9;
+  height: 100vh;
+} */

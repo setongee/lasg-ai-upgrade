@@ -1,0 +1,82 @@
+.useCard {
+  padding: 0;
+  width: 30%;
+  text-align: center;
+  border-radius: 100px;
+  position: relative;
+}
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.useCard::after,
+.useCard::before {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  // background-image: conic-gradient(
+  //   from var(--angle) at 50% 50%,
+  //   #ff4545,
+  //   #00ff99,
+  //   #006aff,
+  //   #ff0095,
+  //   #ff4545
+  // );
+  background-image: conic-gradient(
+    from var(--angle) at 50% 50%,
+    // #fff 25.8605235815deg,
+    #3583f2 41.0335063934deg,
+    #3583f2 77.943046689deg,
+    #08a39f 89.8615390062deg,
+    #0eb75a 100.5985665321deg,
+    #0eb75a 135.4607820511deg,
+    // #fff 150.8437871933deg,
+    // #fff 203.1478071213deg,
+    #f6433f 218.4634137154deg,
+    #f6433f 256.3241672516deg,
+    #f77a1e 268.0846238136deg,
+    #f6c90c 278.2843136787deg,
+    #f6c90c 312.1730589867deg // #fff 331.7425632477deg
+  );
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: -1;
+  padding: 3px;
+  border-radius: 100px;
+  animation: 3s spin linear infinite;
+}
+// .useCard::before{
+//   filter: blur(1.5rem);
+//   opacity: 0.5;
+// }
+@keyframes spin {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}
+
+@media (max-width: 1300px) {
+  .useCard {
+    width: 35%;
+  }
+}
+
+@media (max-width: 1200px) {
+  .useCard {
+    width: 50%;
+  }
+}
+
+@media (max-width: 600px) {
+  .useCard {
+    width: 90%;
+  }
+}

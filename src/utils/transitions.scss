@@ -1,0 +1,22 @@
+.slide__transition{
+    background-color: green;
+    height: 100vh;
+    position: fixed;
+    width: 100%;
+    z-index: 99999;
+    transform-origin: top;
+    top: 0;
+    left: 0;
+}
+
+.slide__transition__out{
+    background-color: green;
+    height: 100vh;
+    position: fixed;
+    width: 100%;
+    z-index: 99999;
+    transform-origin: top;
+    top: 0;
+    left: 0;
+}
+

@@ -1,0 +1,150 @@
+:root {
+  --primary: #00484d;
+  --primary25: #0c766f;
+  --primary75: #095f59;
+  --secondary: #fff8de;
+  --accent: #ffd681;
+  --dark: #131414;
+  --lasgGreen: #78e183;
+  --lime: #32c76d;
+  --gold: #fdcf6e;
+  --bgLime: #f8fff7;
+  --secondary2: #fffcf1;
+  --lime2: #abfa01;
+  --lime3: #42ff01;
+  --Theme2: #3168ff;
+
+  /* --background__main : #F8F8F8 */
+  --background__main: #f2f8f5;
+}
+
+.authPage {
+  background-color: #f9f9f9;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  flex-direction: column;
+  gap: 0px;
+
+  .image__scoop {
+    height: 70px;
+    width: 70px;
+    overflow: hidden;
+    border-radius: 50%;
+    padding: 5px;
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    img {
+      width: 115%;
+    }
+  }
+
+  .loginPart {
+    color: #131313;
+    width: 550px;
+    height: max-content;
+    /* margin-top: 150px; */
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 30px;
+
+    .errorZone {
+      position: absolute;
+      font-weight: 600;
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+
+      &.bad {
+        color: red;
+      }
+
+      &.ok {
+        color: var(--lime);
+      }
+    }
+
+    .topicTitle {
+      font-size: 28px;
+      font-weight: 570;
+      line-height: 32px;
+      margin-bottom: 35px;
+      width: 100%;
+      text-align: center;
+      margin-top: 10px;
+
+      span {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #777;
+      }
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-top: 50px;
+
+      .auth__form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .submitBtn {
+        background-color: var(--primary);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 13px 30px;
+        cursor: pointer;
+        width: 100%;
+        text-align: center;
+        border-radius: 5px;
+      }
+
+      label {
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      input {
+        outline: none;
+        padding: 13px 10px;
+        border-radius: 5px;
+        border: 1px solid #dddcdc;
+
+        &.bad {
+          border-bottom: 1px solid red;
+        }
+
+        &.ok {
+          border-bottom: 1px solid var(--lime);
+        }
+
+        &:focus {
+          border-bottom: 1px solid var(--lime);
+        }
+      }
+    }
+  }
+}
+
+.foot {
+  position: absolute;
+  bottom: 50px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #777;
+}

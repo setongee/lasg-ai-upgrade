@@ -1,0 +1,74 @@
+.backdrop {
+  padding-top: 150px;
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+
+  .modal_content {
+    background-color: #fff;
+    padding: 40px;
+    width: 700px;
+    height: max-content;
+    border-radius: 8px;
+    position: relative;
+    line-height: 24px;
+    text-align: justify;
+
+    .serviceTitle {
+      font-size: 28px;
+      width: 80%;
+      text-transform: capitalize;
+      font-weight: 500;
+      margin-bottom: 40px;
+      line-height: 140%;
+    }
+
+    .cta {
+      padding: 15px 22px;
+      margin-top: 50px;
+      background-color: var(--primary25);
+      width: max-content;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      background-color: #1c3f3a;
+      border-radius: 5px;
+    }
+
+    p,
+    li,
+    ol,
+    ul,
+    a {
+      font-size: 14px !important;
+    }
+
+    li {
+      list-style: decimal;
+      margin-bottom: 10px;
+    }
+
+    ol,
+    ul {
+      margin-left: 14px;
+      margin-top: 5px;
+    }
+
+    a {
+      color: var(--primary25);
+      text-decoration: underline;
+    }
+
+    iframe {
+      width: 100%;
+      height: 300px;
+    }
+
+    img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+  }
+}

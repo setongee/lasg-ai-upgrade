@@ -1,0 +1,533 @@
+.servicesPage{
+ 
+    padding-top: 200px;
+    padding-bottom: 150px;
+    margin: 0px 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #fdfdfd;
+
+    .servicesTop{
+
+        .pageHeader{
+
+            margin-bottom: 50px;
+            min-width: 100%;
+            gap: 26px;
+            align-items: center;
+
+            .pageTitle{
+
+                font-size: 45px;
+                width: 70%;
+                line-height: 57px;
+                letter-spacing: -0.5px;
+                font-weight: 700;
+                text-align: center;
+
+                span{
+                    color: var(--primary25);
+                    // font-style: italic;
+                }
+
+            }
+
+            .pageTitleSubs{
+
+                width: 100%;
+                line-height: 24px;
+                text-align: center;
+
+            }
+
+        }   
+
+    }
+
+    .searchField{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 70px;
+        position: relative;
+
+        .searchInput{
+
+            height: 50px;
+            outline: none;
+            border: none;
+            background-color: transparent;
+            width: 70%;
+            position: relative;
+            z-index: 5;
+            padding: 0 20px;
+            border: 1px solid #dadada;
+            border-radius: 4px;
+        }
+
+        .typeSide{
+
+            position: absolute;
+            width: 70%;
+            background: #fff;
+            z-index: 3;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            color: #777;
+
+            .Typewriter__cursor{
+                display: none;
+            }
+
+        }
+
+        input:focus ~ .typeSide{
+            display: none;
+        }
+
+    }
+
+    .servicesSide{
+
+        background-color: green;
+
+    }
+
+    .recentlyServiced{
+
+        gap: 40px;
+        margin-top: 0px;
+
+        .linksTabs{
+
+            gap: 20px;
+            width: 100%;
+
+            .tab{
+
+                padding: 10px 20px;
+                background-color: var(--primary);
+                font-size: 14px;
+                text-transform: uppercase;
+                font-size: 11px;
+                gap: 10px;
+                align-items: center;
+                letter-spacing: 1px;
+                min-width: max-content;
+
+                &:hover{
+
+                    .arrow2{
+
+                        left: 50% !important;
+                        top: 50% !important;
+                        translate: -50% -50%;
+
+                    }
+
+                    .arrow1{
+
+                        left: 140% !important;
+                        top: -40% !important;
+
+                    }
+                    
+                }
+
+                .arowBon{
+
+                    width: 25px;
+                    height: 25px;
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;
+
+                    .arrowMin{
+
+                        position: absolute;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transition: all .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+                        &.arrow1{
+                            left: 50%;
+                            top: 50%;
+                            translate: -50% -50%;
+                        }
+
+                        &.arrow2{
+
+                            left: -70%;
+                            top: 100%;
+
+                        }
+                        
+                    }
+                    
+                }
+
+            }
+
+        }
+
+    }
+
+    .mdas_sections{
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 50px;
+        margin-top: 60px;
+
+        .section{
+
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 2px;
+            cursor: pointer;
+
+            &:hover{
+
+                color: var(--primary25);
+
+            }
+
+        }
+
+    }
+
+
+    .resultArea{
+
+        margin-top:50px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 22px;
+        justify-content: center;
+
+        .parentHere{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            
+        }
+
+        .mda_card{
+
+            background-color: #f6f6f6;
+            color: var(--dark);
+            width: 70%;
+            display: flex;
+            align-items: center;
+            height: 90px;
+            gap: 20px;
+            padding: 0px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+
+            .logo{
+                width: 60px;
+                height: 60px;
+                overflow: hidden;
+                border-radius: 100%;
+                flex-shrink: 0;
+                background-color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                img{
+                    scale: .7;
+                }
+            }
+            
+            .mda_name{
+
+                font-weight: 600;
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+
+            }
+
+            .mda_desc{
+                font-size: 12px;
+                margin-top: 6px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                color: #777;
+
+            }
+
+            .arrowMai{
+
+                margin-left: auto;
+                margin-right: 10px;
+                color: var(--dark);
+                height: 50px;
+                width: 50px;
+                position: relative;
+                overflow: hidden;
+
+                .arrowMe{
+
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    translate: -50% -50%;
+                    transition: all .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+                    &.bot{
+
+                        left: calc(-50% - 10px);
+                        top: calc(100% + 10px);
+                        translate: 50% -50%;
+
+                    }
+                    
+                }
+
+            }
+
+            &:hover{
+                
+                .arrowMai{
+
+                    .top{
+
+                        left: calc(50% + 10px);
+                        top: -10px;
+                        translate: 50% -50%;
+    
+                    }
+    
+                    .bot{
+    
+                        top: 50%;
+                        left: 50%;
+                        translate: -50% -50%;
+    
+                    }
+
+                }
+            }
+
+
+        }
+
+    }
+
+
+    .servicesSide{
+        margin-top: 0px;
+    }
+
+}
+
+@media (max-width : 1200px) {
+
+    .servicesPage{
+
+        padding-top: 180px;
+
+        .servicesTop{
+
+            .pageHeader{
+    
+                margin-bottom: 70px;
+                gap: 20px;
+    
+                .pageTitle{
+    
+                    font-size: 40px;
+                    line-height: 47px;
+    
+                }
+    
+                .pageTitleSubs{
+    
+                    width: 100%;
+                    line-height: 24px;
+                    text-align: center;
+    
+                }
+    
+            }   
+    
+        }
+
+        .searchField{
+
+            margin-top: 0px;
+    
+            .searchInput{
+                
+                width: 90%;
+            }
+    
+            .typeSide{
+    
+                width: 90%;
+    
+            }
+    
+        }
+
+        .recentlyServiced{
+            
+            justify-content: flex-start;
+            align-items: flex-start;
+            overflow-x: scroll;
+            scrollbar-width: none;
+            margin-top: 40px;
+        }
+
+    }
+
+}
+
+@media (max-width:850px){
+
+    .servicesPage{
+        .resultArea{
+
+            margin-top: 40px;
+
+            .mda_card{
+                width: 100%;
+            }
+        }
+    }
+
+}
+
+@media (max-width : 768px) {
+
+    .servicesPage{
+
+        .searchField{
+
+            margin-top: 0px;
+    
+            .searchInput{
+                
+                width: 100%;
+            }
+    
+            .typeSide{
+    
+                width: 100%;
+    
+            }
+    
+        }
+
+        .resultArea{
+
+            margin-top: 40px;
+
+            .mda_card{
+
+                gap: 15px;
+                padding: 20px;
+                height: 100%;
+
+                .logo{
+                    width: 50px ;
+                    height: 50px ;
+
+                    img{
+                        scale: .5;
+                    }
+                }
+
+                .mda_name{
+
+                    font-size: 11px;
+                    line-height: 18px;
+                    width: 100%;
+
+                }
+
+                .mda_desc{
+                    display: none;
+                }
+
+                .arrowMai{
+
+                    height: 40px;
+                    width: 40px;
+                    display: none;
+                    font-size: 11px;
+                    margin-right: 0;
+
+                }
+            }
+
+        }
+
+    }
+
+}
+
+@media (max-width : 500px) {
+
+    .servicesPage{
+
+        padding-top: 130px;
+
+        .servicesTop{
+
+            .pageHeader{
+    
+                margin-bottom: 50px;
+                gap: 20px;
+    
+                .pageTitle{
+    
+                    font-size: 30px;
+                    line-height: 35px;
+    
+                }
+    
+                .pageTitleSubs{
+    
+                    width: 100%;
+                    line-height: 24px;
+                    text-align: center;
+    
+                }
+    
+            }
+        }
+
+        .searchField{
+
+            margin-top: 0px;
+    
+            .searchInput{
+                
+                width: 100%;
+            }
+    
+            .typeSide{
+    
+                width: 100%;
+    
+            }
+    
+        }
+
+    }
+
+}

@@ -1,0 +1,18 @@
+.tabTitleZone{
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 50px;
+
+    .viewAllPoint{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+
+        color: var(--lime);
+    }
+        
+}

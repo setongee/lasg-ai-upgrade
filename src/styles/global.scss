@@ -1,0 +1,62 @@
+.prima {
+  .iconAnim {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    height: 12px;
+    width: 12px;
+
+    .arr {
+      position: absolute;
+    }
+
+    .last {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      right: 0px;
+      top: 0px;
+    }
+
+    .first {
+      color: #42ff01;
+      transition: all 0.2s ease-in-out;
+      left: -15px;
+      bottom: -15px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+  }
+
+  &:hover .last {
+    right: -15px;
+    top: -15px;
+  }
+
+  &:hover .first {
+    left: 0px;
+    bottom: 0px;
+  }
+}
+
+.flex {
+  display: flex;
+}
+
+.space_fully {
+  justify-content: space-between;
+}
+
+.button__search {
+  .mode {
+    width: 18px;
+    height: 18px;
+  }
+
+  &.darkmode {
+    .mode {
+      img {
+        filter: brightness(0) invert(1);
+      }
+    }
+  }
+}

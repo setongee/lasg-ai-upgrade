@@ -1,0 +1,168 @@
+:root {
+
+    --primary: #00484D;
+    --primary25: #0C766F;
+    --primary75: #095F59;
+    --secondary: #FFF8DE;
+    --accent: #FFD681;
+    --dark: #131414;
+    --lasgGreen : #78E183;
+    --lime : #32C76D;
+    --gold : #FDCF6E;
+    --bgLime : #F8FFF7;
+    --secondary2 : #FFFCF1;
+    --lime2 : #ABFA01;
+    --lime3 : #42FF01;
+    --white : #fff;
+
+    --Theme2 : #3168ff;
+
+  }
+
+* a{
+    text-decoration: none;
+    color: #fff;
+}
+
+.uppercase{
+  text-transform: uppercase;
+}
+
+.thick_500{
+  font-weight: 500;
+}
+
+.thick{
+  font-weight: 600;
+}
+
+.thick_700{
+  font-weight: 700;
+}
+
+.thick_800{
+  font-weight: 800;
+}
+
+.thick_900{
+  font-weight: 900;
+}
+
+.underline{
+  text-decoration: underline;
+}
+
+.padbody{
+  padding: 50px 0;
+}
+
+html{
+
+  scroll-behavior:smooth;
+
+}
+
+*{
+
+  box-sizing: border-box;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-optical-sizing: auto;
+
+}
+
+body{
+
+  font-family: "Cormorant Garamond", serif;
+}
+
+.a-dark a{
+  color : #000
+}
+
+.a-light a{
+  color : #fff
+}
+
+.flex_col{
+  flex-direction: column;
+}
+
+.flex_justify_space_between{
+
+  justify-content: space-between;
+
+}
+
+.flex_justify_center{
+
+  justify-content: center;
+
+}
+
+.flex_align_center{
+
+  align-items: center;
+  
+}
+
+*{
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  /* Track */
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: #108a00;
+  }
+  
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+}
+
+.found{
+
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+  
+  .photo{
+    width: 300px;
+    height: 300px;
+    margin-top: -100px;
+    img{
+      width: 100%;
+    }
+  }
+
+  h1{
+    font-size: 24px;
+  }
+}
+
+.loaderPage{
+  background-color: #fff;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uppercase-t{
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+

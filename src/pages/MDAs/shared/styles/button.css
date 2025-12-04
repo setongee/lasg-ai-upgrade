@@ -1,0 +1,6 @@
+.buttons {
+  padding: 15px 25px;
+  width: max-content;
+  font-weight: 600;
+  cursor: pointer;
+}

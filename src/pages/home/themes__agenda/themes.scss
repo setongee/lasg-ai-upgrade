@@ -1,0 +1,86 @@
+.themes__body{
+    margin-bottom: 100px;
+    background-color: #131313;
+    padding: 100px 0;
+    color: #fff;
+
+    .theme__info{
+
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+
+        .themes__title{
+    
+            font-size: 45px;
+            font-weight: 600;
+            line-height: 55px;
+            letter-spacing: -.5px;
+            width: 60%;
+            text-align: center;
+    
+            span{
+                color: #00e35b;
+            }
+    
+        }
+
+        .themes__subtitle{
+
+            font-size: 15px;
+            width: 500px;
+            margin-top: 30px;
+            line-height: 24px;
+            text-align: center;
+        }
+
+
+    }
+
+    .themes__content{
+
+        margin-top: 90px;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: center;
+        justify-content: center;
+
+        .agenda{
+
+            .index{
+                border-radius: 50%;
+                width: 70px;
+                height: 70px;
+                background-color: #fff;
+                overflow: hidden;
+                margin-bottom: 20px;
+                display: none;
+            }
+
+            width: 300px;
+            height: 350px;
+            background-color: #fff;
+            padding: 30px;
+            padding-bottom: 40px;
+            border-radius: 10px;
+
+            p{
+                font-size: 22px;
+                color: #fff;
+                width: 90%;
+                font-weight: 600;
+                margin-bottom: 12px;
+            }
+
+            span{
+
+                width: 80%;
+                line-height: 19px;
+                color: #d1ffce;
+                
+            }
+        }
+    }
+
+}

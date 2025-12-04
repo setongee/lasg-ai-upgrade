@@ -1,0 +1,150 @@
+.notFound{
+    height: 100%;
+    background-color: #f2f7f2;
+    padding: 170px 0;
+    padding-bottom: 100px;
+    overflow: clip;
+
+    .emptySide{
+        
+        .textSide{
+            h1{
+                margin-bottom: 10px;
+                font-size: 35px;
+            }
+
+            span{
+
+                color: #444;
+         
+                a{
+                    color: green;
+                    font-weight: 600;
+
+                    &:hover{
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+
+        .servicesSide{
+
+            margin-top: 70px;
+            overflow: hidden;
+            gap: 25px;
+            overflow-x: auto;
+
+            &::-webkit-scrollbar {
+                display: none;
+              }
+
+            .serviceSideItem{
+
+                background-color: #fff;
+                width: 420px;
+                flex-shrink: 0;
+
+                .photoYarn{
+
+                    height: 180px;
+                    background-color: #eee;
+                    width: 100%;
+                    overflow: hidden;
+
+                    img{
+                        width: 100%;
+                    }
+
+                }
+
+                .contentSide{
+
+                    padding: 25px 20px;
+
+                    .iconSide{
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+
+                        .photoy{
+                            width: 30px;
+                            height: 30px;
+                            border-radius: 50%;
+
+                            img{
+                                width: 100%;
+                                height: 100%;
+                                object-fit: contain;
+                            }
+                        }
+
+                        p{
+                            font-size: 16px;
+                            font-weight: 600;
+                        }
+                    }
+
+                    .subServices{
+
+                        margin: 25px 0;
+                        font-size: 15px;
+                        line-height: 23px;
+                        color: #777;
+                        border-bottom: 1px solid #e3e2e2;
+                        padding-bottom: 25px;
+
+                    }
+
+                    .learnmore{
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+                        font-size: 11px;
+                        color: green;
+                        font-weight: 700;
+                        align-items: center;
+                        justify-content: space-between;
+                    }
+
+                }
+
+            }
+
+        }
+    }
+}
+
+@media(max-width : 500px) {
+
+    .notFound{
+        padding: 110px 0;
+        padding-bottom: 40px;
+
+        .emptySide{
+
+            .textSide{
+                h1{
+                    font-size: 26px;
+                    width: 85%;
+                    margin-bottom: 15px;
+                }
+
+                span{
+                    font-size: 15px;
+                    line-height: 22px;
+                }
+            }
+
+            .servicesSide{
+                margin-top: 40px;
+                flex-direction: column;
+
+                .serviceSideItem{
+                    width: 100%;
+                }
+            }
+
+        }
+    }
+
+}

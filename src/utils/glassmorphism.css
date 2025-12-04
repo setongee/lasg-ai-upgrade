@@ -1,0 +1,36 @@
+.glass {
+  background: linear-gradient(-45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.accountPreference {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  button {
+    padding: 10px 20px;
+    background-color: green;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 10.5px;
+    border-radius: 4px;
+    color: #fff;
+    display: none;
+  }
+
+  .mode {
+    background-color: #666;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
+.dark.glass {
+  background: #000 !important;
+  color: #fff !important;
+  backdrop-filter: blur(0px) !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(174, 174, 174, 0.2) !important;
+}

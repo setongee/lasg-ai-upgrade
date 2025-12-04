@@ -1,0 +1,92 @@
+.resources{
+    background-color: #fff;
+    padding: 100px 0;
+    position: relative;
+
+    .resource_container{
+
+        display: flex;
+        gap: 30px;
+        overflow-x: scroll;
+        scrollbar-width: none;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+
+    }
+
+    .slideShift{
+
+        display: flex;
+        justify-content: space-between;
+        margin-top: 40px;
+        position: absolute;
+        z-index: 99;
+        top: 45%;
+        left: 50%;
+        width: 95%;
+        translate: -50% -50%;
+
+        .navArrow{
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+        }
+
+    }
+
+    .resource{
+
+        cursor: pointer;
+        width: max-content;
+
+        .image{
+            height: 400px;
+            width: 300px;
+            background-color: var(--secondary);
+            margin-bottom: 10px;
+
+            img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .cta{
+            padding: 15px;
+            font-size: 12px;
+            text-align: center;
+            border: 1px solid #c4c4c4;
+            transition: all .2s ease;
+
+            &:hover{
+
+                background-color: var(--primary);
+                color: #fff;
+
+            }
+        }
+
+    }
+}
+
+
+@media (max-width : 500px) {
+
+    .resources{
+        padding: 50px 0;
+        padding-bottom: 0px;
+
+        .resource_container{
+            padding-bottom: 30px;
+        }
+
+        .slideShift{
+            width: 100%;
+        }
+    }
+
+}

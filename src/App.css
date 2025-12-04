@@ -1,0 +1,34 @@
+.slide__in {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: #384d4e;
+  transform-origin: bottom;
+  z-index: 100;
+}
+
+.slide__out {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: #384d4e;
+  transform-origin: top;
+  z-index: 100;
+}
+
+.fullPortion {
+  height: 700px;
+}
+
+.lineDivider {
+  height: 1px;
+  background-color: #ccc;
+}
+
+html {
+  scroll-padding-top: 200px;
+}
