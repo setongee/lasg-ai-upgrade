@@ -26,7 +26,7 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "draft-js": "^0.11.7",
-    "express": "^4.21.1",
+    "express": "^4.22.1",
     "firebase": "^10.10.0",
     "framer-motion": "^11.0.25",
     "fuse.js": "^7.0.0",
