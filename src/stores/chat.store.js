@@ -5,6 +5,6 @@ export const useChatStore = create((set) => ({
   addMessage: (value) => set((state) => ({ messages: value })),
   checkIsChatOpen: false,
   setCheckIsChatOpen: (value) => set(() => ({ checkIsChatOpen: value })),
-  languagePreference: 'english',
+  languagePreference: 'en',
   setLanguagePreference: (value) => set(() => ({ languagePreference: value })),
 }));

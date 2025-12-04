@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './photo_slider.scss';
 import './searchBorderAnimation.scss';
 
@@ -14,14 +14,27 @@ import LasgIllustrations from '../lasg_landingpage_illustrations';
 import greenFilter from '../../../assets/background/filters/blur__gradient.png';
 import orangeFilter from '../../../assets/background/filters/blur__gradient__orange.png';
 import { useChatStore } from '../../../stores/chat.store';
+import LanguageModal from '../../language/LanguageModal';
 
 export default function HeroSection() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [openEmergency, setOpenEmergency] = useState(false);
   const setCheckIsChatOpen = useChatStore((state) => state.setCheckIsChatOpen);
+  const setLanguagePreference = useChatStore((state) => state.setLanguagePreference);
+  const languagePreference = useChatStore((state) => state.languagePreference);
   const addMessage = useChatStore((state) => state.addMessage);
   const [chatInput, setChatInput] = useState('');
+
+  const [language, setLanguage] = useState('en');
+  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+
+  const LANGUAGES = {
+    en: { name: 'English', code: 'en' },
+    yo: { name: 'Yorùbá', code: 'yo' },
+    ig: { name: 'Igbo', code: 'ig' },
+    ha: { name: 'Hausa', code: 'ha' },
+  };
 
   const darkmode = useApp((state) => state.darkmode);
 
@@ -101,6 +114,10 @@ export default function HeroSection() {
     setChatInput('');
   };
 
+  useEffect(() => {
+    console.log(languagePreference);
+  }, [languagePreference]);
+
   return (
     <div className={`slider home ${darkmode ? 'dark' : 'light'}`}>
       <div className="filters background__filters">
@@ -147,15 +164,28 @@ export default function HeroSection() {
               <button className="send-chat" onClick={() => handleSendMessage()}>
                 <ArrowUp strokeWidth={2} />
               </button>
-              <div className="language-preference flex items-center gap-[6px]">
+              <div
+                className="language-preference flex items-center gap-[6px]"
+                onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+              >
                 <div>
                   <Language className="text-[12px]" />
                 </div>
-                <p className="font-medium">English</p>
+                <p className="font-medium">{LANGUAGES[languagePreference].name}</p>
                 <div>
                   <NavArrowDown className="text-[12px]" />
                 </div>
               </div>
+
+              {showLanguageMenu ? (
+                <LanguageModal
+                  closeModal={() => setShowLanguageMenu(false)}
+                  language={languagePreference}
+                  setLanguage={setLanguagePreference}
+                  setShowLanguageMenu={setShowLanguageMenu}
+                  LANGUAGES={LANGUAGES}
+                />
+              ) : null}
             </div>
 
             <div className="suggestions">

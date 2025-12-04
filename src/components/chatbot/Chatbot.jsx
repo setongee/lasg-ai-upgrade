@@ -75,8 +75,8 @@ const Chatbot = ({ pageContext }) => {
   const [isLocationPrompt, setIsLocationPrompt] = useState(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const setSuggestions = useApp((state) => state.setSuggestions);
-  const [language, setLanguage] = useState('en');
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const [languagePreference, setLanguagePreference] = useState('en');
 
   const LANGUAGES = {
     en: { name: 'English', code: 'en' },
@@ -84,6 +84,8 @@ const Chatbot = ({ pageContext }) => {
     ig: { name: 'Igbo (Coming Soon)', code: 'ig' },
     ha: { name: 'Hausa (Coming Soon)', code: 'ha' },
   };
+
+  console.log(languagePreference);
 
   // ---- Single chat session per lifecycle ----
   const chatSessionRef = useRef(null);
@@ -97,8 +99,8 @@ const Chatbot = ({ pageContext }) => {
       .join('\n');
 
     const languageInstruction =
-      language !== 'en'
-        ? `\n\n🌍 CRITICAL LANGUAGE REQUIREMENT:\nYou MUST respond EXCLUSIVELY in ${LANGUAGES[language].name} language, regardless of what language the user writes in. Even if the user writes in English, you must respond in ${LANGUAGES[language].name}. This is a strict requirement.`
+      languagePreference !== 'en'
+        ? `\n\n🌍 CRITICAL LANGUAGE REQUIREMENT:\nYou MUST respond EXCLUSIVELY in ${LANGUAGES[languagePreference].name} language, regardless of what language the user writes in. Even if the user writes in English, you must respond in ${LANGUAGES[languagePreference].name}. This is a strict requirement.`
         : '';
 
     return `
@@ -122,14 +124,14 @@ ${ministryInfo ? `${ministryInfo.name} (${ministryInfo.url})` : 'Automatically i
 📚 Recent Conversation:
 ${history}
 `;
-  }, [safePage, ministryInfo, messages, language]);
+  }, [safePage, ministryInfo, messages, languagePreference]);
 
   useEffect(() => {
     if (chatSessionRef.current) {
       chatSessionRef.current = null;
       initializeChatSession();
     }
-  }, [language]);
+  }, [languagePreference]);
 
   // ---- Initialize chat session ONCE ----
   const initializeChatSession = useCallback(async () => {
