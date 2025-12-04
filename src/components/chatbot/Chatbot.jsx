@@ -87,8 +87,6 @@ const Chatbot = ({ pageContext }) => {
     ha: { name: 'Hausa (Coming Soon)', code: 'ha' },
   };
 
-  console.log(languagePreference);
-
   // ---- Single chat session per lifecycle ----
   const chatSessionRef = useRef(null);
   const location = useLocation();
@@ -133,7 +131,18 @@ ${history}
       chatSessionRef.current = null;
       initializeChatSession();
     }
-  }, [languagePreference]);
+  }, [languagePreference, setLanguagePreference]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showLanguageMenu && !event.target.closest('.language-preference')) {
+        setShowLanguageMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showLanguageMenu]);
 
   // ---- Initialize chat session ONCE ----
   const initializeChatSession = useCallback(async () => {
@@ -490,7 +499,7 @@ ${history}
               />
             </div>
             <div className="identity flex justify-between items-center">
-              Lagos State Services Assistant (Seth)
+              Eko Smart
               <div className="closeChatModal" onClick={() => setCheckIsChatOpen(false)}>
                 <Xmark strokeWidth={2} />
               </div>
@@ -517,7 +526,7 @@ ${history}
                     <div className="think_img">
                       <img src={think_img} alt="Think Image" />
                     </div>
-                    Seth is thinking
+                    Eko Smart is thinking
                   </p>
                   <span className="thinking-dots"></span>
                 </div>
@@ -555,7 +564,7 @@ ${history}
               disabled={loading}
               value={loading ? '' : chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Ask Seth about Lagos State services..."
+              placeholder="Ask Eko Smart about Lagos State services..."
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();

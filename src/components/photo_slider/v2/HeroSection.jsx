@@ -32,8 +32,8 @@ export default function HeroSection() {
   const LANGUAGES = {
     en: { name: 'English', code: 'en' },
     yo: { name: 'Yorùbá', code: 'yo' },
-    ig: { name: 'Igbo', code: 'ig' },
-    ha: { name: 'Hausa', code: 'ha' },
+    ig: { name: 'Igbo (Coming Soon)', code: 'ig' },
+    ha: { name: 'Hausa (Coming Soon)', code: 'ha' },
   };
 
   const darkmode = useApp((state) => state.darkmode);
@@ -117,6 +117,17 @@ export default function HeroSection() {
   useEffect(() => {
     console.log(languagePreference);
   }, [languagePreference]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showLanguageMenu && !event.target.closest('.language-preference')) {
+        setShowLanguageMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showLanguageMenu]);
 
   return (
     <div className={`slider home ${darkmode ? 'dark' : 'light'}`}>
