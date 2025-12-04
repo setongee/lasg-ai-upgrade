@@ -813,7 +813,7 @@
   .slider {
     .photo_container {
       .home__content {
-        width: 75%;
+        // width: 75%;
 
         .text__area {
           font-size: 60px;
@@ -842,9 +842,12 @@
 // }
 
 @media (max-width: 1200px) {
+  .lasg-ai-chatbot {
+    margin-top: 40px;
+  }
   .slider {
     .photo_container {
-      margin-top: 160px;
+      margin-top: 180px;
       gap: 30px;
 
       .searchBox {
@@ -852,11 +855,13 @@
       }
 
       .home__content {
-        width: 85%;
+        width: 80%;
 
         .text__area {
-          font-size: 55px;
+          font-size: 48px;
           line-height: 48px;
+          text-align: center;
+          margin: 0 auto;
 
           .holder {
             margin-bottom: -19px;
@@ -918,9 +923,14 @@
 }
 
 @media (max-width: 1024px) {
+  .lasg-ai-chatbot {
+    max-width: 700px;
+    width: 100%;
+    margin-top: 20px;
+  }
   .slider {
     .photo_container {
-      margin-top: 170px;
+      margin-top: 190px;
 
       .searchBox {
         width: 90%;
@@ -1314,6 +1324,17 @@
 }
 
 @media (max-width: 550px) {
+  .lasg-ai-chatbot {
+    margin-bottom: 20px;
+    .suggestions {
+      margin-top: 10px;
+    }
+    .chat-textarea {
+      textarea {
+        height: 150px;
+      }
+    }
+  }
   .slider {
     .lasg__illustration {
       .lasg__illustration__theatre {

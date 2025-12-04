@@ -12,6 +12,7 @@ import {
   getLgaPrompt,
   needsLocationContext,
 } from '../../utils/locationUtils';
+import LanguageModal from '../language/LanguageModal';
 import './chatbot.css';
 import think_img from './comment.png';
 import { CONTEXT } from './context';
@@ -76,7 +77,8 @@ const Chatbot = ({ pageContext }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const setSuggestions = useApp((state) => state.setSuggestions);
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-  const [languagePreference, setLanguagePreference] = useState('en');
+  const setLanguagePreference = useChatStore((state) => state.setLanguagePreference);
+  const languagePreference = useChatStore((state) => state.languagePreference);
 
   const LANGUAGES = {
     en: { name: 'English', code: 'en' },
@@ -561,17 +563,32 @@ ${history}
                 }
               }}
             />
-            <div className="language-preference flex items-center gap-[6px]">
+            <div
+              className="language-preference flex items-center gap-[6px]"
+              onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+            >
               <div>
                 <Language className="text-[12px]" />
               </div>
-              <p className="font-medium">English</p>
+              <p className="font-medium">{LANGUAGES[languagePreference].name}</p>
               <div>
                 <NavArrowDown className="text-[12px]" />
               </div>
+
+              {showLanguageMenu ? (
+                <LanguageModal
+                  closeModal={() => setShowLanguageMenu(false)}
+                  language={languagePreference}
+                  setLanguage={setLanguagePreference}
+                  setShowLanguageMenu={setShowLanguageMenu}
+                  LANGUAGES={LANGUAGES}
+                  customClass="main-lang"
+                />
+              ) : null}
             </div>
+
             {loading ? (
-              <button disabled className="stop-btn">
+              <button disabled className="stop-btn send-btn-chat">
                 <ArrowUp />
               </button>
             ) : (

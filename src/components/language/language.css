@@ -12,6 +12,11 @@
   z-index: 1000;
   margin-bottom: 70px;
   width: 250px;
+
+  &.main-lang {
+    margin-bottom: 45px;
+    margin-left: 0;
+  }
 }
 
 .language-option {

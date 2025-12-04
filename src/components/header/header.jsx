@@ -18,9 +18,6 @@ import MobileView from './mobileView';
 import StripLines from './StripLines';
 import Top__header from './top__header';
 
-import night from './mode/night-mode.png';
-import day from './mode/sun.png';
-
 // analytics
 import ReactGA from 'react-ga';
 import { useApp } from '../../stores/app.store';
@@ -212,11 +209,7 @@ export default function Header() {
 
           {/* main navigation links */}
 
-          <div
-            className={`navigation glass ${isTextDark ? 'text-dark' : 'text-light'} ${
-              darkmode ? 'dark' : 'light'
-            }`}
-          >
+          <div className="navigation" style={{ background: '#fff' }}>
             <Container>
               <div className="menuForm">
                 {/* Site Branding Information */}
@@ -332,12 +325,7 @@ export default function Header() {
                 {/* <div className="button__search"><div className="parentName searching" onClick={ () => openModal() } > <Search height={17} width={17} strokeWidth={2.4}/> Search </div></div> */}
 
                 <div className="button__search">
-                  <div className="parentName searching" onClick={() => openModal()}>
-                    {' '}
-                    <div className={darkmode ? 'mode darkmode' : 'mode'}>
-                      {darkmode ? <img src={day} alt="" /> : <img src={night} alt="" />}
-                    </div>
-                  </div>
+                  <div className="parentName searching">Search</div>
                 </div>
               </div>
             </Container>

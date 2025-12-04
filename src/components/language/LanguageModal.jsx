@@ -1,9 +1,9 @@
 import { Check } from 'iconoir-react';
 import './language.css';
 
-const LanguageModal = ({ LANGUAGES, language, setLanguage, setShowLanguageMenu }) => {
+const LanguageModal = ({ LANGUAGES, language, setLanguage, setShowLanguageMenu, customClass }) => {
   return (
-    <div className="language-menu">
+    <div className={`language-menu ${customClass}`}>
       {Object.entries(LANGUAGES).map(([code, lang]) => (
         <button
           key={code}
