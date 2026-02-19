@@ -1,33 +1,51 @@
-import React from 'react';
-
-import './dashboard.css';
-// import Vision from './pages/vision'
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Heading from '../components/header/Heading';
 import Sidebar from '../components/sidebar/sidebar';
+import './dashboard.css';
+
+// pages Section
+import { useThemeStore } from '../../../stores/theme.store';
+import Agency from '../pages/agencies/Agencies';
+import Contact from '../pages/contact/Contact';
 import Overview from '../pages/overview/Overview';
-// import Agency from './pages/agencies'
-// import Responsibilities from './pages/responsibilities'
-// import People from './pages/people'
-// import Contact from './pages/contact'
-// import Resources from './pages/resources'
+import PrincipalOfficers from '../pages/principal-officers/PrincipalOfficers';
+import Resources from '../pages/Resources/Resources';
+import Responsibilities from '../pages/responsibilities/Responsibilities';
+import Services from '../pages/services/Services';
+import Vision from '../pages/vision/Vision';
+import Drafts from '../pages/web-templates/drafts/Drafts';
+import Library from '../pages/web-templates/library/Library';
+import Published from '../pages/web-templates/published/Published';
 
 const Dashboard = () => {
-  let { id } = useParams();
+  const mdaData = useThemeStore((state) => state.mdaData);
+  let { id, mda } = useParams();
+  const navigate = useNavigate();
+  console.log(mdaData);
+
+  useEffect(() => {
+    if (!id && mda) {
+      navigate(`/${mda}/admin/dashboard`);
+    }
+  }, [id, mda, navigate]);
 
   const getPage = () => {
     if (id == 'dashboard') return <Overview />;
-    //   if(page == "vision") return <Vision inData = {data} />
+    if (id == 'vision') return <Vision mda_data={mdaData} />;
+    if (id == 'agencies') return <Agency mda_data={mdaData} />;
+    if (id == 'people') return <PrincipalOfficers mda_data={mdaData} />;
+    if (id == 'responsibility') return <Responsibilities mda_data={mdaData} />;
+    if (id == 'resources') return <Resources mda_data={mdaData} />;
+    if (id == 'contact') return <Contact mda_data={mdaData} />;
 
-    //   if(page == "agencies") return <Agency inData = {data}/>
+    // Web Templates
+    if (id == 'library') return <Library />;
+    if (id == 'published') return <Published />;
+    if (id == 'drafts') return <Drafts />;
 
-    //   if(page == "responsibility") return <Responsibilities inData = {data}/>
-
-    //   if(page == "resources") return <Resources inData = {data}/>
-
-    //   if(page == "people") return <People inData = {data}/>
-
-    //   if(page == "contact_info") return <Contact inData = {data}/>
+    // More
+    if (id == 'services') return <Services />;
   };
 
   return (

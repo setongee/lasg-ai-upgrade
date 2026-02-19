@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router';
 import Connect from '../../shared/connect/connect';
 import Footer from '../../shared/footer/Footer';
@@ -6,10 +6,11 @@ import News_Events from '../../shared/news_events/News_Events';
 import Resources from '../../shared/resources/resources';
 import { useThemeStore } from '../../stores/theme.store';
 import About from './about/About';
+import HeaderEdit from './header/edit-mode/headerEdit';
 import Header from './header/header';
 import Home from './home/home';
 
-const Index = () => {
+const Index = ({ isEdit }) => {
   const { page } = useParams();
   const data = useThemeStore((state) => state.mdaData);
 
@@ -38,9 +39,19 @@ const Index = () => {
       case 'contact':
         return <Connect />;
       default:
-        return <Home />;
+        return <Home isEdit={isEdit || false} />;
     }
   };
+
+  if (isEdit) {
+    return (
+      <div className="themeHolder">
+        <HeaderEdit fullname={data?.fullname} />
+        {renderPage()}
+        <Footer data={data} />
+      </div>
+    );
+  }
 
   return (
     <div className="themeHolder">

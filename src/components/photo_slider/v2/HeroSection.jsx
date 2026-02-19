@@ -25,8 +25,6 @@ export default function HeroSection() {
   const languagePreference = useChatStore((state) => state.languagePreference);
   const addMessage = useChatStore((state) => state.addMessage);
   const [chatInput, setChatInput] = useState('');
-
-  const [language, setLanguage] = useState('en');
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
 
   const LANGUAGES = {
@@ -116,7 +114,7 @@ export default function HeroSection() {
 
   useEffect(() => {
     console.log(languagePreference);
-  }, [languagePreference]);
+  }, [languagePreference, setLanguagePreference]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -128,6 +126,8 @@ export default function HeroSection() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showLanguageMenu]);
+
+  console.log(languagePreference);
 
   return (
     <div className={`slider home ${darkmode ? 'dark' : 'light'}`}>
@@ -214,32 +214,6 @@ export default function HeroSection() {
                   </div>
                 ))}
             </div>
-
-            {/* <div className="quickSearches">
-
-              <div className="arrow__nav abs1" onClick={() => scrollRight('left')}>
-                {' '}
-                <div className="abs">
-                  <NavArrowLeft />
-                </div>{' '}
-              </div>
-
-              <div className="pills__searches" id="scrollRecent">
-                {suggestions?.length > 0 &&
-                  suggestions?.map((item, index) => (
-                    <p onClick={(e) => handleSearchTab(e)} key={index}>
-                      {item}
-                    </p>
-                  ))}
-              </div>
-
-              <div className="arrow__nav abs2" onClick={() => scrollRight('right')}>
-                {' '}
-                <div className="abs">
-                  <NavArrowRight />
-                </div>{' '}
-              </div>
-            </div> */}
           </div>
         </div>
 

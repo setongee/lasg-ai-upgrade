@@ -1,29 +1,34 @@
-import axios from "axios"
-import { env } from "./environment";
+import axios from 'axios';
+import { env } from './environment';
 
-const base_url = `${env}/category`
+const base_url = `${env}/category`;
 
 export const getAllCategory = async () => {
+  const response = await axios.get(`${base_url}/all`);
 
-    const response = await axios.get(`${base_url}/all`);
-    
-    if(response.status === 200) {
-        return response.data;
-    } else{
-        return [];
-    }
+  if (response.status === 200) {
+    return response.data;
+  } else {
+    return [];
+  }
+};
 
-}
+export const getMultipleServices = async (categories) => {
+  const response = await axios.get(`${base_url}/grouped`, { formattedNames: categories });
+
+  if (response.status === 200) {
+    return response.data;
+  } else {
+    return [];
+  }
+};
 
 export const getSingleCategory = async (name) => {
+  const response = await axios.get(`${base_url}/name/${name}`);
 
-    const response = await axios.get(`${base_url}/name/${name}`);
-    
-    if(response.status === 200) {
-        return response.data;
-    } else{
-        return [];
-    }
-
-}
-
+  if (response.status === 200) {
+    return response.data;
+  } else {
+    return [];
+  }
+};

@@ -10,6 +10,8 @@ import Header from './components/header/header';
 import Cookie from './cookie';
 import RouterClass from './routes/router';
 import './styles/root.css';
+import './styles/toast.css';
+import { useRouteType } from './utils/routeUtils';
 const TRACKING_ID = 'G-NB0QB4RDM7'; // LASG Main Site Tracking ID
 
 function App() {
@@ -17,6 +19,9 @@ function App() {
   const { pathname } = useLocation();
   const location = useLocation();
   const currentPage = location.pathname.replace('/', ''); // e.g. "health"
+  const { isPublicRoute, isDynamicPath, isAdminRoute } = useRouteType();
+
+  console.log(isAdminRoute);
 
   useEffect(() => {
     const cookieInfo = Cookies.get('lasgConsent');
@@ -52,17 +57,25 @@ function App() {
       {/* Toast Notifications */}
       <Toaster
         position="top-right"
+        containerStyle={{
+          top: '100px' /* Account for header height */,
+          right: '0px',
+        }}
         toastOptions={{
           style: {
             fontSize: '14px',
-            padding: '10px 16px',
+            padding: '12px 16px',
             borderRadius: '4px',
+            zIndex: 1000000,
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
           },
         }}
       />
 
       {/* Chatbot */}
-      <Chatbot pageContext={currentPage || 'general'} />
+      {!isAdminRoute && <Chatbot pageContext={currentPage || 'general'} />}
+
+      {/* Cookie Consent */}
       {!cookies && <Cookie cookieStatus={setCookieStatus} />}
     </div>
   );

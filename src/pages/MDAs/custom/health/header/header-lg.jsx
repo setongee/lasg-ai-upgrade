@@ -1,10 +1,13 @@
 import { ArrowUpRight } from 'iconoir-react';
-import React from 'react';
 import { useParams } from 'react-router';
+import { useNavigate } from 'react-router-dom';
+import { useThemeStore } from '../../../stores/theme.store';
 import lasg__logo from '../assets/lasg__logo.png';
 
 const HeaderLg = ({ customClass, fullname }) => {
   const { mda, page } = useParams();
+  const navigate = useNavigate();
+  const mdaData = useThemeStore((state) => state.mdaData);
 
   return (
     <div className={`w-full p-2 flex items-center justify-between ${customClass}`}>
@@ -16,38 +19,40 @@ const HeaderLg = ({ customClass, fullname }) => {
       </div>
 
       <div className="flex items-center gap-7 text-[11px] tracking-[2px] uppercase">
-        <a
+        <div
           className={
             page === '' || page === undefined ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'
           }
-          href={`/${mda}`}
+          onClick={() => navigate(`/${mda}`)}
         >
           Home
-        </a>
-        <a
+        </div>
+        <div
           className={page === 'about' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
-          href={`/${mda}/about`}
+          onClick={() => navigate(`/${mda}/about`)}
         >
           About
-        </a>
-        <a
+        </div>
+        <div
           className={page === 'news' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
-          href={`/${mda}/news?page=1`}
+          onClick={() => navigate(`/${mda}/news?page=1`)}
         >
           Newsroom
-        </a>
-        <a
-          className={page === 'resources' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
-          href={`/${mda}/resources`}
-        >
-          Resources
-        </a>
-        <a
+        </div>
+        {mdaData?.resources?.length > 0 && (
+          <div
+            className={page === 'resources' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
+            onClick={() => navigate(`/${mda}/resources`)}
+          >
+            Resources
+          </div>
+        )}
+        <div
           className={page === 'contact' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
-          href={`/${mda}/contact`}
+          onClick={() => navigate(`/${mda}/contact`)}
         >
           Contact
-        </a>
+        </div>
 
         <a className="!text-[#008435] font-bold flex gap-1.5 items-center" href="/">
           Back to LASG

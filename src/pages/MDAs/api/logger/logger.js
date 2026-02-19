@@ -1,6 +1,23 @@
+import axios from 'axios';
 import { env } from '../../../../api/read/environment';
 
-export const logger = async (data) => {
-  const baseUrl = `${env}/logger`;
-  await axios.post(baseUrl, data);
+const addLoggingData = async (data) => {
+  const baseUrl = `${env}/logger/add`;
+  try {
+    await axios.post(baseUrl, data);
+  } catch (error) {
+    console.log(error);
+  }
 };
+
+const getLoggingData = async (id) => {
+  const baseUrl = `${env}/logger/get/mda/${id}`;
+  try {
+    const response = await axios.get(baseUrl);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { addLoggingData, getLoggingData };

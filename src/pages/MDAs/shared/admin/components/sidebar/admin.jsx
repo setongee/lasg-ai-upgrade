@@ -13,7 +13,7 @@ import {
   TextSquareSolid,
   WhiteFlagSolid,
 } from 'iconoir-react';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 export default function Admin({ baseurl }) {
@@ -28,111 +28,111 @@ export default function Admin({ baseurl }) {
     getElementToBeActive.classList.add('current-active');
   };
 
+  const menuItemsList = {
+    overview: [
+      {
+        name: 'Dashboard',
+        href: `${baseurl}/dashboard`,
+        icon: <AppleShortcutsSolid />,
+        id: 'dashboard-admin',
+      },
+    ],
+
+    templates: [
+      {
+        name: 'Published',
+        href: `${baseurl}/published`,
+        icon: <FlashSolid />,
+        id: 'published-admin',
+      },
+      {
+        name: 'Drafts',
+        href: `${baseurl}/drafts`,
+        icon: <WhiteFlagSolid />,
+        id: 'drafts-admin',
+      },
+      {
+        name: 'Library',
+        href: `${baseurl}/library`,
+        icon: <PocketSolid />,
+        id: 'library-admin',
+      },
+    ],
+
+    content: [
+      {
+        name: 'Vision & Mission',
+        href: `${baseurl}/vision`,
+        icon: <CompassSolid />,
+        id: 'vision-admin',
+      },
+      {
+        name: 'Agencies / Depts.',
+        href: `${baseurl}/agencies`,
+        icon: <CoolingSquareSolid />,
+        id: 'agencies-admin',
+      },
+      {
+        name: 'Principal Officers',
+        href: `${baseurl}/people`,
+        icon: <GraduationCapSolid />,
+        id: 'people-admin',
+      },
+      {
+        name: 'Responsibilities',
+        href: `${baseurl}/responsibility`,
+        icon: <TextSquareSolid />,
+        id: 'responsibility-admin',
+      },
+      {
+        name: 'Resources',
+        href: `${baseurl}/resources`,
+        icon: <DownloadSquareSolid />,
+        id: 'resources-admin',
+      },
+      {
+        name: 'Contact',
+        href: `${baseurl}/contact`,
+        icon: <MultiBubbleSolid />,
+        id: 'contact-admin',
+      },
+    ],
+
+    more: [
+      {
+        name: 'Services',
+        href: `${baseurl}/services`,
+        icon: <AppNotificationSolid />,
+        id: 'services-admin',
+      },
+      {
+        name: 'Messages',
+        href: `${baseurl}/messages`,
+        icon: <MessageTextSolid />,
+        id: 'messages-admin',
+      },
+      {
+        name: 'Subscribers',
+        href: `${baseurl}/subscribers`,
+        icon: <HeartSolid />,
+        id: 'subscribers-admin',
+      },
+    ],
+  };
+
   return (
     <div className="menu__links">
-      <section className="nav-section">
-        <div className="section-title-admin">Overview</div>
-        <a href={`${baseurl}/dashboard`} className="link dashboard-admin">
-          <div className="icon">
-            <AppleShortcutsSolid />
-          </div>
-          <div className="text">Dashboard</div>
-        </a>
-      </section>
-
-      <section className="nav-section">
-        <div className="section-title-admin">Templates</div>
-        <a href={`${baseurl}/published`} className="link published-admin">
-          <div className="icon">
-            <FlashSolid />
-          </div>
-          <div className="text">Published</div>
-        </a>
-
-        <a href={`${baseurl}/drafts`} className="link drafts-admin">
-          <div className="icon">
-            <WhiteFlagSolid />
-          </div>
-          <div className="text">Drafts</div>
-        </a>
-
-        <a href={`${baseurl}/library`} className="link library-admin">
-          <div className="icon">
-            <PocketSolid />
-          </div>
-          <div className="text">Library</div>
-        </a>
-      </section>
-
-      <section className="nav-section">
-        <div className="section-title-admin">Content</div>
-
-        <a href={`${baseurl}/vision`} className="link vision-admin">
-          <div className="icon">
-            <CompassSolid />
-          </div>
-          <div className="text">Vision & Mission</div>
-        </a>
-
-        <a href={`${baseurl}/agencies`} className="link agencies-admin">
-          <div className="icon">
-            <CoolingSquareSolid />
-          </div>
-          <div className="text"> Agencies / Depts. </div>
-        </a>
-
-        <a href={`${baseurl}/people`} className="link people-admin">
-          <div className="icon">
-            <GraduationCapSolid />
-          </div>
-          <div className="text"> Principal Officers </div>
-        </a>
-
-        <a href={`${baseurl}/responsibility`} className="link responsibility-admin">
-          <div className="icon">
-            <TextSquareSolid />
-          </div>
-          <div className="text"> Responsibilities </div>
-        </a>
-
-        <a href={`${baseurl}/resources`} className="link resources-admin">
-          <div className="icon">
-            <DownloadSquareSolid />
-          </div>
-          <div className="text"> Resources </div>
-        </a>
-
-        <a href={`${baseurl}/contact_info`} className="link contact_info-admin">
-          <div className="icon">
-            <MultiBubbleSolid />
-          </div>
-          <div className="text"> Contact </div>
-        </a>
-      </section>
-
-      <section className="nav-section">
-        <div className="section-title-admin">More</div>
-        <a href={`${baseurl}/published`} className="link published-admin">
-          <div className="icon">
-            <AppNotificationSolid />
-          </div>
-          <div className="text">Services</div>
-        </a>
-
-        <a href={`${baseurl}/drafts`} className="link drafts-admin">
-          <div className="icon">
-            <MessageTextSolid />
-          </div>
-          <div className="text">Messages</div>
-        </a>
-
-        <a href={`${baseurl}/library`} className="link library-admin">
-          <div className="icon">
-            <HeartSolid />
-          </div>
-          <div className="text">Subscribers</div>
-        </a>
-      </section>
+      {Object.entries(menuItemsList).map(([key, value]) => (
+        <section className="nav-section">
+          <div className="section-title-admin">{key}</div>
+          {Object.entries(value).map(([key, value]) => (
+            <a href={value.href} className={`link ${value.id}`}>
+              <div className="icon">{value.icon}</div>
+              <div className="text">{value.name}</div>
+            </a>
+          ))}
+        </section>
+      ))}
     </div>
   );
 }

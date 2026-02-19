@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { NavArrowDown } from 'iconoir-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { formatDate } from '../../../../../../middleware/middleware';
 import { getDashboardData } from '../../../../api/admin/dashboard';
+import Loader from '../../../loader/loader';
 import ActivitySection from './ActivitySection';
 import ChartDown from './chart-down.svg';
 import ChartUp from './chart-up.svg';
@@ -11,7 +12,7 @@ import './overview.scss';
 
 const Overview = () => {
   const [userDetails, setUserDetails] = useState({ firstname: '', lastname: '', role: '' });
-  const [period, setPeriod] = useState('today');
+  const [period, setPeriod] = useState('week');
   const [showDropdown, setShowDropdown] = useState(false);
   const siteName = useParams().mda;
 
@@ -39,7 +40,7 @@ const Overview = () => {
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   const changePeriod = (period) => {
@@ -51,7 +52,7 @@ const Overview = () => {
     <>
       <div className="admin-overview">
         {/* activity panel */}
-        <ActivitySection />
+        <ActivitySection siteName={siteName} />
 
         {/* body area */}
         <div className="overview-body">

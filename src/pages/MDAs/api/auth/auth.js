@@ -28,3 +28,13 @@ export const authenticateToken = async (token) => {
     return { status: 'bad', message: 'Missing Token' };
   }
 };
+
+export const refreshToken = async (token, mda) => {
+  const response = await axios.post(`${base_url}/mda/refresh-token`, { token, mda });
+
+  if (response.status === 200) {
+    return response.data;
+  } else {
+    return { status: 'bad', message: 'Missing Token' };
+  }
+};

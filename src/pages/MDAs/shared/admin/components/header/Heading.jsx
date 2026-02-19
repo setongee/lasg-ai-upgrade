@@ -1,5 +1,5 @@
 import { Bell, NavArrowDown, PlusCircle, ProfileCircle, Settings } from 'iconoir-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { updateAdminData } from '../../../../api/admin/content';
 import { useThemeStore } from '../../../../stores/theme.store';
@@ -31,7 +31,11 @@ const Heading = () => {
 
       try {
         setIsUpdating(true);
-        await updateAdminData(mdaData._id, { isOffline: newStatus });
+        await updateAdminData(
+          mdaData._id,
+          { isOffline: newStatus },
+          `changed status to ${newStatus ? 'offline' : 'online'}`
+        );
       } catch (error) {
         console.error('Failed to update status:', error);
         throw error;

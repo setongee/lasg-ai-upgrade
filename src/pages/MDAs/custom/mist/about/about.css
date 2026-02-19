@@ -1,0 +1,317 @@
+.about-mda {
+  margin-top: 115px;
+
+  .active-scroll-spy {
+    color: green !important;
+  }
+
+  .navigateMenu {
+    width: 100%;
+    position: fixed;
+    background-color: #fff;
+    top: 114px;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+    z-index: 40;
+
+    .spy__links {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+
+      p,
+      a {
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 2px;
+        font-weight: 500;
+        border-right: 1px solid #bdbdbd;
+        padding-right: 20px;
+        color: #131313;
+
+        &:last-child {
+          border: none;
+          padding-right: 0;
+        }
+      }
+    }
+  }
+
+  .index-top {
+    margin-top: 170px;
+  }
+
+  .history {
+    position: relative;
+    overflow: hidden;
+
+    .contentArea {
+      padding: 100px 0;
+      display: flex;
+      gap: 50px;
+      flex-direction: column;
+    }
+    h2 {
+      font-size: 48px;
+      width: 900px;
+      line-height: 130%;
+      text-align: center;
+      font-weight: 600;
+      text-decoration: underline;
+      letter-spacing: -0.5px;
+    }
+    p {
+      text-align: center;
+    }
+  }
+
+  .mission {
+    .card-set {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+
+      .card-item {
+        width: calc(53% - 50px);
+        overflow: hidden;
+        border-radius: 10px;
+        background-color: #f4f4f4;
+        background-color: #2e7d32;
+        overflow: hidden;
+        position: relative;
+
+        .card-content {
+          padding: 30px;
+          bottom: 0;
+          z-index: 11;
+          border-radius: 5px;
+
+          .h2 {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 125%;
+            color: #131313;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #f1f1f149;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            color: #fff;
+          }
+          p {
+            font-size: 16px;
+            width: 80%;
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+
+  #responsibility {
+    background-color: #e6edef;
+    padding: 80px 0;
+    margin: 80px 0;
+  }
+
+  #people {
+    margin-top: 50px;
+  }
+
+  .about-heading {
+    align-items: center;
+    justify-content: space-between;
+
+    h1 {
+      font-size: 40px;
+      line-height: 130%;
+      font-weight: 600;
+      width: 800px;
+    }
+
+    span {
+      width: 300px;
+      line-height: 180%;
+    }
+
+    &.full {
+      width: 900px;
+      margin: 0 auto;
+      margin-bottom: 50px;
+      h1 {
+        width: 100%;
+      }
+      span {
+        width: 80%;
+      }
+    }
+  }
+
+  #responsibility-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    p:first-child {
+      margin-bottom: 10px;
+    }
+
+    p {
+      line-height: 190%;
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .about-mda {
+    margin-top: 190px;
+
+    .navigateMenu {
+      top: 90px;
+      padding: 10px 0;
+      border: none;
+      background-color: transparent;
+
+      .spy__links {
+        gap: 10px;
+        justify-content: flex-start;
+        overflow: hidden;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+        a,
+        p {
+          min-width: max-content;
+          padding: 10px 20px;
+          border-radius: 100px;
+          background-color: #eee;
+          border: none;
+          border: 1px solid #e7e7e7;
+        }
+      }
+    }
+
+    .index-top {
+      margin-top: 0px;
+    }
+
+    .history {
+      .contentArea {
+        gap: 20px;
+        padding: 0px;
+      }
+      h2 {
+        font-size: 32px;
+        width: 600px;
+        margin-bottom: 50px;
+      }
+    }
+
+    .mission {
+      .card-set {
+        gap: 10px;
+        justify-content: flex-start;
+        overflow: hidden;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+        /* flex-wrap: wrap; */
+        .card-item {
+          min-width: 400px;
+          .card-content {
+            padding: 25px;
+            p {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+
+    #responsibility {
+      background-color: #e6edef;
+      padding: 50px 0;
+      margin: 30px 0;
+      padding-bottom: 0;
+    }
+
+    #agency {
+      margin-top: 50px;
+    }
+
+    #people {
+      margin-top: 50px;
+    }
+
+    .divider-about {
+      margin: 30px 0;
+    }
+
+    .about-heading {
+      width: 80% !important;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+
+      &.full-heading {
+        h1 {
+          margin-bottom: 0;
+        }
+      }
+
+      h1 {
+        font-size: 32px;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      span {
+        width: 80%;
+        text-align: center;
+      }
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .about-mda {
+    margin-top: 185px;
+    .history {
+      h2 {
+        font-size: 28px;
+        width: 100%;
+        margin-bottom: 40px;
+      }
+    }
+
+    .mission {
+      .card-set {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .card-item {
+          min-width: 100%;
+        }
+      }
+    }
+
+    .about-heading {
+      width: 100% !important;
+
+      h1 {
+        font-size: 26px;
+        width: 100%;
+      }
+      span {
+        width: 100%;
+      }
+    }
+  }
+}

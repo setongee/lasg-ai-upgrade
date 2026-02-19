@@ -362,6 +362,249 @@
   }
 }
 
+/* ========================= 
+container queries 
+========================== */
+
+@container builder (max-width: 1300px) {
+  .footer {
+    padding-top: 0;
+
+    .picture {
+      height: 250px;
+
+      img {
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .footerContent {
+      padding: 0px 0;
+
+      .linksPart {
+        margin-top: 50px;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .linksTabs {
+        margin-top: 40px;
+        overflow-x: scroll;
+        scrollbar-width: none;
+        scroll-behavior: smooth;
+
+        .tab {
+          min-width: max-content;
+        }
+      }
+
+      .footest_footer {
+        line-height: 20px;
+
+        .copyright {
+          gap: 40px;
+          justify-content: space-between;
+        }
+      }
+    }
+  }
+}
+
+@container builder (max-width: 1000px) {
+  .footer {
+    padding-top: 0;
+
+    .picture {
+      height: 250px;
+
+      img {
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .footerContent {
+      padding: 0px 0;
+
+      .linksPart {
+        margin-top: 50px;
+        gap: 60px;
+        flex-wrap: wrap;
+      }
+
+      .footest_footer {
+        .copyright {
+          gap: 40px;
+          justify-content: space-between;
+        }
+      }
+    }
+  }
+}
+
+@container builder (max-width: 870px) {
+  .footer {
+    padding-top: 0;
+
+    .picture {
+      height: 250px;
+
+      img {
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+
+  .footerContent {
+    padding: 0px 0;
+
+    .topPart {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 30px;
+
+      h1 {
+        font-size: 42px !important;
+      }
+    }
+
+    .linksPart {
+      margin-top: 50px;
+      gap: 60px;
+      flex-wrap: wrap;
+    }
+
+    .footest_footer {
+      .copyright {
+        gap: 40px;
+        justify-content: space-between;
+      }
+    }
+  }
+}
+
+@container builder (max-width: 600px) {
+  .footer {
+    padding-top: 0;
+
+    .picture {
+      height: 250px;
+
+      img {
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+
+  .footerContent {
+    padding: 0px 0;
+
+    .topPart {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 30px;
+
+      h1 {
+        display: block;
+        flex-direction: column;
+        line-height: 120%;
+        text-align: center !important;
+
+        span {
+          margin-left: 0;
+        }
+      }
+    }
+
+    .linksPart {
+      margin-top: 50px;
+      gap: 40px;
+      flex-wrap: wrap;
+
+      .linkHolder {
+        width: 100%;
+        gap: 30px;
+
+        .links {
+          width: 100%;
+          gap: 20px;
+
+          a {
+            width: 100% !important;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px !important;
+          }
+        }
+      }
+    }
+
+    .footest_footer {
+      .copyright {
+        gap: 20px;
+        justify-content: space-between;
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+@container builder (max-width: 400px) {
+  .footerContent {
+    .topPart {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 30px;
+
+      h1 {
+        font-size: 36px !important;
+        display: block;
+        flex-direction: column;
+
+        span {
+          margin-left: 0;
+        }
+      }
+    }
+
+    .linksPart {
+      margin-top: 50px;
+      gap: 40px;
+      flex-wrap: wrap;
+
+      .linkHolder {
+        width: 100%;
+        gap: 30px;
+
+        .links {
+          width: 100%;
+          gap: 20px;
+
+          a {
+            width: 100%;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+          }
+        }
+      }
+    }
+
+    .footest_footer {
+      .copyright {
+        gap: 20px;
+        justify-content: space-between;
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+/* ========================= 
+global styles
+========================== */
+
 .sublime {
   flex-wrap: wrap;
 }

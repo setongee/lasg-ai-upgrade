@@ -81,7 +81,9 @@
           &.current-active {
             background-color: hsl(157, 37%, 96%);
             // background-color: hsl(195, 40%, 96%);
+            background-color: green;
             color: green;
+            color: hsl(157, 37%, 96%);
             // color: rgb(0, 85, 255);
             font-weight: 600;
           }

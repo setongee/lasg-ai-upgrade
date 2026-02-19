@@ -4,6 +4,7 @@ import { useParams } from 'react-router';
 import { useVisitTracker } from '../../hooks/useVisitTracker';
 import { getMda } from './api/data';
 import Admin from './shared/admin/Admin';
+import Loader from './shared/loader/loader';
 import { useThemeStore } from './stores/theme.store';
 import ThemeSelector from './Themes/ThemeSelector';
 
@@ -27,22 +28,26 @@ const Page = () => {
   const { data, isError, isPending, isLoading } = useQuery({
     queryKey: ['mda', mda],
     queryFn: () => getMda(mda),
+    staleTime: 1000 * 60 * 60,
   });
 
   useEffect(() => {
     if (data?.length > 0) {
-      setMdaData({ ...data[0], fullname: 'Ministry of Health' });
+      const newData = data[0];
+      setMdaData(newData);
       setMda(mda);
     }
-  }, [data]);
+  }, [data, mda, setMda, setMdaData]);
 
   useVisitTracker(mda, page === undefined ? 'home' : page);
 
+  if (isLoading) return <Loader />;
+
   switch (page) {
-    case 'test-admin':
+    case 'admin':
       return <Admin />;
     default:
-      return <ThemeSelector theme={mda} />;
+      return <ThemeSelector theme={data[0]?.theme} data={data[0]} />;
   }
 };
 

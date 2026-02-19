@@ -1,10 +1,10 @@
 import { ArrowDown, ArrowUp } from 'iconoir-react';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Button from '../../button/Button';
 import Wrapper from '../../Wrapper/Wrapper';
 import ServiceCard from './card';
 
-const ServicesComponent = ({ data, icon }) => {
+const ServicesComponent = ({ data, icon, name }) => {
   const [showAll, setShowAll] = useState(false);
   const visibleServices = showAll ? data : data?.slice(0, 9);
   const sectionRef = useRef(null);
@@ -13,11 +13,11 @@ const ServicesComponent = ({ data, icon }) => {
     <Wrapper>
       <div className="flex flex-col items-center">
         <div
-          className="font-semibold w-[100%] text-center flex flex-col items-center gap-[20px]"
+          className="font-semibold w-[100%] text-center flex flex-col items-center gap-[20px] container-builder"
           ref={sectionRef}
         >
           <p className="text-[24px] sm:text-[32px] md:text-[40px] md:w-[600px] text-center leading-9 md:leading-13">
-            Discover and Access Ministry of Health Online Services
+            Discover and Access {name} Online Services
           </p>
           <span className="text-[#666] text-base font-normal w-full !leading-[150%] ">
             Explore our offerings and choose the service that best meets your needs.

@@ -36,3 +36,17 @@
     margin-top: 10px;
   }
 }
+
+/* container builder */
+
+@container builder (max-width: 500px) {
+  .container-builder {
+    width: 100%;
+    gap: 10px;
+    p {
+      font-size: 24px;
+      width: 100%;
+      line-height: 34px;
+    }
+  }
+}

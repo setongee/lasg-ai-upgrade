@@ -1,4 +1,3 @@
-import React from 'react';
 import './confirm-modal.css';
 
 const ConfirmModal = ({ children, open, onClose, onConfirm }) => {

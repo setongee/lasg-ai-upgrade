@@ -1,10 +1,12 @@
 import { create } from 'zustand';
 
-export const useThemeStore = create((set) => ({
+const useThemeStore = create((set) => ({
   isMobile: false,
-  setIsMobile: (value) => set(() => ({ isMobile: value })),
+  setIsMobile: (value) => set({ isMobile: value }),
   mda: '',
-  setMda: (value) => set(() => ({ mda: value })),
+  setMda: (value) => set({ mda: value }),
   mdaData: {},
-  setMdaData: (value) => set(() => ({ mdaData: value })),
+  setMdaData: (value) => set({ mdaData: value }),
 }));
+
+export { useThemeStore };

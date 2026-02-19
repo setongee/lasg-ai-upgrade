@@ -1,50 +1,48 @@
-.newsletter {
-  margin: 100px 0;
-  margin-bottom: 50px;
-  background-color: #0c140c;
-  background-color: #2e7d32;
-  padding: 80px;
-  border-radius: 10px;
-  align-items: center;
+/* ===============================
+   NEWSLETTER – BUILDER RESPONSIVE
+   =============================== */
 
-  .letter_icon {
-    width: 300px;
-    height: 300px;
-    overflow: hidden;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+@container builder (max-width: 900px) {
+  .newsletter-section {
+    padding: 50px;
+    margin-block: 80px;
   }
 
-  .details__area {
-    display: flex;
-    color: #fff;
-    gap: 20px;
-    align-items: center;
-    justify-content: space-between;
+  .newsletter-title {
+    font-size: 24px;
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .newsletter-inner {
+    gap: 40px;
+  }
+}
+
+@container builder (max-width: 600px) {
+  .newsletter-section {
+    padding: 30px;
+    margin-block: 60px;
+  }
+
+  .newsletter-inner {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .newsletter-title {
+    font-size: 22px;
+    line-height: 135%;
+  }
+
+  .newsletter-form {
     width: 100%;
+    flex-direction: column;
   }
 
-  .letter_title {
-    font-size: 28px;
-    font-weight: 600;
-    line-height: 125%;
-    color: #fff;
-    width: 550px;
-  }
-
-  .input-action {
-    border-radius: 5px;
-    height: 60px;
-
-    input {
-      width: 320px;
-      padding: 20px;
-      outline: none;
-      border-radius: 5px;
-    }
+  .newsletter-input,
+  .newsletter-button {
+    width: 100%;
+    height: 55px;
   }
 }

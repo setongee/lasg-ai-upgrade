@@ -1,4 +1,3 @@
-import React from 'react';
 import useWindowWidth from '../../../../../hooks/useWindowWidth';
 import '../../../shared/styles/style.scss';
 import Wrapper from '../../../shared/Wrapper/Wrapper';

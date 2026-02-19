@@ -1,11 +1,13 @@
 import { ArrowUpRight, Menu, Xmark } from 'iconoir-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import lasg__logo from '../assets/lasg__logo.png';
 
 const HeaderSm = ({ customClass, fullname }) => {
   const { mda, page } = useParams();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className={`w-full p-2 flex items-center justify-between ${customClass}`}>
@@ -28,38 +30,38 @@ const HeaderSm = ({ customClass, fullname }) => {
 
       {isMenuOpen && (
         <div className="flex flex-col gap-10 text-[13px] tracking-[4px] uppercase fixed top-[0px] bg-[#fff] left-0 w-full z-10 h-[100vh] px-[10%] py-[120px] border-t-[1px] border-[#eee] overflow-y-auto">
-          <a
+          <div
             className={
               page === '' || page === undefined ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'
             }
-            href={`/${mda}`}
+            onClick={() => navigate(`/${mda}`)}
           >
             Home
-          </a>
-          <a
+          </div>
+          <div
             className={page === 'about' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
-            href={`/${mda}/about`}
+            onClick={() => navigate(`/${mda}/about`)}
           >
             About
-          </a>
-          <a
+          </div>
+          <div
             className={page === 'news' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
-            href={`/${mda}/news`}
+            onClick={() => navigate(`/${mda}/news`)}
           >
             Newsroom
-          </a>
-          <a
+          </div>
+          <div
             className={page === 'resources' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
-            href={`/${mda}/resources`}
+            onClick={() => navigate(`/${mda}/resources`)}
           >
             Resources
-          </a>
-          <a
+          </div>
+          <div
             className={page === 'contact' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
             href={`/${mda}/contact`}
           >
             Contact
-          </a>
+          </div>
 
           <a className="!text-[#008435] font-bold flex gap-1.5 items-center" href="/">
             Back to LASG

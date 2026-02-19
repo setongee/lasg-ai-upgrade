@@ -1,5 +1,5 @@
 import { AppleShortcuts, DocMagnifyingGlass, User } from 'iconoir-react';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 export default function Comms({ baseurl }) {
@@ -30,7 +30,7 @@ export default function Comms({ baseurl }) {
         <div className="text"> People </div>
       </a>
 
-      <a href={`${baseurl}/contact_info`} className="link contact_info-admin">
+      <a href={`${baseurl}/contact`} className="link contact_info-admin">
         <div className="icon">
           <AppleShortcuts />
         </div>

@@ -1,12 +1,12 @@
 .admin-overview {
-  width: calc(100% - 400px);
+  width: calc(100% - 500px);
   h1 {
     font-size: 21px;
     font-weight: 500;
   }
 
   .activity-panel {
-    width: 400px;
+    width: 500px;
     background-color: #f9fbfc;
     background-color: #fff;
     height: calc(100vh - 80px);
@@ -40,13 +40,16 @@
     .logger-items {
       margin-top: 55px;
       .loggerItem {
-        font-size: 13px;
+        font-size: 15px;
+        // word-break: break-all;
+        overflow-wrap: break-word;
         line-height: 150%;
         display: flex;
         gap: 4px;
         flex-direction: column;
-        padding: 10px 20px;
+        padding: 20px;
         padding-right: 50px;
+        font-weight: 500;
 
         &:nth-child(2n) {
           background-color: #f9fbfc;
@@ -54,7 +57,9 @@
 
         p {
           color: #777;
-          font-size: 12px;
+          font-size: 14px;
+          text-transform: capitalize;
+          font-weight: 500;
         }
       }
     }

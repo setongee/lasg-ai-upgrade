@@ -1,0 +1,36 @@
+/* Custom toast styles to ensure they appear above all other elements */
+:root {
+  --toastify-z-index: 1000000; /* Higher than admin header's z-index */
+}
+
+/* Override the default toast container z-index */
+.Toastify__toast-container {
+  z-index: var(--toastify-z-index) !important;
+}
+
+/* Ensure individual toasts also have the correct z-index */
+.Toastify__toast {
+  z-index: var(--toastify-z-index) !important;
+  position: relative;
+}
+
+/* Make sure the toast container is above other elements */
+.Toastify__toast-container--top-right {
+  top: 6em; /* Add some top margin to account for the header */
+}
+
+/* Adjust toast colors for better visibility */
+.Toastify__toast--success {
+  background: #4caf50 !important;
+  color: white !important;
+}
+
+.Toastify__toast--error {
+  background: #f44336 !important;
+  color: white !important;
+}
+
+.Toastify__toast--info {
+  background: #2196f3 !important;
+  color: white !important;
+}
