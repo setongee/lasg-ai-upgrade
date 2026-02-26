@@ -1,8 +1,11 @@
+import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 import { notify } from '../../../../../../../utils/toast';
+import { getDraftsByMda } from '../../../../../api/admin/drafts';
 import { useEditDataStore } from '../../../../../stores/editData.store';
 import { useThemeStore } from '../../../../../stores/theme.store';
+import Loader from '../../../../loader/loader';
 import Modal from '../../../../modal/Modal';
 import SearchInput from '../../../components/searchInput/SearchInput';
 import TemplateContainer from '../templates-container/TemplateContainer';
@@ -18,15 +21,23 @@ const Drafts = () => {
     createNewDraft,
   } = useEditDataStore();
 
-  const draftList = getDraftList();
-  console.log(draftList);
-  const mdaId = useThemeStore((state) => state.mda);
+  const mdaId = useThemeStore((state) => state.mdaData?.slug);
+
+  const mdaId2 = useThemeStore((state) => state.mdaData);
+  console.log(mdaId2);
+  console.log(mdaEditData);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [editingDraft, setEditingDraft] = useState(null);
   const [newDraftName, setNewDraftName] = useState('');
   const inputRef = useRef(null);
+  const [draftList, setDraftList] = useState([]);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['drafts', mdaId],
+    queryFn: () => getDraftsByMda(mdaId),
+  });
 
   useEffect(() => {
     if (isRenameModalOpen && inputRef.current) {
@@ -76,11 +87,13 @@ const Drafts = () => {
 
     setTimeout(() => {
       createNewDraft();
-      window.location.href = `/${mdaId}/admin/published`;
+      // window.location.href = `/${mdaId}/admin/published`;
     }, 2000);
   };
 
-  if (draftList.length === 0) {
+  if (isLoading) return <Loader />;
+
+  if (data?.length === 0) {
     return (
       <div className="p-6 text-center flex flex-col items-center justify-center h-[calc(100vh-345px)]">
         <div className="text-gray-500 mb-4">
@@ -123,7 +136,7 @@ const Drafts = () => {
       <div>
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
           <ul className="divide-y divide-gray-200">
-            {draftList.map(({ id, date, title }) => (
+            {data?.map(({ _id: id, updatedAt, title }) => (
               <li key={id}>
                 <div
                   className={`px-4 py-4 sm:px-6 ${id === currentDraftId ? 'bg-[#d8e9e370]' : 'hover:bg-gray-50'}`}
@@ -138,7 +151,9 @@ const Drafts = () => {
                         </span>{' '}
                         - {id}
                       </p>
-                      <p className="mt-1 text-sm text-gray-500">Last saved: {formatDate(date)}</p>
+                      <p className="mt-1 text-sm text-gray-500">
+                        Last saved: {formatDate(updatedAt)}
+                      </p>
                     </div>
                     <div className="ml-4 flex-shrink-0 flex space-x-2">
                       <button

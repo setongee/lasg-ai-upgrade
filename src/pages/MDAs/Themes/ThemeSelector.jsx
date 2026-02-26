@@ -1,3 +1,5 @@
+import { useParams } from 'react-router';
+import NotFound from '../../notFound/notFound';
 import Index from '../custom/health';
 import MEPB from '../custom/mepb/Mepb';
 import MistTheme from '../custom/mist/mist-theme';
@@ -6,7 +8,9 @@ import Transportation from '../custom/mot/Transportation';
 import STO from '../custom/sto/STO';
 
 const ThemeSelector = ({ slug, theme, isEdit, data }) => {
-  if (!data) return <h1>404 : Page not found!</h1>;
+  const { page } = useParams();
+  if (!data) return <NotFound />;
+  // if (data?.isOffline && page !== 'admin') return <Offline />;
 
   switch (theme) {
     case 'health':

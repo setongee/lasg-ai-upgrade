@@ -11,7 +11,7 @@ import Header from './header/header';
 import Home from './home/home';
 
 const Index = ({ isEdit }) => {
-  const { page } = useParams();
+  const { mda, page } = useParams();
   const data = useThemeStore((state) => state.mdaData);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const Index = ({ isEdit }) => {
       case 'about':
         return <About />;
       case 'news':
-        return <News_Events topic="Health Services" />;
+        return <News_Events topic="Health Services" mda={mda} />;
       case 'resources':
         return <Resources />;
       case 'contact':

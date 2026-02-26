@@ -1,0 +1,172 @@
+.headingAdmin {
+  background-color: #fff;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  /* overflow: clip; */
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  color: #000;
+  padding: 0 50px;
+
+  .brand {
+    align-items: center;
+    gap: 15px;
+    width: 260px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 500;
+  }
+}
+
+.logo__side {
+  width: 55px;
+  height: 55px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  cursor: pointer;
+
+  .app_status {
+    p {
+      font-size: 10.8px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #666;
+    }
+  }
+
+  .header-navs {
+    font-size: 13px;
+
+    .nav-holder {
+      cursor: pointer;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #dedede;
+      position: relative;
+
+      &.profile-part {
+        background-color: #333;
+        color: #fff;
+        margin-right: 26px;
+        cursor: pointer;
+        font-weight: 500;
+        position: relative;
+
+        .profile-dropdown {
+          position: absolute;
+          right: -25px;
+          top: 30px;
+          border-radius: 5px;
+          z-index: 1000;
+          display: none;
+          flex-direction: column;
+          width: 270px;
+          background-color: #fff;
+          border: 1px solid #eee;
+          border-radius: 5px;
+          color: #333;
+          padding: 21px;
+          gap: 14px;
+
+          &:hover {
+            display: flex;
+          }
+
+          button {
+            background-color: crimson;
+            padding: 10px;
+            border-radius: 3px;
+            color: #fff;
+            font-weight: 500;
+            margin-top: 8px;
+            cursor: pointer;
+
+            &:hover {
+              background-color: rgb(175, 13, 46);
+            }
+          }
+
+          p {
+            font-size: 12px;
+          }
+
+          a {
+            /* padding: 10px 16px; */
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: #000;
+          }
+        }
+
+        &:hover .profile-dropdown {
+          display: flex;
+        }
+      }
+
+      .arrowPulldown {
+        position: absolute;
+        right: -26px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #000;
+      }
+    }
+  }
+
+  .namePin {
+    height: 46px;
+    width: 46px;
+    background-color: #1c3f3a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #fff;
+    font-size: 15px;
+  }
+
+  .namePinFull {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .fullname {
+      font-weight: 500;
+    }
+
+    .roleArea {
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 500;
+      color: #1c3f3a;
+      letter-spacing: 2px;
+    }
+  }
+}

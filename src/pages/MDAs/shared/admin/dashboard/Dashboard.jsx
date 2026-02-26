@@ -6,6 +6,7 @@ import './dashboard.css';
 
 // pages Section
 import { useThemeStore } from '../../../stores/theme.store';
+import Onboarding from '../onboarding/Onboarding';
 import Agency from '../pages/agencies/Agencies';
 import Contact from '../pages/contact/Contact';
 import Overview from '../pages/overview/Overview';
@@ -22,9 +23,12 @@ const Dashboard = () => {
   const mdaData = useThemeStore((state) => state.mdaData);
   let { id, mda } = useParams();
   const navigate = useNavigate();
-  console.log(mdaData);
 
   useEffect(() => {
+    if (!mdaData?.isVerified) {
+      return navigate(`/${mda}/admin/onboarding`);
+    }
+
     if (!id && mda) {
       navigate(`/${mda}/admin/dashboard`);
     }
@@ -47,6 +51,10 @@ const Dashboard = () => {
     // More
     if (id == 'services') return <Services />;
   };
+
+  if (id === 'onboarding') {
+    return <Onboarding />;
+  }
 
   return (
     <div className="dashboard-body">

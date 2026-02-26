@@ -10,7 +10,7 @@ import Admin from './admin';
 import Comms from './comms';
 
 export default function Sidebar() {
-  const { mda } = useParams();
+  const { mda, page } = useParams();
   const [role, setRole] = useState('');
   const data = useThemeStore((state) => state.mdaData);
 
@@ -21,6 +21,8 @@ export default function Sidebar() {
   }, []);
 
   const baseurl = `/${mda}/admin`;
+
+  
 
   return (
     <div className="sidebar ">

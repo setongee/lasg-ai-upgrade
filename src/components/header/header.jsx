@@ -69,7 +69,7 @@ export default function Header() {
 
   const setActiveState = (page) => {
     document.querySelector('.current')?.classList.remove('current');
-    const addCurrent = document.querySelector(`.seth_nav [name=${page}]`);
+    const addCurrent = document.querySelector(`.seth_nav [name="${page}"]`);
 
     if (addCurrent !== null) addCurrent.classList.add('current');
   };

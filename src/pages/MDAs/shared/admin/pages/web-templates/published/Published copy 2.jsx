@@ -4,7 +4,7 @@ import { Check, CloudUpload, Edit, Eye, NavArrowDown, Plus } from 'iconoir-react
 import { useEffect, useState } from 'react';
 import { usePublishChanges } from '../../../../../../../hooks/usePublishChanges';
 import { notify } from '../../../../../../../utils/toast';
-import { createDraft, getDraftsByMda } from '../../../../../api/admin/drafts';
+import { createDraft } from '../../../../../api/admin/drafts';
 import { useEditDataStore } from '../../../../../stores/editData.store';
 import { useEditModeStore } from '../../../../../stores/editMode.store';
 import { useThemeStore } from '../../../../../stores/theme.store';
@@ -46,13 +46,11 @@ const Published = () => {
     }
   };
 
-  console.log(mda_data);
-
   const createNewDraft = async () => {
     await createDraft({
       title: 'Untitled Draft',
-      data: mdaEditData,
-      mda: mda_data.slug,
+      data: mda_data.landingPage,
+      mda: mda_data.mda,
     })
       .then((response) => {
         if (response.data) {
@@ -75,13 +73,45 @@ const Published = () => {
   };
 
   useEffect(() => {
-    getMdaDrafts();
+    // Only run this effect if we have the mda_data loaded
+    if (!mda_data?.landingPage) return;
 
-    // show the pure mda data
-    setMdaEditData(mda_data.landingPage);
-  }, [mda_data]);
+    // If there are no drafts and no current draft ID, initialize with default data
+    if (draftList.length === 0 && !draftId) {
+      // Only update if the current mdaEditData is different from the default
+      if (JSON.stringify(mdaEditData) !== JSON.stringify(mda_data.landingPage)) {
+        setMdaEditData(mda_data.landingPage);
+      }
+      return;
+    }
 
-  console.log(mdaEditData);
+    // If we have a draft ID, find and load that draft
+    if (draftId) {
+      const currentDraft = draftList.find((draft) => draft.id === draftId);
+      if (currentDraft) {
+        // Only update if the data is different
+        if (JSON.stringify(mdaEditData) !== JSON.stringify(currentDraft.data)) {
+          setMdaEditData(currentDraft.data);
+        }
+      } else if (draftList.length > 0) {
+        // If draft ID is invalid but we have drafts, load the first one
+        if (JSON.stringify(mdaEditData) !== JSON.stringify(draftList[0].data)) {
+          setMdaEditData(draftList[0].data);
+        }
+      } else {
+        // Fallback to default data if no valid drafts found
+        if (JSON.stringify(mdaEditData) !== JSON.stringify(mda_data.landingPage)) {
+          setMdaEditData(mda_data.landingPage);
+        }
+      }
+    } else {
+      if (JSON.stringify(mdaEditData) !== JSON.stringify(mda_data.landingPage)) {
+        setMdaEditData(mda_data.landingPage);
+      }
+    }
+  }, [mda_data, draftId, draftList, setMdaEditData, mdaEditData]);
+
+  console.log(draftId, mdaEditData);
 
   useEffect(() => {
     setDevice(deviceSize);
@@ -99,6 +129,11 @@ const Published = () => {
   };
 
   const { publishChanges, isPublishing } = usePublishChanges();
+
+  const startDraft = () => {
+    createNewDraft();
+    notify.success('New draft created successfully!');
+  };
 
   const handlePublish = () => {
     setShowPublishConfirm(true);
@@ -137,7 +172,7 @@ const Published = () => {
         <div className="titleAdmin z-10 flex items-center justify-between w-full h-[65px] px-6 border-b border-gray-200">
           <div
             className="px-4 py-2 text-sm font-medium text-white bg-gray-800 border border-transparent rounded-md hover:bg-green-700 focus:outline-none cursor-pointer flex items-center gap-1"
-            onClick={() => createNewDraft()}
+            onClick={() => startDraft()}
           >
             <Plus /> Create New Draft
           </div>

@@ -9,6 +9,7 @@ import './auth.css';
 
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
 const TOKEN_REFRESH_INTERVAL = 50 * 60 * 1000; // Refresh token every 50 minutes
+const POLL_INTERVAL = 60 * 1000; // Check every 1 minute
 
 export default function Auth() {
   const [error, setError] = useState('');
@@ -17,197 +18,202 @@ export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  let { pathname } = useLocation();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
-  let { mda } = useParams();
+  const { mda } = useParams();
 
   const inactivityTimerRef = useRef(null);
   const refreshTimerRef = useRef(null);
 
-  // Reset inactivity timer on user activity
+  // Track the last time a token was issued or refreshed
+  // so we don't accidentally refresh immediately after a fresh login/remount
+  const lastRefreshRef = useRef(Date.now());
+
+  // ─── Logout helper ────────────────────────────────────────────────────────
+  const logOut = useCallback((message, type = 'info') => {
+    window.localStorage.removeItem('MDA__TOKEN');
+    setIsValidated(false);
+    setLoginPage(true);
+    if (message) {
+      type === 'error' ? notify.error(message) : notify.info(message);
+    }
+  }, []);
+
+  // ─── Inactivity timer ─────────────────────────────────────────────────────
   const resetInactivityTimer = useCallback(() => {
-    // Clear existing timer
     if (inactivityTimerRef.current) {
       clearTimeout(inactivityTimerRef.current);
     }
-
-    // Set new timer
     inactivityTimerRef.current = setTimeout(() => {
-      // Log out user after inactivity
-      window.localStorage.removeItem('MDA__TOKEN');
-      setIsValidated(false);
-      setLoginPage(true);
-      notify.info('Session expired due to inactivity');
+      logOut('Session expired due to inactivity');
     }, INACTIVITY_TIMEOUT);
-  }, []);
+  }, [logOut]);
 
-  // Refresh token periodically while user is active
+  // ─── Token refresh (time-based, not interval-restart-based) ───────────────
   const setupTokenRefresh = useCallback(() => {
     if (refreshTimerRef.current) {
       clearInterval(refreshTimerRef.current);
     }
 
+    // Poll every minute but only actually refresh once 50 mins have elapsed
+    // since the last refresh/login. This prevents an immediate refresh call
+    // when the component remounts (e.g. toggling online/offline mode).
     refreshTimerRef.current = setInterval(() => {
-      const user = window.localStorage.getItem('MDA__TOKEN');
-      if (user) {
-        const parser = JSON.parse(user);
+      const now = Date.now();
+      if (now - lastRefreshRef.current < TOKEN_REFRESH_INTERVAL) return;
 
-        // Call your backend to refresh the token
-        refreshToken(parser.token, mda)
-          .then((res) => {
-            if (res.status === 'ok') {
-              window.localStorage.setItem(
-                'MDA__TOKEN',
-                JSON.stringify({
-                  token: res.token,
-                  id: parser.id,
-                  mda: parser.mda,
-                  role: parser.role,
-                  firstname: parser.firstname,
-                  lastname: parser.lastname,
-                })
-              );
-            } else {
-              // Token refresh failed, log out
-              window.localStorage.removeItem('MDA__TOKEN');
-              setIsValidated(false);
-              setLoginPage(true);
-              notify.error('Session expired. Please login again.');
-            }
-          })
-          .catch(() => {
-            window.localStorage.removeItem('MDA__TOKEN');
-            setIsValidated(false);
-            setLoginPage(true);
-          });
-      }
-    }, TOKEN_REFRESH_INTERVAL);
-  }, [mda]);
+      const stored = window.localStorage.getItem('MDA__TOKEN');
+      if (!stored) return;
 
-  // Track user activity
-  useEffect(() => {
-    if (isValidated) {
-      // Activity events to track
-      const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+      const parser = JSON.parse(stored);
 
-      // Reset timer on any activity
-      events.forEach((event) => {
-        document.addEventListener(event, resetInactivityTimer);
-      });
-
-      // Initialize timers
-      resetInactivityTimer();
-      setupTokenRefresh();
-
-      // Cleanup
-      return () => {
-        events.forEach((event) => {
-          document.removeEventListener(event, resetInactivityTimer);
+      refreshToken(parser.token, mda)
+        .then((res) => {
+          if (res.status === 'ok') {
+            // Update the timestamp so we don't refresh again for another 50 min
+            lastRefreshRef.current = Date.now();
+            window.localStorage.setItem(
+              'MDA__TOKEN',
+              JSON.stringify({
+                token: res.token,
+                id: parser.id,
+                mda: parser.mda,
+                role: parser.role,
+                firstname: parser.firstname,
+                lastname: parser.lastname,
+              })
+            );
+          } else {
+            logOut('Session expired. Please login again.', 'error');
+          }
+        })
+        .catch(() => {
+          logOut('Session expired. Please login again.', 'error');
         });
-        if (inactivityTimerRef.current) {
-          clearTimeout(inactivityTimerRef.current);
-        }
-        if (refreshTimerRef.current) {
-          clearInterval(refreshTimerRef.current);
-        }
-      };
-    }
+    }, POLL_INTERVAL);
+  }, [mda, logOut]);
+
+  // ─── Activity tracking + timer setup ──────────────────────────────────────
+  useEffect(() => {
+    if (!isValidated) return;
+
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+    events.forEach((event) => document.addEventListener(event, resetInactivityTimer));
+
+    resetInactivityTimer();
+    setupTokenRefresh();
+
+    return () => {
+      events.forEach((event) => document.removeEventListener(event, resetInactivityTimer));
+      if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
+      if (refreshTimerRef.current) clearInterval(refreshTimerRef.current);
+    };
   }, [isValidated, resetInactivityTimer, setupTokenRefresh]);
 
+  // ─── Hide admin header when on admin route ────────────────────────────────
   useEffect(() => {
-    const header = document.querySelector('.currentPage_admin');
-
     if (pathname.split('/')[1] === 'admin') {
-      if (header !== null) {
-        header.style.display = 'none';
-      }
+      const header = document.querySelector('.currentPage_admin');
+      if (header) header.style.display = 'none';
     }
-  }, []);
+  }, [pathname]);
 
-  const handleVerification = (token) => {
-    authenticateToken(token, mda).then((res) => {
-      if (res.status === 'ok' && res.data.mda === mda) {
-        window.localStorage.setItem(
-          'MDA__TOKEN',
-          JSON.stringify({
-            token,
-            id: res.data.id,
-            mda: res.data.mda,
-            role: res.data.role,
-            firstname: res.data.firstName,
-            lastname: res.data.lastName,
-          })
-        );
-        setIsValidated(true);
-        setLoginPage(false);
-        setEmail('');
-        setPassword('');
-      } else {
-        setIsValidated(false);
-        setLoginPage(true);
-
-        if (res.data.mda !== mda) {
-          notify.error('You are not authorized to access this page');
+  // ─── Token verification ───────────────────────────────────────────────────
+  const handleVerification = useCallback(
+    (token) => {
+      authenticateToken(token, mda).then((res) => {
+        if (res.status === 'ok' && res.data.mda === mda) {
+          window.localStorage.setItem(
+            'MDA__TOKEN',
+            JSON.stringify({
+              token,
+              id: res.data.id,
+              mda: res.data.mda,
+              role: res.data.role,
+              firstname: res.data.firstName,
+              lastname: res.data.lastName,
+            })
+          );
+          // Mark the time we last received a valid token so the refresh
+          // interval doesn't fire immediately on next mount
+          lastRefreshRef.current = Date.now();
+          setIsValidated(true);
+          setLoginPage(false);
           setEmail('');
           setPassword('');
+        } else {
+          setIsValidated(false);
+          setLoginPage(true);
+          if (res.data?.mda !== mda) {
+            notify.error('You are not authorized to access this page');
+            setEmail('');
+            setPassword('');
+          }
         }
+      });
+    },
+    [mda]
+  );
+
+  // ─── On mount: check for existing session ─────────────────────────────────
+  useEffect(() => {
+    const stored = window.localStorage.getItem('MDA__TOKEN');
+
+    if (!stored) {
+      setIsValidated(false);
+      setLoginPage(true);
+      return;
+    }
+
+    const parser = JSON.parse(stored);
+
+    if (parser.mda !== mda) {
+      setIsValidated(false);
+      setLoginPage(true);
+      return;
+    }
+
+    handleVerification(parser.token);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // ^ Intentionally empty — we only want this to run once on mount
+
+  // ─── Login handler ────────────────────────────────────────────────────────
+  const handleLogin = (email, password) => {
+    if (!email || !password) {
+      notify.error('All fields are required!');
+      return;
+    }
+
+    loginUser(email, password, mda).then((res) => {
+      if (res.status === 'ok') {
+        handleVerification(res.token);
+      } else {
+        notify.error(res.message);
       }
     });
   };
 
-  useEffect(() => {
-    const user = window.localStorage.getItem('MDA__TOKEN');
-
-    if (!user) {
-      setIsValidated(false);
-      setLoginPage(true);
-    } else {
-      const parser = JSON.parse(user);
-
-      // check if user is valid for the mda
-      if (parser.mda !== mda) {
-        setIsValidated(false);
-        setLoginPage(true);
-        return;
-      }
-      handleVerification(parser.token);
-    }
-  }, []);
-
-  const handleLogin = (email, password) => {
-    if (email === '' || password === '') {
-      notify.error('All fields are required!');
-    } else {
-      loginUser(email, password, mda).then((res) => {
-        if (res.status === 'ok') {
-          handleVerification(res.token);
-        } else {
-          notify.error(res.message);
-        }
-      });
-    }
-  };
-
-  if (loginPage)
+  // ─── Render ───────────────────────────────────────────────────────────────
+  if (loginPage) {
     return (
       <div className="appHome">
         <div className="authPage">
           <div className="image__scoop">
-            <img src={logo} alt="" />
+            <img src={logo} alt="LASG Logo" />
           </div>
 
           <div className="loginPart">
             <div className="topicTitle">
-              {' '}
-              Hello There! {<br></br>} <span>Welcome to LASG MIST admin platform</span>{' '}
+              Hello There! <br />
+              <span>Welcome to LASG MIST admin platform</span>
             </div>
 
             <div className="form">
               <div className="auth__form">
-                <label>Email Address</label>
+                <label htmlFor="access">Email Address</label>
                 <input
                   type="email"
-                  placeholder="Enter email id"
+                  placeholder="Enter email address"
                   id="access"
                   name="email"
                   value={email}
@@ -216,36 +222,38 @@ export default function Auth() {
               </div>
 
               <div className="auth__form">
-                <label>Password</label>
+                <label htmlFor="access_main">Password</label>
+                {/* Fixed: was type="text", now type="password" */}
                 <input
-                  type="text"
+                  type="password"
                   placeholder="Enter password"
                   id="access_main"
                   name="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleLogin(email, password)}
                 />
               </div>
 
               <div className="submitBtn" onClick={() => handleLogin(email, password)}>
-                {' '}
-                Log into dashboard{' '}
+                Log into dashboard
               </div>
             </div>
 
             <div className="errorZone" id="error">
-              {' '}
-              {error}{' '}
+              {error}
             </div>
           </div>
 
-          <p className="foot">Powered by Ministry of Innovation, Science & Technology</p>
+          <p className="foot">Powered by Ministry of Innovation, Science &amp; Technology</p>
         </div>
       </div>
     );
+  }
 
-  if (!isValidated)
+  if (!isValidated) {
     return <Loader customClass="w-full h-[100vh] flex items-center justify-center" />;
+  }
 
   return <Dashboard />;
 }

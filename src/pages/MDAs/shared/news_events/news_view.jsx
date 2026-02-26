@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft } from 'iconoir-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { getAllNews, getSingleNews } from '../../../../api/read/news.req';
 import Loader from '../../../../components/loader/loader';
@@ -26,10 +26,17 @@ export default function News_view({ topic }) {
     queryFn: () => getSingleNews(id),
   });
 
-  const newsData = useQuery({
-    queryKey: ['view-news', topic, mda],
-    queryFn: () => getAllNews(0, topic),
-  });
+  const newsData = useQuery(
+    mda === 'health'
+      ? {
+          queryKey: ['news', page, topic],
+          queryFn: () => getAllNews(Number(page - 1), topic),
+        }
+      : {
+          queryKey: ['news', mda],
+          queryFn: () => getAllNewsByMda(mda),
+        }
+  );
 
   useEffect(() => {
     const pin = sortArray(newsData?.data?.data, 'date').then((sortedArr) => sortedArr);
