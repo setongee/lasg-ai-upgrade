@@ -3,37 +3,14 @@ import { useParams } from 'react-router';
 import { updateAdminData } from '../../../../api/admin/content';
 import { useThemeStore } from '../../../../stores/theme.store';
 import ContentGeneratorChatbot from './ContentGeneratorChatbot';
+import { themeInitialData } from './theme-initial-data';
 
 const ContentGeneratorExample = () => {
   const [generatedContent, setGeneratedContent] = useState(null);
   const mdaData = useThemeStore((state) => state.mdaData);
   const { mda } = useParams();
 
-  const landingPage = {
-    enabledSections: {
-      quickServices: true,
-      services: true,
-      commissionersZone: true,
-      youtubePlayer: true,
-      newsletter: true,
-    },
-    hero_text: '',
-    hero_subtitle: '',
-    action_button_text: '',
-    action_button_link: '',
-    main_photo:
-      'https://images.unsplash.com/photo-1618828665347-d870c38c95c7?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bGFnb3N8ZW58MHx8MHx8fDA%3D',
-    commissionersZone: {
-      commissionerImage:
-        'https://res.cloudinary.com/dirmxkznt/image/upload/v1737329627/mr.tunbosunalake214345.jpg',
-      welcomeTitle: '',
-      welcomeMessage: '',
-      commissionerName: '',
-      commissionerTitle: '',
-    },
-
-    youtubePlayer: { id: 'TSccsFXwjtI' },
-  };
+  const landingPage = themeInitialData[mdaData?.theme];
 
   const update = async (content) => {
     await updateAdminData(
@@ -46,11 +23,31 @@ const ContentGeneratorExample = () => {
   const handleContentGenerated = (content) => {
     const landingArea = {
       ...landingPage,
-      main_photo: content.heroImage || landingPage.main_photo,
-      hero_text: content.hero_text,
-      hero_subtitle: content.hero_subtitle,
-      action_button_text: content.action_button_text,
-      commissionersZone: {
+    };
+
+    // Only update main_photo if it exists in landingPage
+    if ('main_photo' in landingPage) {
+      landingArea.main_photo = content.heroImage || landingPage.main_photo;
+    }
+
+    // Only update hero_text if it exists in landingPage
+    if ('hero_text' in landingPage) {
+      landingArea.hero_text = content.hero_text;
+    }
+
+    // Only update hero_subtitle if it exists in landingPage
+    if ('hero_subtitle' in landingPage) {
+      landingArea.hero_subtitle = content.hero_subtitle;
+    }
+
+    // Only update action_button_text if it exists in landingPage
+    if ('action_button_text' in landingPage) {
+      landingArea.action_button_text = content.action_button_text;
+    }
+
+    // Only update commissionersZone if it exists in landingPage
+    if ('commissionersZone' in landingPage) {
+      landingArea.commissionersZone = {
         ...landingPage.commissionersZone,
         welcomeTitle: content.welcomeTitle,
         welcomeMessage: content.welcomeMessage,
@@ -58,8 +55,9 @@ const ContentGeneratorExample = () => {
         commissionerTitle: content.commissionerTitle,
         commissionerImage:
           content.commissionerImage || landingPage.commissionersZone.commissionerImage,
-      },
-    };
+      };
+    }
+
     update(landingArea);
   };
 
@@ -67,8 +65,8 @@ const ContentGeneratorExample = () => {
     <div style={{ padding: '20px' }}>
       <ContentGeneratorChatbot
         onContentGenerated={handleContentGenerated}
-        mdaFullName={mdaData?.mdaFullName || ''}
-        mdaType="Lagos State MDA"
+        mdaFullName={mdaData?.fullname || ''}
+        mdaType={mdaData?.theme || 'default'}
       />
     </div>
   );

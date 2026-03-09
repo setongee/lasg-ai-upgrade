@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import logo from '../../../assets/lasg__logo.png';
 import './sidebar.scss';
 
@@ -22,7 +22,7 @@ export default function Sidebar() {
 
   const baseurl = `/${mda}/admin`;
 
-  
+  const mdaType = useThemeStore((state) => state.mdaData)?.type;
 
   return (
     <div className="sidebar ">
@@ -43,7 +43,11 @@ export default function Sidebar() {
 
           {/* Menu Links */}
 
-          {role === 'admin' ? <Admin baseurl={baseurl} /> : <Comms baseurl={baseurl} />}
+          {role === 'admin' ? (
+            <Admin baseurl={baseurl} mdaType={mdaType} />
+          ) : (
+            <Comms baseurl={baseurl} mdaType={mdaType} />
+          )}
         </div>
       </IconoirProvider>
     </div>

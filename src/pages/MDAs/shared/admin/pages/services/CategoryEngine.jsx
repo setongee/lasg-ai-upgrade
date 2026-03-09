@@ -165,20 +165,22 @@ const CategoryEngine = ({ selectView, mdaData, services }) => {
         id="service-point"
       >
         {filteredCategories?.length > 0 ? (
-          filteredCategories?.map((item) => (
-            <div
-              key={item.id}
-              className="w-full h-full bg-white flex flex-col gap-5 p-8 shadow-[1px_3px_20px_rgba(0,0,0,0.02)] rounded-[10px] cursor-pointer hover:ring-green-600 ring-1 ring-transparent"
-              onClick={() => handleCardClick(item)}
-            >
-              <div className="icon-card w-9 h-9 flex-shrink-0">
-                <img src={item?.icon} alt={item.name} className="w-full h-full object-contain" />
+          filteredCategories
+            ?.filter((c) => !c.isOffline)
+            ?.map((item) => (
+              <div
+                key={item.id}
+                className="w-full h-full bg-white flex flex-col gap-5 p-8 shadow-[1px_3px_20px_rgba(0,0,0,0.02)] rounded-[10px] cursor-pointer hover:ring-green-600 ring-1 ring-transparent"
+                onClick={() => handleCardClick(item)}
+              >
+                <div className="icon-card w-9 h-9 flex-shrink-0">
+                  <img src={item?.icon} alt={item.name} className="w-full h-full object-contain" />
+                </div>
+                <h1 className="text-[16px] font-semibold">{item.name}</h1>
+                <p className="text-[14px] text-gray-600 leading-[165%]">{item.short}</p>
+                <div className="select-box"></div>
               </div>
-              <h1 className="text-[16px] font-semibold">{item.name}</h1>
-              <p className="text-[14px] text-gray-600 leading-[165%]">{item.short}</p>
-              <div className="select-box"></div>
-            </div>
-          ))
+            ))
         ) : (
           <div className="w-full text-[16px] text-gray-600">
             {searchTerm ? 'No matching categories found.' : 'No categories available.'}

@@ -9,9 +9,7 @@ const LanguageModal = ({ LANGUAGES, language, setLanguage, setShowLanguageMenu, 
           key={code}
           className={`language-option ${language === code ? 'active' : ''}`}
           onClick={() => {
-            if (code === 'en' || code === 'yo') {
-              setLanguage(code);
-            }
+            setLanguage(code);
             setShowLanguageMenu(false);
           }}
         >

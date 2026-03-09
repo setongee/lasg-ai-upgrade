@@ -34,7 +34,7 @@ export const updateAdminData = async (id, data, activity) => {
     addLoggingData({
       initiator: auth?.firstname + ' ' + auth?.lastname,
       mda: data.name || auth?.mda,
-      activity: `${auth?.firstname + ' ' + auth?.lastname} ${activity}`,
+      activity: `${auth?.firstname + ' ' + auth?.lastname} ${activity || 'made some changes'}`,
     });
     return response.data;
   } else {
@@ -116,7 +116,7 @@ export const uploadDocument = async (file, name) => {
   const authResponse = await authenticateToken(auth.token, name);
 
   if (authResponse.status === 'bad') {
-    notify.error(authResponse.message);
+    notify.error("Oops! Something went wrong, File couldn't be uploaded");
     window.location.href = `/${auth?.mda}/admin/${page}`;
     return authResponse;
   }

@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
+import { NavArrowDown } from 'iconoir-react';
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { notify } from '../../../../../../../utils/toast';
-import { getDraftsByMda } from '../../../../../api/admin/drafts';
+import { deleteDraft, getDraftsByMda, updateDraft } from '../../../../../api/admin/drafts';
 import { useEditDataStore } from '../../../../../stores/editData.store';
 import { useThemeStore } from '../../../../../stores/theme.store';
 import Loader from '../../../../loader/loader';
@@ -12,30 +14,46 @@ import TemplateContainer from '../templates-container/TemplateContainer';
 
 const Drafts = () => {
   const {
-    loadDraft,
+    setActiveDraftId,
+    setMdaEditData,
+    setOriginalData,
     getDraftList,
     currentDraftId,
-    deleteDraft,
     mdaEditData,
     renameDraft,
     createNewDraft,
+    activeDraftId,
   } = useEditDataStore();
 
   const mdaId = useThemeStore((state) => state.mdaData?.slug);
-
-  const mdaId2 = useThemeStore((state) => state.mdaData);
-  console.log(mdaId2);
-  console.log(mdaEditData);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [editingDraft, setEditingDraft] = useState(null);
   const [newDraftName, setNewDraftName] = useState('');
+  const [activeDropdownId, setActiveDropdownId] = useState(null);
+  const dropdownRef = useRef(null);
   const inputRef = useRef(null);
   const [draftList, setDraftList] = useState([]);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['drafts', mdaId],
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Find the parent with class 'more-actions-container'
+      const container = event.target.closest('.more-actions-container');
+      if (container) {
+        return;
+      }
+      setActiveDropdownId(null);
+    };
+    // Use capture phase to ensure this runs before other click handlers
+    window.addEventListener('click', handleClickOutside, true);
+    return () => window.removeEventListener('click', handleClickOutside, true);
+  }, []);
+
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['drafts', mdaId, isRenameModalOpen],
     queryFn: () => getDraftsByMda(mdaId),
   });
 
@@ -51,13 +69,20 @@ const Drafts = () => {
     setIsRenameModalOpen(true);
   };
 
-  const handleRenameSubmit = (e) => {
+  const handleRenameSubmit = async (e) => {
     e.preventDefault();
     if (!editingDraft || !newDraftName.trim()) return;
 
-    renameDraft(editingDraft.id, newDraftName.trim());
-    notify.success('Draft renamed successfully');
-    setIsRenameModalOpen(false);
+    const selectedDraft = data?.find((d) => d._id === editingDraft.id);
+
+    await updateDraft(editingDraft.id, { ...selectedDraft.data, title: newDraftName }).then(
+      (response) => {
+        if (response.status === 'ok') {
+          notify.success('Draft renamed successfully');
+          setIsRenameModalOpen(false);
+        }
+      }
+    );
   };
 
   const formatDate = (dateString) => {
@@ -69,25 +94,44 @@ const Drafts = () => {
   };
 
   const handleLoadDraft = (id) => {
-    loadDraft(id);
-    notify.loading('Loading draft...');
+    // Find the specific draft from the query data to get its current content
+    const selectedDraft = data?.find((d) => d._id === id);
 
-    setTimeout(() => {
-      window.location.href = `/${mdaId}/admin/published`;
-    }, 2000);
+    if (selectedDraft) {
+      setActiveDraftId(id);
+      setMdaEditData(selectedDraft.data);
+      setOriginalData(selectedDraft.data);
+
+      const toastId = notify.loading('Loading draft...');
+
+      setTimeout(() => {
+        notify.dismiss(toastId);
+        navigate(`/${mdaId}/admin/published`);
+      }, 2000);
+    } else {
+      notify.error('Failed to load draft data');
+    }
   };
 
-  const handleDeleteDraft = (id) => {
-    deleteDraft(id);
-    notify.success('Draft deleted successfully');
+  const handlePreview = (id) => {
+    window.open(`/${mdaId}/draft/${id}`, '_blank');
+    setActiveDropdownId(null);
+  };
+
+  const handleDeleteDraft = async (id) => {
+    const response = await deleteDraft(id, mdaId);
+    if (response) {
+      refetch();
+    }
   };
 
   const startDraft = () => {
-    notify.loading('Creating draft...');
+    const toastId = notify.loading('Creating draft...');
 
     setTimeout(() => {
       createNewDraft();
-      // window.location.href = `/${mdaId}/admin/published`;
+      notify.dismiss(toastId);
+      window.location.href = `/${mdaId}/admin/published`;
     }, 2000);
   };
 
@@ -133,61 +177,88 @@ const Drafts = () => {
         </div>
       </div>
 
-      <div>
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
+      <div className="pb-20">
+        <div className="bg-white shadow sm:rounded-md">
           <ul className="divide-y divide-gray-200">
-            {data?.map(({ _id: id, updatedAt, title }) => (
+            {data?.map(({ _id: id, updatedAt, title }, index) => (
               <li key={id}>
                 <div
-                  className={`px-4 py-4 sm:px-6 ${id === currentDraftId ? 'bg-[#d8e9e370]' : 'hover:bg-gray-50'}`}
+                  className={`px-4 py-4 sm:px-6 ${id === activeDraftId ? 'bg-[#d8e9e370]' : 'hover:bg-gray-50'}`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-500 truncate">
                         <span
-                          className={`font-semibold text-gray-800 ${id === currentDraftId ? 'text-green-600' : ''}`}
+                          className={`font-semibold text-gray-800 ${id === activeDraftId ? 'text-green-600' : ''}`}
                         >
                           {title}
-                        </span>{' '}
-                        - {id}
+                        </span>
                       </p>
                       <p className="mt-1 text-sm text-gray-500">
                         Last saved: {formatDate(updatedAt)}
                       </p>
                     </div>
-                    <div className="ml-4 flex-shrink-0 flex space-x-2">
+                    <div className="ml-4 flex-shrink-0 flex space-x-2 relative more-actions-container">
                       <button
                         onClick={() => handleLoadDraft(id)}
                         className={`px-3 py-1.5 border text-xs font-medium rounded-md ${
-                          id === currentDraftId
+                          id === activeDraftId
                             ? 'bg-gray-100 text-gray-700 border-gray-300'
                             : 'bg-green-600 text-white border-transparent hover:bg-green-700'
                         } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
                       >
-                        {id === currentDraftId ? 'Currently Viewing...' : 'Load Draft'}
+                        {id === activeDraftId ? 'Currently Viewing...' : 'Load Draft'}
                       </button>
-                      {/* rename draft */}
-                      <button
-                        onClick={() =>
-                          handleRenameClick({
-                            id,
-                            title,
-                          })
-                        }
-                        className="px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                      >
-                        Rename
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (window.confirm('Are you sure you want to delete this draft?')) {
-                            deleteDraft(id);
-                          }
-                        }}
-                        className="px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                      >
-                        Delete
-                      </button>
+
+                      <div className="relative">
+                        <button
+                          onClick={() => {
+                            setActiveDropdownId(activeDropdownId === id ? null : id);
+                          }}
+                          className="px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none flex items-center gap-1"
+                        >
+                          More actions <NavArrowDown width={14} height={14} />
+                        </button>
+
+                        {activeDropdownId === id && (
+                          <div
+                            className={`absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-[100] border border-gray-100 py-1 ${
+                              index >= data?.length - 2 && data?.length > 3
+                                ? 'bottom-full mb-2'
+                                : 'top-full'
+                            }`}
+                          >
+                            <button
+                              onClick={() => {
+                                handlePreview(id);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center transition-colors cursor-pointer"
+                            >
+                              Preview URL
+                            </button>
+                            <button
+                              onClick={() => {
+                                handleRenameClick({ id, title });
+                                setActiveDropdownId(null);
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center transition-colors cursor-pointer"
+                            >
+                              Rename
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (window.confirm('Are you sure you want to delete this draft?')) {
+                                  handleDeleteDraft(id);
+                                  setActiveDropdownId(null);
+                                }
+                              }}
+                              className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center transition-colors cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

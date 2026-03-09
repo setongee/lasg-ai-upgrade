@@ -1,5 +1,6 @@
-import { ArrowUpRight, CartPlus, Eye } from 'iconoir-react';
+import { ArrowUpRight, CartPlus, Check, Eye } from 'iconoir-react';
 import { useEffect, useState } from 'react';
+import { updateAdminData } from '../../../../../api/admin/content';
 import { createRequestTemplate } from '../../../../../api/admin/template';
 import { useThemeStore } from '../../../../../stores/theme.store';
 import Modal from '../../../../modal/Modal';
@@ -12,6 +13,8 @@ const Library = () => {
   const mdaData = useThemeStore((state) => state.mdaData);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loadingTemplate, setLoadingTemplate] = useState(null);
+  const [activeTheme, setActiveTheme] = useState(null);
   const [requestData, setRequestData] = useState({
     templateName: '',
     description: '',
@@ -27,6 +30,13 @@ const Library = () => {
       : null;
     const fullName = currentUser ? `${currentUser.firstname} ${currentUser.lastname}` : '';
     setRequestData((prev) => ({ ...prev, requestedBy: fullName, mda: mdaData.name }));
+  }, [mdaData]);
+
+  useEffect(() => {
+    // Initialize active theme from mdaData on mount and when mdaData changes
+    if (mdaData?.theme) {
+      setActiveTheme(mdaData.theme);
+    }
   }, [mdaData]);
 
   const openModal = () => setIsModalOpen(true);
@@ -48,6 +58,13 @@ const Library = () => {
       requestedBy: requestData.requestedBy,
       additionalNotes: '',
     });
+  };
+
+  const updateTheme = async (theme, name) => {
+    setLoadingTemplate(theme);
+    await updateAdminData(mdaData?._id, { theme: theme }, `updated web template to - ${name}`);
+    setActiveTheme(theme); // Update active theme immediately
+    setLoadingTemplate(null);
   };
 
   return (
@@ -102,12 +119,31 @@ const Library = () => {
                 </div> */}
 
                 <div className="flex items-center gap-2 mt-1">
-                  <button className="text-gray-500 text-[13px] cursor-pointer pr-5 px-4 py-2 rounded h-[100%] flex items-center gap-2 border border-transparent bg-gray-800 text-white">
-                    <CartPlus fontSize={12} /> Use Template
+                  <button
+                    className={`text-[13px] cursor-pointer pr-5 px-4 py-2 rounded h-[100%] flex items-center gap-2 border ${
+                      activeTheme === template.theme
+                        ? 'bg-green-600 text-white border-green-600'
+                        : 'bg-gray-800 text-white border-transparent'
+                    }`}
+                    onClick={() => updateTheme(template.theme, template.name)}
+                    disabled={loadingTemplate === template.theme}
+                  >
+                    {activeTheme === template.theme ? (
+                      <Check fontSize={12} />
+                    ) : (
+                      <CartPlus fontSize={12} />
+                    )}
+                    {loadingTemplate === template.theme
+                      ? 'Loading...'
+                      : activeTheme === template.theme
+                        ? 'Template in Use'
+                        : 'Use Template'}
                   </button>
-                  <button className="text-gray-500 text-[13px] cursor-pointer pr-5 px-4 py-2 rounded h-[100%] flex items-center gap-2 border border-gray-300">
-                    <Eye /> Preview
-                  </button>
+                  {activeTheme !== template.theme && (
+                    <button className="text-gray-500 text-[13px] cursor-pointer pr-5 px-4 py-2 rounded h-[100%] flex items-center gap-2 border border-gray-300">
+                      <Eye /> Preview
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

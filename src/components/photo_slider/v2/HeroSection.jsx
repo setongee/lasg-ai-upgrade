@@ -30,8 +30,9 @@ export default function HeroSection() {
   const LANGUAGES = {
     en: { name: 'English', code: 'en' },
     yo: { name: 'Yorùbá', code: 'yo' },
-    ig: { name: 'Igbo (Coming Soon)', code: 'ig' },
-    ha: { name: 'Hausa (Coming Soon)', code: 'ha' },
+    pcm: { name: 'Nigerian Pidgin', code: 'pcm' },
+    ig: { name: 'Igbo', code: 'ig' },
+    ha: { name: 'Hausa', code: 'ha' },
   };
 
   const darkmode = useApp((state) => state.darkmode);

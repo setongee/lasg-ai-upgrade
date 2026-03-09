@@ -1,4 +1,6 @@
+import { useEffect, useRef } from 'react';
 import YouTube from 'react-youtube';
+import { useThemeStore } from '../../stores/theme.store';
 import facebook from './icons/facebook.png';
 import instagram from './icons/instagram.png';
 import twitter from './icons/twitter.png';
@@ -6,16 +8,31 @@ import youtube from './icons/youtube.png';
 import './youtube.scss';
 
 export default function YoutubeSocials({ id, viewMode }) {
+  const playerRef = useRef(null);
+  const socials = useThemeStore((state) => state.mdaData)?.contact?.socials;
+
   const opts = {
     playerVars: { autoplay: 0 },
     width: '100%',
   };
 
-  const socials = {
-    twitter: 'https://twitter.com/LSMOH',
-    facebook: 'https://web.facebook.com/lsmoh',
-    youtube: 'https://www.youtube.com/channel/UCZzZf_6m2Wm60fBNKp0-l3w',
-    instagram: 'https://www.instagram.com/lagoshealth/',
+  // Cleanup effect for YouTube player
+  useEffect(() => {
+    return () => {
+      // Clean up YouTube player instance if it exists
+      if (playerRef.current && typeof playerRef.current.destroy === 'function') {
+        try {
+          playerRef.current.destroy();
+        } catch (error) {
+          // Silently fail if destroy is not available or already destroyed
+          console.warn('YouTube player cleanup failed:', error.message);
+        }
+      }
+    };
+  }, []);
+
+  const onReady = (event) => {
+    playerRef.current = event.target;
   };
 
   console.log(viewMode);
@@ -34,6 +51,7 @@ export default function YoutubeSocials({ id, viewMode }) {
           videoId={id}
           iframeClassName="w-full h-[220px] sm:h-[350px] md:h-[450px] lg:h-[550px] rounded-[10px] bg-[#eee]"
           opts={opts}
+          onReady={onReady}
           className={`w-full ${viewMode === 'edit' ? 'pointer-events-none' : ''}`}
         />
       </div>
@@ -45,41 +63,49 @@ export default function YoutubeSocials({ id, viewMode }) {
         </div>
 
         <div className="social-icons flex flex-wrap justify-center gap-[30px] sm:gap-[40px] md:gap-[50px]">
-          <a
-            href={socials.twitter}
-            target="_blank"
-            rel="noreferrer"
-            className="social-icon h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-110"
-          >
-            <img src={twitter} alt="Twitter" className="w-full" />
-          </a>
+          {socials.hasOwnProperty('x') && (
+            <a
+              href={socials.x}
+              target="_blank"
+              rel="noreferrer"
+              className="social-icon h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-110"
+            >
+              <img src={twitter} alt="Twitter" className="w-full" />
+            </a>
+          )}
 
-          <a
-            href={socials.facebook}
-            target="_blank"
-            rel="noreferrer"
-            className="social-icon h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-110"
-          >
-            <img src={facebook} alt="Facebook" className="w-full" />
-          </a>
+          {socials.hasOwnProperty('facebook') && (
+            <a
+              href={socials.facebook}
+              target="_blank"
+              rel="noreferrer"
+              className="social-icon h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-110"
+            >
+              <img src={facebook} alt="Facebook" className="w-full" />
+            </a>
+          )}
 
-          <a
-            href={socials.youtube}
-            target="_blank"
-            rel="noreferrer"
-            className="social-icon h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-110"
-          >
-            <img src={youtube} alt="YouTube" className="w-full" />
-          </a>
+          {socials.hasOwnProperty('youtube') && (
+            <a
+              href={socials.youtube}
+              target="_blank"
+              rel="noreferrer"
+              className="social-icon h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-110"
+            >
+              <img src={youtube} alt="YouTube" className="w-full" />
+            </a>
+          )}
 
-          <a
-            href={socials.instagram}
-            target="_blank"
-            rel="noreferrer"
-            className="social-icon h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-110"
-          >
-            <img src={instagram} alt="Instagram" className="w-full" />
-          </a>
+          {socials.hasOwnProperty('instagram') && (
+            <a
+              href={socials.instagram}
+              target="_blank"
+              rel="noreferrer"
+              className="social-icon h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-110"
+            >
+              <img src={instagram} alt="Instagram" className="w-full" />
+            </a>
+          )}
         </div>
       </div>
     </div>

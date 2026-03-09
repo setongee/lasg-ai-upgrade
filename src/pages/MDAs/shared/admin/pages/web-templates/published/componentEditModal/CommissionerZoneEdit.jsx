@@ -1,4 +1,7 @@
 import { Attachment } from 'iconoir-react';
+import { useState } from 'react';
+import { notify } from '../../../../../../../../utils/toast';
+import { uploadFile } from '../../../../../../api/admin/content';
 import { useEditDataStore } from '../../../../../../stores/editData.store';
 import { useThemeStore } from '../../../../../../stores/theme.store';
 import SectionTitle from './util/SectionTitle';
@@ -8,6 +11,8 @@ const CommissionerZoneEdit = () => {
   const mdaEditData = useEditDataStore((state) => state.mdaEditData);
   const commissionersData = mdaEditData?.commissionersZone;
   const mdaData = useThemeStore((s) => s.mdaData);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleChange = (e) => {
     setMdaEditData({
@@ -19,16 +24,37 @@ const CommissionerZoneEdit = () => {
     });
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     e.preventDefault();
     const choosePhoto = document.getElementById('commissioner_image');
     choosePhoto.click();
 
-    choosePhoto.addEventListener('change', (e) => {
+    choosePhoto.addEventListener('change', async (e) => {
       const file = e.target.files[0];
+      if (!file) return;
+
+      if (file.size > 2 * 1024 * 1024) {
+        notify.error('File size must be less than 2MB');
+        return;
+      }
+
+      setIsUploading(true);
+      setUploadProgress(0);
+
+      // Simulate progress updates
+      const progressInterval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev < 90) {
+            return Math.min(prev + Math.random() * 15, 90);
+          }
+          return prev;
+        });
+      }, 200);
+
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
+        // Immediately update the image with base64 for instant preview
         setMdaEditData({
           ...mdaEditData,
           commissionersZone: {
@@ -36,7 +62,52 @@ const CommissionerZoneEdit = () => {
             commissionerImage: e.target.result,
           },
         });
+
+        // Upload in background
+        await uploadFile({
+          photo: {
+            temp: `${mdaData?.fullname?.replace(' ', '-')}-commissioner-photo`,
+            data: e.target.result,
+          },
+        })
+          .then((response) => {
+            if (response.status === 'ok') {
+              // Clear interval and set to 100%
+              clearInterval(progressInterval);
+              setUploadProgress(100);
+
+              setMdaEditData({
+                ...mdaEditData,
+                commissionersZone: {
+                  ...commissionersData,
+                  commissionerImage: response.url,
+                },
+              });
+
+              // Clean up after a short delay
+              setTimeout(() => {
+                setIsUploading(false);
+                setUploadProgress(0);
+              }, 500);
+            }
+          })
+          .catch((err) => {
+            clearInterval(progressInterval);
+            notify.error(err.message);
+            setIsUploading(false);
+            setUploadProgress(0);
+          });
       };
+    });
+  };
+
+  const toggleSection = () => {
+    setMdaEditData({
+      ...mdaEditData,
+      enabledSections: {
+        ...mdaEditData.enabledSections,
+        commissionersZone: !mdaEditData.enabledSections?.commissionersZone,
+      },
     });
   };
 
@@ -45,7 +116,27 @@ const CommissionerZoneEdit = () => {
   return (
     <div className="fixed top-[145px] left-[280px] w-[350px] h-[calc(100vh-145px)] bg-white overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] z-90">
       <SectionTitle />
-      <div className="p-[30px] mt-[60px]">
+
+      {/* Enable/Disable Toggle */}
+      <div className="py-[20px] px-[30px] border-b border-gray-200 mt-[60px] bg-gray-100">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-700">Enable Section</span>
+          <button
+            onClick={toggleSection}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+              mdaEditData.enabledSections?.commissionersZone ? 'bg-green-600' : 'bg-gray-300'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                mdaEditData.enabledSections?.commissionersZone ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
+      <div className="p-[30px]">
         <form action="" className="flex flex-col gap-6">
           {/* Welcome Title */}
           <div className="flex gap-4 flex-col border-b border-gray-200 pb-6">
@@ -142,8 +233,22 @@ const CommissionerZoneEdit = () => {
                 Recommended size: 600x580px
               </span>
             </label>
+            {isUploading && (
+              <div className="mt-2">
+                <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                  <span>Uploading...</span>
+                  <span>{Math.round(uploadProgress)}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                  <div
+                    className="bg-green-600 h-1.5 rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
             <div className="mt-1 flex items-center">
-              <span className="inline-block h-32 w-32 overflow-hidden bg-gray-100 rounded-md">
+              <span className="inline-block h-32 w-32 overflow-hidden bg-gray-100 rounded-md relative">
                 {commissionersData?.commissionerImage ? (
                   <img
                     src={commissionersData?.commissionerImage}
@@ -153,6 +258,11 @@ const CommissionerZoneEdit = () => {
                 ) : (
                   <div className="h-full w-full bg-gray-200 flex items-center justify-center">
                     <Attachment className="text-gray-500" />
+                  </div>
+                )}
+                {isUploading && (
+                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   </div>
                 )}
               </span>

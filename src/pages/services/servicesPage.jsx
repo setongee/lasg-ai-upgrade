@@ -1,115 +1,91 @@
-import React,{useState, useEffect} from 'react'
-import './servicesPAGE.scss'
-import Container from '../../components/container/container'
-import Typewriter from 'typewriter-effect';
-import { ArrowUpRight } from 'iconoir-react';
-import Services from '../../components/services/services';
-import { servicesDB } from '../../api/data/servicesDB';
 import Fuse from 'fuse.js';
+import { useEffect, useState } from 'react';
+import { servicesDB } from '../../api/data/servicesDB';
+import Container from '../../components/container/container';
+import Services from '../../components/services/services';
 import ServiceSearchResults from './serviceSearchResults';
+import './servicesPAGE.scss';
 import ViewServiceModal from './viewServiceModal';
-import Transitions from '../../utils/transitions';
 
 export default function ServicesPage() {
-
-  const [ query, setQuery ] = useState('');
+  const [query, setQuery] = useState('');
   const [queryResults, setQueryResults] = useState([]);
-  const [totalResults, setTotalResults] = useState(0)
+  const [totalResults, setTotalResults] = useState(0);
 
   const [modalData, setModalData] = useState({});
   const [isModalOpen, setIsMOdalOpen] = useState(false);
 
-
   useEffect(() => {
-
     const fuseOptions = {
+      includeScore: true,
 
-      includeScore : true,
-  
-      keys: [
-        "sub_service",
-        "theme",
-        "short"
-      ]
-    
+      keys: ['sub_service', 'theme', 'short'],
     };
-  
+
     const fuse = new Fuse(servicesDB, fuseOptions);
     const results = fuse.search(query);
-    const queriedRes =  results.map(res => res.item);
+    const queriedRes = results.map((res) => res.item);
     setQueryResults(queriedRes);
-   
-   }, [query]);
+  }, [query]);
 
+  // useEffect(() => {
 
-// useEffect(() => {
-    
-//     const mapple = queryResults.map( e => e.services.length);
-//     const rest = mapple.reduce( (a, b) => {
+  //     const mapple = queryResults.map( e => e.services.length);
+  //     const rest = mapple.reduce( (a, b) => {
 
-//         return a + b;
+  //         return a + b;
 
-//     }, 0 );
+  //     }, 0 );
 
-//     setTotalResults(rest);
+  //     setTotalResults(rest);
 
-// }, [queryResults]);
+  // }, [queryResults]);
 
-
-
-const openModal = (data) => {
-
+  const openModal = (data) => {
     setModalData(data);
     setIsMOdalOpen(true);
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
+  };
 
- }
+  const closeModal = (data) => {
+    setModalData({});
+    setIsMOdalOpen(false);
+    document.body.style.overflow = 'visible';
+  };
 
- const closeModal = (data) => {
-
-  setModalData({});
-  setIsMOdalOpen(false);
-  document.body.style.overflow = "visible";
-
-}
-
-
- const handleCloseBar = (e) => {
-
-    if ( e.target.classList[0] === 'view_service_modal' ) {
-  
+  const handleCloseBar = (e) => {
+    if (e.target.classList[0] === 'view_service_modal') {
       closeModal();
-  
     }
-  
-  }
+  };
 
   return (
+    <div className="servicesPage">
+      {isModalOpen ? (
+        <div className="viewMax" onClick={handleCloseBar}>
+          {' '}
+          <ViewServiceModal data={modalData} close={closeModal} />{' '}
+        </div>
+      ) : null}
 
-      <div className="servicesPage">
+      <Container>
+        <div className="servicesBody">
+          <div className="servicesTop">
+            <div className="pageHeader flex flex_col">
+              <div className="pageTitle">
+                {' '}
+                Explore Lagos State Government : Browse all Services in One Place{' '}
+              </div>
+              <div className="pageTitleSubs">
+                {' '}
+                Empowering Citizens of Lagos State to Engage with their Government.{' '}
+              </div>
+            </div>
+          </div>
 
-        {
-          isModalOpen ? <div className="viewMax" onClick={handleCloseBar} > <ViewServiceModal data = {modalData} close = {closeModal}  /> </div> : null
-        }
+          {/* Search Area Side With Search Input */}
 
-        <Container>
-
-            <div className="servicesBody">
-
-                <div className="servicesTop">
-
-                    <div className="pageHeader flex flex_col">
-
-                        <div className="pageTitle"> Explore Lagos State Government : Browse all Services in One Place </div>
-                        <div className="pageTitleSubs"> Empowering Citizens of Lagos State to Engage with their Government. </div>
-
-                    </div>
-
-                </div>
-
-                {/* Search Area Side With Search Input */}
-
-                {/* <div className="searchField">
+          {/* <div className="searchField">
 
                       <input type="text" className="searchInput" value = {query} onChange={ e => setQuery(e.target.value) }/>
 
@@ -136,54 +112,38 @@ const openModal = (data) => {
 
                 </div> */}
 
-                {/* searched query results */}
+          {/* searched query results */}
 
-                {
-                    query !== '' ? (
-
-                        <div className="mdas_sections">
-
-                            <div className="section all"> {queryResults.length} Results Found </div>
-
-                        </div>
-
-                    ) : null
-                }
-
-                <div className="resultArea">
-
-
-                      {
-                         queryResults.length && query !== '' ? queryResults.map( (data, index) => (
-
-                            <ServiceSearchResults data = {data} key = {index} openModal = {openModal} icon = {data.theme.trim()} />
-
-                        ) ) : query !== '' ? <h1>Oops! Sorry No results Found, Try Again!</h1> : null
-
-                      }
-                    
-
-                </div>
-
+          {query !== '' ? (
+            <div className="mdas_sections">
+              <div className="section all"> {queryResults.length} Results Found </div>
             </div>
-            
-        </Container>
+          ) : null}
 
-        {/* services Component */}
+          <div className="resultArea">
+            {queryResults.length && query !== '' ? (
+              queryResults.map((data, index) => (
+                <ServiceSearchResults
+                  data={data}
+                  key={index}
+                  openModal={openModal}
+                  icon={data.theme.trim()}
+                />
+              ))
+            ) : query !== '' ? (
+              <h1>Oops! Sorry No results Found, Try Again!</h1>
+            ) : null}
+          </div>
+        </div>
+      </Container>
 
-        {
-            query === '' ? (
+      {/* services Component */}
 
-                <div className="servicesSide">
-
-                    <Services bgColor = "#fdfdfd" location = 'services' data_limit={1000} />
-
-                </div>
-
-            ) : null
-        }
-
-      </div>
-    
-  )
+      {query === '' ? (
+        <div className="servicesSide">
+          <Services bgColor="#fdfdfd" location="services" data_limit={1000} />
+        </div>
+      ) : null}
+    </div>
+  );
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import ScrollSpy from 'react-ui-scrollspy';
 import Divider from '../../../shared/divider/Divider';
 import Wrapper from '../../../shared/Wrapper/Wrapper';

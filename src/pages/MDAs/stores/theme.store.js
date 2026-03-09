@@ -7,6 +7,8 @@ const useThemeStore = create((set) => ({
   setMda: (value) => set({ mda: value }),
   mdaData: {},
   setMdaData: (value) => set({ mdaData: value }),
+  refetchData: null,
+  setRefetchData: (fn) => set({ refetchData: fn }),
 }));
 
 export { useThemeStore };

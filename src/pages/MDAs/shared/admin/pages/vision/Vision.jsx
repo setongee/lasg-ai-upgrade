@@ -3,12 +3,14 @@ import { useEffect, useState } from 'react';
 import { notify } from '../../../../../../utils/toast';
 import { updateAdminData } from '../../../../api/admin/content';
 import Loader from '../../../../shared/loader/loader';
+import { useThemeStore } from '../../../../stores/theme.store';
 import '../../styles/pages.scss';
 
 const Vision = ({ mda_data }) => {
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [updateInfo, setUpdateInfo] = useState({});
+  const refetchData = useThemeStore((state) => state.refetchData);
 
   useEffect(() => {
     setData(mda_data);
@@ -42,6 +44,7 @@ const Vision = ({ mda_data }) => {
       .then(() => {
         setIsLoading(false);
         setUpdateInfo({});
+        if (refetchData) refetchData();
       })
       .catch((err) => {
         setIsLoading(false);

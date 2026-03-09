@@ -1,10 +1,16 @@
 import { ComputerIcon, Tablet01Icon, Tablet02Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Check, CloudUpload, Edit, Eye, NavArrowDown, Plus } from 'iconoir-react';
-import { useEffect, useState } from 'react';
+import { Check, CloudUpload, Edit, Eye, NavArrowDown, Plus, RefreshDouble } from 'iconoir-react';
+import { useEffect, useRef, useState } from 'react';
 import { usePublishChanges } from '../../../../../../../hooks/usePublishChanges';
+import { formatDate } from '../../../../../../../middleware/middleware';
 import { notify } from '../../../../../../../utils/toast';
-import { createDraft, getDraftsByMda } from '../../../../../api/admin/drafts';
+import { createDraft, getSingleDraft, updateDraft } from '../../../../../api/admin/drafts';
+import {
+  getPublishBucketsByDraftId,
+  publishPage,
+  updatePublishDraftRequest,
+} from '../../../../../api/admin/publish';
 import { useEditDataStore } from '../../../../../stores/editData.store';
 import { useEditModeStore } from '../../../../../stores/editMode.store';
 import { useThemeStore } from '../../../../../stores/theme.store';
@@ -13,8 +19,14 @@ import ConfirmModal from '../../../../confirmModal/confirm-modal';
 import AdminChatbot from '../../../components/chatbot/AdminChatbot';
 import TemplateContainer from '../templates-container/TemplateContainer';
 import CommissionerZoneEdit from './componentEditModal/CommissionerZoneEdit';
+import CoreInformationEdit from './componentEditModal/CoreInformationEdit';
 import HeroSectionEdit from './componentEditModal/HeroSectionEdit';
+import QuickDocumentsEdit from './componentEditModal/QuickDocumentsEdit';
 import QuickServicesEdit from './componentEditModal/QuickServicesEdit';
+import ResourceCategoriesEdit from './componentEditModal/ResourceCategoriesEdit';
+import ServicesEdit from './componentEditModal/ServicesEdit';
+import StatisticsEdit from './componentEditModal/StatisticsEdit';
+import SupportLinksEdit from './componentEditModal/SupportLinksEdit';
 import YoutubePlayerEdit from './componentEditModal/YoutubePlayerEdit';
 import { contentKey } from './data_content_key';
 import './published.scss';
@@ -29,7 +41,11 @@ const Published = () => {
   const [viewMode, setViewMode] = useState('preview');
   const [showDropdown, setShowDropdown] = useState(false);
   const [showPublishConfirm, setShowPublishConfirm] = useState(false);
+  const [publishNotes, setPublishNotes] = useState('');
   const [draftList, setDraftList] = useState([]);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState(null);
+  const autoSaveIntervalRef = useRef(null);
 
   // edit mode
   const setEditViewMode = useEditModeStore((state) => state.setEditViewMode);
@@ -37,34 +53,112 @@ const Published = () => {
   // edit data logic
   const setMdaEditData = useEditDataStore((state) => state.setMdaEditData);
   const mdaEditData = useEditDataStore((state) => state.mdaEditData);
-  const draftId = useEditDataStore((state) => state.currentDraftId);
+  const {
+    setActiveDraftId,
+    activeDraftId,
+    setOriginalData,
+    originalData,
+    currentMda,
+    setCurrentMda,
+    clearEditData,
+  } = useEditDataStore();
 
-  const getMdaDrafts = async () => {
-    const response = await getDraftsByMda(mda_data.mda);
+  // store draft publishing status here;
+  const [isDraftPublishCreated, setIsDraftPublishCreated] = useState(null);
+  const [publishId, setPublishId] = useState('');
+
+  // Check if MDA has changed and clear edit data if needed
+  useEffect(() => {
+    if (mda_data?.slug && currentMda && mda_data.slug !== currentMda) {
+      // MDA has changed, clear the edit data
+      clearEditData();
+      setIsDraftPublishCreated(null);
+      setPublishId('');
+    }
+
+    // Set current MDA if not set or if it's different
+    if (mda_data?.slug && mda_data.slug !== currentMda) {
+      setCurrentMda(mda_data.slug);
+    }
+  }, [mda_data?.slug, currentMda, clearEditData, setCurrentMda]);
+
+  useEffect(() => {
+    if (activeDraftId) {
+      // check if draft is published
+      // if published, set isDraftPublishCreated to true
+      // if not published, set isDraftPublishCreated to false
+      getPublishBucketsByDraftId(activeDraftId).then((response) => {
+        if (response?.data) {
+          setIsDraftPublishCreated(response.data.status);
+          setPublishId(response.data._id);
+        } else {
+          setIsDraftPublishCreated(null);
+        }
+      });
+    }
+  }, [activeDraftId]);
+
+  const createNewDraft = async (title) => {
+    const response = await createDraft({
+      title: title || 'Untitled Draft',
+      data: mdaEditData,
+      mda: mda_data.slug,
+    });
     if (response.data) {
-      setDraftList(response.data);
+      // Set the active draft ID
+      setActiveDraftId(response.data._id);
+      // Set the edit data to the draft data
+      setMdaEditData(response.data);
+      setOriginalData(response.data);
     }
   };
 
-  console.log(mda_data);
+  const saveDraft = async (data) => {
+    if (!activeDraftId || !mdaEditData) return;
 
-  const createNewDraft = async () => {
-    await createDraft({
-      title: 'Untitled Draft',
-      data: mdaEditData,
-      mda: mda_data.slug,
-    })
-      .then((response) => {
-        if (response.data) {
-          notify.success('New draft created successfully!');
-        }
-      })
-      .catch((error) => {
-        notify.error('Failed to create draft');
-      });
+    setIsAutoSaving(true);
+
+    try {
+      const response = await updateDraft(
+        activeDraftId,
+        data
+          ? { data }
+          : {
+              data: mdaEditData,
+              mda: mda_data.slug,
+            }
+      );
+
+      // Check if updateDraft failed specifically with a 404 (document not found/deleted)
+      if (response === null || response?.status === 404 || response?.response?.status === 404) {
+        console.warn('Draft not found, likely deleted. Creating a new one...');
+        await createNewDraft('Auto-recovered Draft');
+        return;
+      }
+
+      setLastSavedAt(new Date());
+      setOriginalData(data ? data : mdaEditData);
+    } catch (error) {
+      console.error('Auto-save failed:', error);
+      // Fallback check for 404 in the error object itself if updateDraft throws
+      if (error?.response?.status === 404) {
+        await createNewDraft('Auto-recovered Draft');
+      }
+    } finally {
+      setIsAutoSaving(false);
+    }
   };
 
-  // Update MDA Edit Data via AI
+  // reset data to last published
+  const resetToOriginal = async () => {
+    if (!mda_data?.landingPage) return;
+    const lastPublished = mda_data.landingPage;
+    setMdaEditData(lastPublished);
+    await saveDraft(lastPublished);
+    notify.success('Reset to original and saved!');
+  };
+
+  // Update MDA Edit Data via Admin AI
   const handleContentGenerated = (content) => {
     const objectKey = contentKey[selectedComponent] || '';
     const updatedData = {
@@ -74,14 +168,84 @@ const Published = () => {
     setMdaEditData(updatedData);
   };
 
+  const isInitializingRef = useRef(false);
+
   useEffect(() => {
-    getMdaDrafts();
+    const initializeDraft = async () => {
+      // Prevent double initialization if already in progress or if mda_data isn't ready
+      if (isInitializingRef.current || !mda_data?.slug) return;
 
-    // show the pure mda data
-    setMdaEditData(mda_data.landingPage);
-  }, [mda_data]);
+      isInitializingRef.current = true;
 
-  console.log(mdaEditData);
+      try {
+        // Check if there's no active draft
+        if (!activeDraftId) {
+          // Create a new draft with the current MDA data
+          const response = await createDraft({
+            title: `${mda_data.fullname} - Initial Draft`,
+            data: mda_data?.landingPage || {},
+            mda: mda_data.slug,
+          });
+
+          if (response.data) {
+            // Set the active draft ID
+            setActiveDraftId(response.data._id);
+            // Set the edit data to the draft data
+            setMdaEditData(response.data);
+            setOriginalData(response.data);
+          }
+        } else {
+          // Load existing draft data
+          const response = await getSingleDraft(activeDraftId);
+          if (response && response?.data) {
+            setMdaEditData(response.data);
+            setOriginalData(response.data);
+          } else {
+            // create new draft
+            const response = await createDraft({
+              title: `${mda_data.fullname} - Ready Initial Draft`,
+              data: mda_data?.landingPage || {},
+              mda: mda_data.slug,
+            });
+
+            if (response.data) {
+              // Set the active draft ID
+              setActiveDraftId(response.data._id);
+              // Set the edit data to the draft data
+              setMdaEditData(response.data);
+              setOriginalData(response.data);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Initialization failed:', error);
+      } finally {
+        isInitializingRef.current = false;
+      }
+    };
+
+    initializeDraft();
+  }, [mda_data?.slug, activeDraftId]);
+
+  // Auto-save effect
+  useEffect(() => {
+    // Set up auto-save interval only if there's an active draft AND we're in edit mode
+    if (activeDraftId && viewMode === 'edit') {
+      autoSaveIntervalRef.current = setInterval(() => {
+        const isChanged = JSON.stringify(originalData) === JSON.stringify(mdaEditData);
+        if (!isChanged) {
+          saveDraft();
+        }
+      }, 3000);
+    }
+
+    // Cleanup interval on component unmount or when dependencies change
+    return () => {
+      if (autoSaveIntervalRef.current) {
+        clearInterval(autoSaveIntervalRef.current);
+      }
+    };
+  }, [activeDraftId, mdaEditData, viewMode, originalData, setOriginalData, setMdaEditData]);
 
   useEffect(() => {
     setDevice(deviceSize);
@@ -106,40 +270,126 @@ const Published = () => {
 
   const handleConfirmPublish = async () => {
     setShowPublishConfirm(false);
-    const success = await publishChanges();
-    if (success) {
-      // Optional: Add any post-publish logic here
+
+    if (isDraftPublishCreated && publishId !== '') {
+      await updatePublishDraftRequest(publishId, {
+        draftId: activeDraftId,
+        mda: mda_data?.slug,
+        notes: publishNotes,
+      });
+    } else {
+      await publishPage({
+        draftId: activeDraftId,
+        mda: mda_data?.slug,
+        notes: publishNotes,
+      });
     }
+
+    setPublishNotes('');
   };
+
+  const [isOriginalChanged, setIsOriginalChanged] = useState(false);
+
+  useEffect(() => {
+    if (!mda_data?.landingPage || !mdaEditData) return;
+    // Check if current edit data differs from the original live landing page
+    const changed = JSON.stringify(mda_data.landingPage) !== JSON.stringify(mdaEditData);
+    setIsOriginalChanged(changed);
+  }, [mdaEditData, mda_data?.landingPage]);
 
   const showComponentEdit = () => {
     switch (selectedComponent) {
       case 'heroSection':
         return <HeroSectionEdit />;
+      case 'coreInformation':
+        return <CoreInformationEdit saveDraft={saveDraft} />;
       case 'quickServices':
         return <QuickServicesEdit />;
       case 'commissionerZone':
         return <CommissionerZoneEdit />;
       case 'youtubePlayer':
         return <YoutubePlayerEdit />;
+      case 'services':
+        return <ServicesEdit />;
+      case 'quickDocuments':
+        return <QuickDocumentsEdit />;
+      case 'resourceCategories':
+        return <ResourceCategoriesEdit />;
+      case 'statistics':
+        return <StatisticsEdit />;
+      case 'supportLinks':
+        return <SupportLinksEdit />;
       default:
         return null;
     }
   };
 
+  const renderDraftStatusMessage = () => {
+    if (!isDraftPublishCreated) return null;
+
+    if (isDraftPublishCreated === 'pending') {
+      return (
+        <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-2 rounded-md mb-4 w-full text-center text-[15px] -mt-[14px] font-medium">
+          This draft is awaiting content approval at the moment, you can still make changes to it.
+        </div>
+      );
+    }
+
+    if (isDraftPublishCreated === 'published') {
+      return (
+        <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-2 rounded-md mb-4 w-full text-center text-[15px] -mt-[14px] font-medium">
+          This draft has been approved and is now live.
+        </div>
+      );
+    }
+
+    if (isDraftPublishCreated === 'rejected') {
+      return (
+        <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-2 rounded-md mb-4 w-full text-center text-[15px] -mt-[14px] font-medium">
+          This draft has been rejected. Please make the necessary changes and resubmit.
+        </div>
+      );
+    }
+
+    if (isDraftPublishCreated === 'content approved') {
+      return (
+        <div className="bg-blue-100 border border-blue-400 text-blue-800 px-4 py-2 rounded-md mb-4 w-full text-center text-[15px] -mt-[14px] font-medium">
+          This draft has passed content approval and currently awaiting technical approval
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <TemplateContainer>
       <div
-        className={`fixed bg-gray-300 w-[calc(100%-280px)] left-[280px] top-[145px] flex items-center px-[50px] py-[20px] ${
+        className={`fixed bg-gray-300 w-[calc(100%-280px)] left-[280px] top-[145px] flex items-center px-[30px] py-[30px] ${
           viewMode === 'edit' ? 'justify-end' : 'justify-center flex-col'
         }`}
       >
-        <div className="titleAdmin z-10 flex items-center justify-between w-full h-[65px] px-6 border-b border-gray-200">
-          <div
-            className="px-4 py-2 text-sm font-medium text-white bg-gray-800 border border-transparent rounded-md hover:bg-green-700 focus:outline-none cursor-pointer flex items-center gap-1"
-            onClick={() => createNewDraft()}
-          >
-            <Plus /> Create New Draft
+        <div className="titleAdmin z-500 flex items-center justify-between w-full h-[65px] px-6 border-b border-gray-200">
+          <div className="flex gap-3">
+            <div
+              className="px-4 py-2 text-sm font-medium text-white bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 focus:outline-none cursor-pointer flex items-center gap-1"
+              onClick={() => createNewDraft()}
+            >
+              <Plus className="ml-[-4px] text-[11px]" />
+              New Draft
+            </div>
+
+            <div
+              className={`px-4 py-2 text-sm font-medium border border-transparent rounded-md focus:outline-none flex items-center gap-2 transition-all ${
+                isOriginalChanged
+                  ? 'text-gray-700 bg-gray-200 hover:bg-green-700 hover:text-white cursor-pointer'
+                  : 'text-gray-400 bg-gray-100 cursor-not-allowed opacity-50'
+              }`}
+              onClick={() => isOriginalChanged && resetToOriginal()}
+            >
+              <RefreshDouble className="ml-[-4px] text-[10px]" />
+              Reset to Original
+            </div>
           </div>
 
           {/* Device size controls */}
@@ -189,6 +439,26 @@ const Published = () => {
 
           {/* Action buttons */}
           <div className="flex items-center gap-3">
+            {/* Auto-save status indicator */}
+            <div className="flex items-center gap-2 text-sm text-gray-500 w-[250px] justify-end mr-4">
+              {isAutoSaving && (
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span>Auto-saving...</span>
+                </div>
+              )}
+              {lastSavedAt && !isAutoSaving && (
+                <span className="flex items-center gap-1">
+                  <p className="font-medium">Last saved:</p> {formatDate(lastSavedAt)},{' '}
+                  {lastSavedAt.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                  })}
+                </span>
+              )}
+            </div>
+
             <button
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none cursor-pointer"
               onClick={toggleDropdown}
@@ -247,8 +517,16 @@ const Published = () => {
           </div>
         </div>
 
+        {/* ////////////////////////////////////////////// */}
+
+        {/* Ui Builder Starts here */}
+
         {/* show edit form selector */}
         {showComponentEdit()}
+
+        {/* draft messages */}
+        {/* draft messages */}
+        {viewMode === 'preview' && renderDraftStatusMessage()}
 
         {/* show editor canvas */}
         <div
@@ -265,12 +543,26 @@ const Published = () => {
 
         <ConfirmModal
           open={showPublishConfirm}
-          onClose={() => setShowPublishConfirm(false)}
+          onClose={() => {
+            setShowPublishConfirm(false);
+            setPublishNotes('');
+          }}
           onConfirm={handleConfirmPublish}
         >
-          <p className="text-gray-700 mb-4">
+          <p className="text-gray-700 mb-6">
             Are you sure you want to publish these changes? This will update your live site.
           </p>
+
+          <div className="">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Notes (optional)</label>
+            <textarea
+              value={publishNotes}
+              onChange={(e) => setPublishNotes(e.target.value)}
+              placeholder="Add any notes or comments about this publish..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-600 focus:border-transparent resize-none text-[15px]"
+              rows={3}
+            />
+          </div>
         </ConfirmModal>
       </div>
 

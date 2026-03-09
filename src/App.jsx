@@ -49,11 +49,11 @@ function App() {
   return (
     <div className="App">
       {/* Application Header */}
-      <Header />
+      {!isAdminRoute || isPublicRoute ? <Header /> : null}
       {/* Application Router */}
       <RouterClass />
       {/* Application Footer */}
-      <Footer />
+      {!isAdminRoute || isPublicRoute ? <Footer /> : null}
       {/* Toast Notifications */}
       <Toaster
         position="top-right"

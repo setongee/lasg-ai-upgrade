@@ -1,0 +1,167 @@
+/* Resource Categories Component Styles */
+
+.resource-categories {
+  margin-top: 80px;
+  margin-bottom: 80px;
+}
+
+.resource-categories-header {
+  text-align: center;
+  margin-bottom: 50px;
+
+  h2 {
+    font-size: 40px;
+    font-weight: 600;
+    color: #1c3f3a;
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 26px;
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+.budgets__cat {
+  margin-top: 50px;
+}
+
+/* Grid layout for page-resource-categories */
+.page-resource-categories .budgets__cat {
+  /* Grid layout handled by Tailwind classes */
+}
+
+/* Default flex layout for component */
+.resource-categories:not(.page-resource-categories) .budgets__cat {
+  gap: 30px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .bud__cat {
+    width: 500px;
+    flex-shrink: 0;
+  }
+}
+
+.bud__cat {
+  height: 500px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  background-color: #1c3f3a;
+  border-radius: 5px;
+
+  img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+    transition: all 0.8s cubic-bezier(0.39, 0.01, 0.36, 0.9);
+  }
+
+  &:hover {
+    img {
+      scale: 1.09;
+    }
+  }
+
+  .naming {
+    background-color: #fff;
+    position: absolute;
+    z-index: 8;
+    bottom: 50px;
+    padding: 25px;
+    border-radius: 5px;
+    width: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    p {
+      font-weight: 700;
+      font-size: 17px;
+      margin-bottom: 15px;
+      color: #1c3f3a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    span {
+      line-height: 21px;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .butt {
+      margin-top: 30px;
+    }
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+  .resource-categories-header {
+    h2 {
+      font-size: 32px;
+    }
+
+    p {
+      font-size: 15px;
+    }
+  }
+
+  .bud__cat {
+    height: 350px;
+
+    .naming {
+      bottom: 20px;
+      width: 90%;
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .resource-categories-header {
+    h2 {
+      font-size: 28px;
+    }
+  }
+
+  .bud__cat {
+    height: 400px;
+
+    .naming {
+      bottom: 20px;
+      width: 90%;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .resource-categories-header {
+    h2 {
+      font-size: 24px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+  }
+
+  .bud__cat {
+    height: 400px;
+
+    .naming {
+      bottom: 20px;
+      width: 90%;
+    }
+  }
+}

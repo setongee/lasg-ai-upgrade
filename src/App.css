@@ -32,3 +32,13 @@
 html {
   scroll-padding-top: 200px;
 }
+
+.no-scrollbar {
+  overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

@@ -1,8 +1,46 @@
+import { useState } from 'react';
+import { addSubscriber } from '../../../../api/read/subscribers.req';
 import bgb from '../../custom/health/assets/bgb.jpg';
+import { useThemeStore } from '../../stores/theme.store';
 import Button from '../button/Button';
 import './newsletter.css';
 
 const Newsletter = () => {
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const mdaId = useThemeStore((state) => state.mdaData)?._id;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!email) {
+      setMessage('Please enter your email address');
+      return;
+    }
+
+    setIsLoading(true);
+    setMessage('');
+
+    try {
+      const result = await addSubscriber({
+        email,
+        mdaDirectory: mdaId,
+      });
+
+      if (result.success) {
+        setMessage('Successfully subscribed!');
+        setEmail('');
+      } else {
+        setMessage(result.message || 'Subscription failed');
+      }
+    } catch (error) {
+      setMessage('Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="newsletter-section flex justify-center items-center bg-[#2e7d32] rounded-[10px] p-[30px] md:p-[50px] lg:p-[80px] my-[70px] md:my-[100px] mb-[50px] overflow-hidden relative">
       <img
@@ -22,11 +60,18 @@ const Newsletter = () => {
           <input
             type="email"
             placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="newsletter-input w-full md:w-[320px] p-[14px] rounded-[5px] outline-none text-white glass-card h-[55px] md:h-[60px]"
+            disabled={isLoading}
           />
 
-          <Button customClass="newsletter-button bg-[#1c3f3a] text-white flex items-center justify-center gap-2 rounded-[5px] px-[20px] py-[12px] !w-full md:max-w-max h-[55px] md:h-[60px]">
-            Subscribe
+          <Button
+            action={handleSubmit}
+            customClass="newsletter-button bg-[#1c3f3a] text-white flex items-center justify-center gap-2 rounded-[5px] px-[20px] py-[12px] !w-full md:max-w-max h-[55px] md:h-[60px]"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Subscribing...' : 'Subscribe'}
           </Button>
         </div>
       </div>

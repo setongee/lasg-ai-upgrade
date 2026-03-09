@@ -1,6 +1,6 @@
 import './confirm-modal.css';
 
-const ConfirmModal = ({ children, open, onClose, onConfirm }) => {
+const ConfirmModal = ({ children, open, onClose, onConfirm, customClass }) => {
   if (!open) return null;
   const handleConfirm = () => {
     onClose();
@@ -9,7 +9,7 @@ const ConfirmModal = ({ children, open, onClose, onConfirm }) => {
 
   return (
     <div className="confirm-backdrop h-[100vh] w-[100vw] fixed top-0 left-0 z-[999999999999] bg-black/50">
-      <div className="modal_content mb-40">
+      <div className={`modal_content mb-40 ${customClass}`}>
         <div className="confirmTitle">Confirm Action</div>
 
         {children}

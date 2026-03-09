@@ -1,8 +1,7 @@
-import React from 'react';
 import Auth from './auth/auth';
 
-const Admin = () => {
-  return <Auth />;
+const Admin = ({ refetch }) => {
+  return <Auth refetch={refetch} />;
 };
 
 export default Admin;

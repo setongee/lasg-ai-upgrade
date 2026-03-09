@@ -5,4 +5,5 @@ export const notify = {
   error: (msg, duration = 4000) => toast.error(msg, { duration }),
   info: (msg, duration = 4000) => toast(msg, { duration, icon: '⚠️' }),
   loading: (msg) => toast.loading(msg),
+  dismiss: (id) => toast.dismiss(id),
 };

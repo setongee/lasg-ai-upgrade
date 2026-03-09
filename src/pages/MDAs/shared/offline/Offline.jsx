@@ -12,7 +12,9 @@ const Offline = () => {
       </div>
       <div className="text-center">
         <h1 className="text-4xl font-bold w-[400px] mb-10">We would be back online soon!</h1>
-        <button className="px-6 py-3 bg-gray-800 text-white rounded-md">Back to homepage</button>
+        <a href="/" className="px-6 py-3 bg-gray-800 text-white rounded-md">
+          Back to homepage
+        </a>
       </div>
     </div>
   );

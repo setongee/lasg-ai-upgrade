@@ -24,7 +24,6 @@ const addToService = async (data, categoryName) => {
         ? [...data?.formattedName, formattedName(categoryName)]
         : [formattedName(categoryName)],
       categories: data?.categories ? [...data?.categories, categoryName] : [categoryName],
-      keywordsGroup: [],
     });
 
     if (response.status === 200) {
@@ -98,7 +97,6 @@ export const addExistingService = async (data, categoryName) => {
         ? [...data?.formattedName, formattedName(categoryName)]
         : [formattedName(categoryName)],
       categories: data?.categories ? [...data?.categories, categoryName] : [categoryName],
-      keywordsGroup: [],
     });
 
     if (response.status === 'ok') {

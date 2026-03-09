@@ -1,14 +1,30 @@
 import { Attachment, Link, Mail, NavArrowDown, Phone } from 'iconoir-react';
 import { useRef, useState } from 'react';
+import { notify } from '../../../../../../../../utils/toast';
+import { uploadFile } from '../../../../../../api/admin/content';
 import { useEditDataStore } from '../../../../../../stores/editData.store';
+import { useThemeStore } from '../../../../../../stores/theme.store';
 import SectionTitle from './util/SectionTitle';
 
 const QuickServicesEdit = () => {
   const setMdaEditData = useEditDataStore((state) => state.setMdaEditData);
   const mdaEditData = useEditDataStore((state) => state.mdaEditData);
+  const { fullname } = useThemeStore((s) => s.mdaData);
   const [showLinkTypeDropdown, setShowLinkTypeDropdown] = useState(-1);
+  const [uploadingIndices, setUploadingIndices] = useState(new Set());
+  const [uploadProgress, setUploadProgress] = useState({});
   const serviceRefs = useRef([]);
   const containerRef = useRef(null);
+
+  const toggleSection = () => {
+    setMdaEditData({
+      ...mdaEditData,
+      enabledSections: {
+        ...mdaEditData.enabledSections,
+        quickServices: !mdaEditData.enabledSections?.quickServices,
+      },
+    });
+  };
 
   const handleChange = (e, index) => {
     const { name, value } = e.target;
@@ -33,8 +49,6 @@ const QuickServicesEdit = () => {
       servicesData: updatedQuickServices,
     });
   };
-
-  console.log(mdaEditData.servicesData);
 
   const getFormattedLink = (service) => {
     if (!service.link) return '';
@@ -84,24 +98,98 @@ const QuickServicesEdit = () => {
     }
   };
 
-  const handleImageUpload = (e, index) => {
+  const handleImageUpload = async (e, index) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const updatedQuickServices = [...mdaEditData.servicesData];
-      updatedQuickServices[index] = {
-        ...updatedQuickServices[index],
-        image: event.target.result,
-      };
+    if (file.size > 2 * 1024 * 1024) {
+      notify.error('File size must be less than 2MB');
+      return;
+    }
 
+    const blobUrl = URL.createObjectURL(file);
+    // Immediately update the image with blob for instant preview
+    const updatedQuickServices = [...mdaEditData.servicesData];
+    updatedQuickServices[index] = {
+      ...updatedQuickServices[index],
+      image: blobUrl,
+    };
+
+    // Add to uploading set and start progress
+    setUploadingIndices((prev) => new Set(prev).add(index));
+    setUploadProgress((prev) => ({ ...prev, [index]: 0 }));
+
+    // Simulate progress updates
+    const progressInterval = setInterval(() => {
+      setUploadProgress((prev) => {
+        const currentProgress = prev[index] || 0;
+        if (currentProgress < 90) {
+          return { ...prev, [index]: Math.min(currentProgress + Math.random() * 15, 90) };
+        }
+        return prev;
+      });
+    }, 200);
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = async (event) => {
       setMdaEditData({
         ...mdaEditData,
         servicesData: updatedQuickServices,
       });
+
+      // Upload in background without awaiting - concurrent uploads
+      uploadFile({
+        photo: {
+          temp: `${fullname.replace(' ', '-')}-quick-services-image-${index}`,
+          data: event.target.result,
+        },
+      })
+        .then((e) => {
+          if (e.status === 'ok') {
+            // Clear interval and set to 100%
+            clearInterval(progressInterval);
+            setUploadProgress((prev) => ({ ...prev, [index]: 100 }));
+
+            // Get current state to avoid race conditions
+            const currentData = useEditDataStore.getState().mdaEditData;
+            setMdaEditData({
+              ...currentData,
+              servicesData: currentData.servicesData.map((service, idx) =>
+                idx === index ? { ...service, image: e.url } : service
+              ),
+            });
+
+            // Clean up after a short delay
+            setTimeout(() => {
+              setUploadingIndices((prev) => {
+                const newSet = new Set(prev);
+                newSet.delete(index);
+                return newSet;
+              });
+              setUploadProgress((prev) => {
+                const newProgress = { ...prev };
+                delete newProgress[index];
+                return newProgress;
+              });
+            }, 500);
+          }
+        })
+        .catch((err) => {
+          clearInterval(progressInterval);
+          notify.error(err.message);
+          setUploadingIndices((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(index);
+            return newSet;
+          });
+          setUploadProgress((prev) => {
+            const newProgress = { ...prev };
+            delete newProgress[index];
+            return newProgress;
+          });
+        });
     };
-    reader.readAsDataURL(file);
   };
 
   const addService = () => {
@@ -147,211 +235,250 @@ const QuickServicesEdit = () => {
   return (
     <div className="fixed top-[145px] left-[280px] w-[350px] h-[calc(100vh-145px)] bg-white overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] z-90">
       <SectionTitle />
-      <div ref={containerRef} className="p-[30px] mt-[60px]">
-      <div className="flex flex-col gap-6">
-        <div className="flex justify-between items-center  border-b border-gray-200 pb-6">
+
+      {/* Enable/Disable Toggle */}
+      <div className="py-[20px] px-[30px] border-b border-gray-200 mt-[60px] bg-gray-100">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-700">Enable Section</span>
           <button
-            onClick={addService}
-            className="px-5 py-2.5 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
+            onClick={toggleSection}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+              mdaEditData.enabledSections?.quickServices ? 'bg-green-600' : 'bg-gray-300'
+            }`}
           >
-            Add Service
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                mdaEditData.enabledSections?.quickServices ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
           </button>
         </div>
+      </div>
 
-        <div className="space-y-6">
-          {mdaEditData.servicesData?.map((service, index) => {
-            // Create a ref for each service item if it doesn't exist
-            if (!serviceRefs.current[index]) {
-              serviceRefs.current[index] = null;
-            }
+      <div className="p-[30px]">
+        <div className="flex flex-col gap-6">
+          <div className="flex justify-between items-center pb-6 w-full">
+            <button
+              onClick={addService}
+              className="w-full px-5 py-3 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
+            >
+              Add Service
+            </button>
+          </div>
 
-            return (
-              <div
-                key={index}
-                ref={(ref) => (serviceRefs.current[index] = ref)}
-                className="flex gap-4 flex-col border-b border-gray-200 pb-6"
-              >
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-[15px]">Service {index + 1}</h3>
-                  <button
-                    onClick={() => removeService(index)}
-                    className="text-red-500 text-sm hover:text-red-700"
-                  >
-                    Remove
-                  </button>
-                </div>
+          <div className="space-y-6">
+            {mdaEditData.servicesData?.map((service, index) => {
+              // Create a ref for each service item if it doesn't exist
+              if (!serviceRefs.current[index]) {
+                serviceRefs.current[index] = null;
+              }
 
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                    <input
-                      type="text"
-                      name="title"
-                      value={service.title || ''}
-                      onChange={(e) => handleChange(e, index)}
-                      className="focus:border-green-600 border-[1px] border-transparent w-full bg-gray-100 py-3 px-4 rounded-[6px] text-[14px] outline-none"
-                      placeholder="Service title"
-                    />
+              return (
+                <div
+                  key={index}
+                  ref={(ref) => (serviceRefs.current[index] = ref)}
+                  className="flex gap-4 flex-col border-b border-gray-200 pb-6"
+                >
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-semibold text-[15px]">Service {index + 1}</h3>
+                    <button
+                      onClick={() => removeService(index)}
+                      className="text-red-500 text-sm hover:text-red-700"
+                    >
+                      Remove
+                    </button>
                   </div>
 
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <label className="block text-sm font-medium text-gray-700">Link</label>
-                      <div className="relative text-left flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setShowLinkTypeDropdown(showLinkTypeDropdown === index ? -1 : index)
-                          }
-                          className="inline-flex items-center text-xs text-gray-600 hover:text-gray-900"
-                        >
-                          {!service.linkType || service.linkType === 'page' ? (
-                            <div className="flex gap-1">
-                              {' '}
-                              <span className="text-gray-600">
-                                <Link />
-                              </span>{' '}
-                              <p className="font-semibold">Page URL</p>
-                            </div>
-                          ) : service.linkType === 'phone' ? (
-                            <div className="flex gap-1">
-                              {' '}
-                              <span className="text-gray-600">
-                                <Phone />
-                              </span>{' '}
-                              <p className="font-semibold">Phone Number</p>
-                            </div>
-                          ) : (
-                            <div className="flex gap-1">
-                              {' '}
-                              <span className="text-gray-600">
-                                <Mail />
-                              </span>{' '}
-                              <p className="font-semibold">Email Address</p>
-                            </div>
-                          )}
-                          <NavArrowDown className="ml-1 h-3 w-3" />
-                        </button>
-
-                        {showLinkTypeDropdown === index && (
-                          <div className="origin-top-right absolute right-0 mt-1 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-                            <div className="py-1">
-                              <button
-                                type="button"
-                                className={`block w-full text-left px-4 py-2 text-sm ${
-                                  service.linkType === 'page'
-                                    ? 'bg-gray-100 text-gray-900'
-                                    : 'text-gray-700'
-                                }`}
-                                onClick={() => {
-                                  handleChange(
-                                    { target: { name: 'linkType', value: 'page' } },
-                                    index
-                                  );
-                                  setShowLinkTypeDropdown(-1);
-                                }}
-                              >
-                                Page URL
-                              </button>
-                              <button
-                                type="button"
-                                className={`block w-full text-left px-4 py-2 text-sm ${
-                                  service.linkType === 'phone'
-                                    ? 'bg-gray-100 text-gray-900'
-                                    : 'text-gray-700'
-                                }`}
-                                onClick={() => {
-                                  handleChange(
-                                    { target: { name: 'linkType', value: 'phone' } },
-                                    index
-                                  );
-                                  setShowLinkTypeDropdown(-1);
-                                }}
-                              >
-                                Phone Number
-                              </button>
-                              <button
-                                type="button"
-                                className={`block w-full text-left px-4 py-2 text-sm ${
-                                  service.linkType === 'email'
-                                    ? 'bg-gray-100 text-gray-900'
-                                    : 'text-gray-700'
-                                }`}
-                                onClick={() => {
-                                  handleChange(
-                                    { target: { name: 'linkType', value: 'email' } },
-                                    index
-                                  );
-                                  setShowLinkTypeDropdown(-1);
-                                }}
-                              >
-                                Email Address
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center">
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                       <input
-                        type={getLinkInputType(service.linkType)}
-                        name="link"
-                        value={service.link || ''}
+                        type="text"
+                        name="title"
+                        value={service.title || ''}
                         onChange={(e) => handleChange(e, index)}
-                        className={`focus:border-green-600 border-[1px] border-transparent w-full bg-gray-100 py-3 px-4 rounded-[6px] text-[14px] outline-none ${
-                          service.link && !validateLink(service.link, service.linkType)
-                            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-                            : 'border-gray-300 focus:ring-green-500 focus:border-green-500'
-                        }`}
-                        placeholder={getLinkPlaceholder(service.linkType)}
+                        className="focus:border-green-600 border-[1px] border-transparent w-full bg-gray-100 py-3 px-4 rounded-[6px] text-[14px] outline-none"
+                        placeholder="Service title"
                       />
                     </div>
-                    {service.link && !validateLink(service.link, service.linkType) && (
-                      <p className="mt-1 text-xs text-red-600">
-                        {service.linkType === 'email'
-                          ? 'Please enter a valid email address'
-                          : 'Please enter a valid phone number'}
-                      </p>
-                    )}
-                    <input type="hidden" name="formattedLink" value={getFormattedLink(service)} />
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
-                    <div className="mt-1 flex items-center">
-                      <span className="inline-block h-12 w-12 overflow-hidden bg-gray-100 rounded-md">
-                        {service.image ? (
-                          <img
-                            src={service.image}
-                            alt="Service"
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <div className="h-full w-full bg-gray-200 flex items-center justify-center text-[12px]">
-                            <Attachment className="text-gray-500" />
-                          </div>
-                        )}
-                      </span>
-                      <label className="ml-3">
-                        <div className="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md shadow-xs text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50">
-                          Change
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <label className="block text-sm font-medium text-gray-700">Link</label>
+                        <div className="relative text-left flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setShowLinkTypeDropdown(showLinkTypeDropdown === index ? -1 : index)
+                            }
+                            className="inline-flex items-center text-xs text-gray-600 hover:text-gray-900"
+                          >
+                            {!service.linkType || service.linkType === 'page' ? (
+                              <div className="flex gap-1">
+                                {' '}
+                                <span className="text-gray-600">
+                                  <Link />
+                                </span>{' '}
+                                <p className="font-semibold">Page URL</p>
+                              </div>
+                            ) : service.linkType === 'phone' ? (
+                              <div className="flex gap-1">
+                                {' '}
+                                <span className="text-gray-600">
+                                  <Phone />
+                                </span>{' '}
+                                <p className="font-semibold">Phone Number</p>
+                              </div>
+                            ) : (
+                              <div className="flex gap-1">
+                                {' '}
+                                <span className="text-gray-600">
+                                  <Mail />
+                                </span>{' '}
+                                <p className="font-semibold">Email Address</p>
+                              </div>
+                            )}
+                            <NavArrowDown className="ml-1 h-3 w-3" />
+                          </button>
+
+                          {showLinkTypeDropdown === index && (
+                            <div className="origin-top-right absolute right-0 mt-1 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                              <div className="py-1">
+                                <button
+                                  type="button"
+                                  className={`block w-full text-left px-4 py-2 text-sm ${
+                                    service.linkType === 'page'
+                                      ? 'bg-gray-100 text-gray-900'
+                                      : 'text-gray-700'
+                                  }`}
+                                  onClick={() => {
+                                    handleChange(
+                                      { target: { name: 'linkType', value: 'page' } },
+                                      index
+                                    );
+                                    setShowLinkTypeDropdown(-1);
+                                  }}
+                                >
+                                  Page URL
+                                </button>
+                                <button
+                                  type="button"
+                                  className={`block w-full text-left px-4 py-2 text-sm ${
+                                    service.linkType === 'phone'
+                                      ? 'bg-gray-100 text-gray-900'
+                                      : 'text-gray-700'
+                                  }`}
+                                  onClick={() => {
+                                    handleChange(
+                                      { target: { name: 'linkType', value: 'phone' } },
+                                      index
+                                    );
+                                    setShowLinkTypeDropdown(-1);
+                                  }}
+                                >
+                                  Phone Number
+                                </button>
+                                <button
+                                  type="button"
+                                  className={`block w-full text-left px-4 py-2 text-sm ${
+                                    service.linkType === 'email'
+                                      ? 'bg-gray-100 text-gray-900'
+                                      : 'text-gray-700'
+                                  }`}
+                                  onClick={() => {
+                                    handleChange(
+                                      { target: { name: 'linkType', value: 'email' } },
+                                      index
+                                    );
+                                    setShowLinkTypeDropdown(-1);
+                                  }}
+                                >
+                                  Email Address
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
+                      </div>
+
+                      <div className="flex items-center">
                         <input
-                          type="file"
-                          className="sr-only"
-                          accept="image/*"
-                          onChange={(e) => handleImageUpload(e, index)}
+                          type={getLinkInputType(service.linkType)}
+                          name="link"
+                          value={service.link || ''}
+                          onChange={(e) => handleChange(e, index)}
+                          className={`focus:border-green-600 border-[1px] border-transparent w-full bg-gray-100 py-3 px-4 rounded-[6px] text-[14px] outline-none ${
+                            service.link && !validateLink(service.link, service.linkType)
+                              ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                              : 'border-gray-300 focus:ring-green-500 focus:border-green-500'
+                          }`}
+                          placeholder={getLinkPlaceholder(service.linkType)}
                         />
-                      </label>
+                      </div>
+                      {service.link && !validateLink(service.link, service.linkType) && (
+                        <p className="mt-1 text-xs text-red-600">
+                          {service.linkType === 'email'
+                            ? 'Please enter a valid email address'
+                            : 'Please enter a valid phone number'}
+                        </p>
+                      )}
+                      <input type="hidden" name="formattedLink" value={getFormattedLink(service)} />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                      <div className="mt-1 flex items-center">
+                        <span className="inline-block h-12 w-12 overflow-hidden bg-gray-100 rounded-md relative">
+                          {service.image ? (
+                            <img
+                              src={service.image}
+                              alt="Service"
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <div className="h-full w-full bg-gray-200 flex items-center justify-center text-[12px]">
+                              <Attachment className="text-gray-500" />
+                            </div>
+                          )}
+                          {uploadingIndices.has(index) && (
+                            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                              <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                          )}
+                        </span>
+                        <label className="ml-3">
+                          <div className="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md shadow-xs text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50">
+                            Change
+                          </div>
+                          <input
+                            type="file"
+                            className="sr-only"
+                            accept="image/*"
+                            onChange={(e) => handleImageUpload(e, index)}
+                          />
+                        </label>
+                      </div>
+                      {uploadingIndices.has(index) && (
+                        <div className="mt-2">
+                          <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                            <span>Uploading...</span>
+                            <span>{Math.round(uploadProgress[index] || 0)}%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-1.5">
+                            <div
+                              className="bg-green-600 h-1.5 rounded-full transition-all duration-300 ease-out"
+                              style={{ width: `${uploadProgress[index] || 0}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

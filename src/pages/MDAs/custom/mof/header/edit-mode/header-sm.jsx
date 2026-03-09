@@ -1,0 +1,65 @@
+import { ArrowUpRight, Menu, Xmark } from 'iconoir-react';
+import { useState } from 'react';
+import { useParams } from 'react-router';
+import { useThemeStore } from '../../../../stores/theme.store';
+import lasg__logo from '../../assets/lasg__logo.png';
+
+const HeaderSm = ({ customClass, fullname }) => {
+  const { page } = useParams();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const mdaData = useThemeStore((state) => state.mdaData);
+
+  return (
+    <div className={`w-full p-2 flex items-center justify-between ${customClass}`}>
+      <div
+        className={`flex justify-between items-center gap-4 relative z-50 h-[80px] w-full ${
+          isMenuOpen ? 'bg-green-700 border-b-[1px] border-[#eeeeee6b]' : ''
+        }`}
+      >
+        <div className="brandZone flex items-center gap-4">
+          <div className="logo overflow-hidden w-10 h-10 flex-shrink-0 sm:w-12 sm:h-12">
+            <img src={lasg__logo} alt={`Lagos State ${fullname}`} />
+          </div>
+          <p className="text-[11px] uppercase tracking-[2px]">{fullname}</p>
+        </div>
+
+        <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {!isMenuOpen ? <Menu /> : <Xmark />}
+        </button>
+      </div>
+
+      {isMenuOpen && (
+        <div className="flex flex-col gap-10 text-[13px] tracking-[4px] uppercase fixed top-[0px] bg-green-700 left-0 w-full z-10 h-[100vh] px-[10%] py-[120px] border-t-[1px] border-[#eee] overflow-y-auto">
+          <div
+            className={
+              page === '' || page === undefined ? '!text-[#fbbf24] font-bold' : '!text-white'
+            }
+          >
+            Home
+          </div>
+          <div className={page === 'about' ? '!text-[#fbbf24] font-bold' : '!text-white'}>
+            About
+          </div>
+          <div className={page === 'news' ? '!text-[#fbbf24] font-bold' : '!text-white'}>
+            Newsroom
+          </div>
+          {mdaData?.resources?.length > 0 && (
+            <div className={page === 'resources' ? '!text-[#fbbf24] font-bold' : '!text-white'}>
+              Resources
+            </div>
+          )}
+          <div className={page === 'contact' ? '!text-[#fbbf24] font-bold' : '!text-white'}>
+            Contact
+          </div>
+
+          <div className="!text-[#ffb700] font-bold flex gap-1.5 items-center">
+            Back to LASG
+            <ArrowUpRight />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default HeaderSm;

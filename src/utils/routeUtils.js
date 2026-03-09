@@ -27,7 +27,7 @@ export const checkRouteType = (pathname) => {
   ];
 
   // Check if the path is an admin route (/:mda/admin)
-  const isAdminRoute = pathSegments[1] === 'admin';
+  const isAdminRoute = pathSegments[1] === 'admin' || pathSegments.includes('admin');
 
   // Check if the path matches any public route exactly
   const isPublicRoute = publicRoutes.some((route) => {

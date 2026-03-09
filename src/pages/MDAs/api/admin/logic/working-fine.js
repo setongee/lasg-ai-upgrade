@@ -1,9 +1,11 @@
+// NOTE: this is the one without adding service with category
+
 import axios from 'axios';
-import { getSingleCategory } from '../../../../api/read/category.req';
-import { env } from '../../../../api/read/environment';
-import { updateSingleService } from '../../../../api/read/services.req';
-import { notify } from '../../../../utils/toast';
-import { addLoggingData } from '../logger/logger';
+import { getSingleCategory } from '../../../../../api/read/category.req';
+import { env } from '../../../../../api/read/environment';
+import { updateSingleService } from '../../../../../api/read/services.req';
+import { notify } from '../../../../../utils/toast';
+import { addLoggingData } from '../../logger/logger';
 
 const base_url = `${env}`;
 
@@ -18,7 +20,8 @@ export const formattedName = (str) => {
 
 const addToService = async (data, categoryName) => {
   try {
-    const response = await updateSingleService(data._id, {
+    const response = await axios.post(`${base_url}/services/add/single`, {
+      ...data,
       formattedName: data?.formattedName
         ? [...data?.formattedName, formattedName(categoryName)]
         : [formattedName(categoryName)],
@@ -26,7 +29,7 @@ const addToService = async (data, categoryName) => {
       keywordsGroup: [],
     });
 
-    if (response.status === 'ok') {
+    if (response.status === 200) {
       addLoggingData({
         initiator: `${auth?.firstname} ${auth?.lastname}`.trim(),
         mda: data.name || auth?.mda,
@@ -85,6 +88,35 @@ export const addSingleService = async (data, categoryName) => {
   } catch (error) {
     console.error('Error in addSingleService:', error);
     notify.error('Failed to process service addition');
+    return [];
+  }
+};
+
+// update existing service
+export const addExistingService = async (data, categoryName) => {
+  try {
+    const response = await updateSingleService(data._id, {
+      formattedName: data?.formattedName
+        ? [...data?.formattedName, formattedName(categoryName)]
+        : [formattedName(categoryName)],
+      categories: data?.categories ? [...data?.categories, categoryName] : [categoryName],
+      keywordsGroup: [],
+    });
+
+    if (response.status === 'ok') {
+      addLoggingData({
+        initiator: `${auth?.firstname} ${auth?.lastname}`.trim(),
+        mda: data.name || auth?.mda,
+        activity: `${auth?.firstname} ${auth?.lastname} added a new service - ${data.name}`,
+      });
+      return response.data;
+    }
+
+    notify.error(response.data?.message || 'Failed to add service');
+    return [];
+  } catch (error) {
+    console.error('Error adding service:', error);
+    notify.error(error.response?.data?.message || 'An error occurred while adding the service');
     return [];
   }
 };

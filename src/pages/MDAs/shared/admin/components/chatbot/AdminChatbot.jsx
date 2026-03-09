@@ -284,7 +284,7 @@ const AdminChatbot = ({
       <div className="admin-chatbot-window">
         <div className="chat-header">
           <h3>Content Generator</h3>
-          <button className="close-chat" onClick={() => setIsOpen(false)}>
+          <button className="admin-close-chat cursor-pointer" onClick={() => setIsOpen(false)}>
             <Xmark />
           </button>
         </div>

@@ -1,17 +1,37 @@
 import { NavArrowDown } from 'iconoir-react';
 import { useEffect, useState } from 'react';
 import { useEditModeStore } from '../../../../../../../stores/editMode.store';
+import { useThemeStore } from '../../../../../../../stores/theme.store';
 
 const SectionTitle = () => {
   const { selectedComponent, setSelectedComponent } = useEditModeStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const landingPageData = useThemeStore((state) => state.mdaData)?.landingPage?.enabledSections;
 
-  const sections = {
-    heroSection: 'Hero Section',
-    quickServices: 'Quick Services',
-    commissionerZone: 'Commissioner Zone',
-    youtubePlayer: 'Youtube Player',
-  };
+  // Only show sections that exist in landingPageData
+  const sections = landingPageData
+    ? {
+        heroSection: landingPageData.hasOwnProperty('heroSection') ? 'Hero Section' : null,
+        quickServices: landingPageData.hasOwnProperty('quickServices') ? 'Quick Services' : null,
+        commissionerZone: landingPageData.hasOwnProperty('commissionersZone')
+          ? 'Commissioner Zone'
+          : null,
+        youtubePlayer: landingPageData.hasOwnProperty('youtubePlayer') ? 'Youtube Player' : null,
+        services: landingPageData.hasOwnProperty('services') ? 'Services' : null,
+        resourceCategories: landingPageData.hasOwnProperty('resourceCategories')
+          ? 'Resource Categories'
+          : null,
+        quickDocuments: landingPageData.hasOwnProperty('quickDocuments') ? 'Quick Documents' : null,
+        statistics: landingPageData.hasOwnProperty('statistics') ? 'Statistics' : null,
+        supportLinks: landingPageData.hasOwnProperty('supportLinks') ? 'Support Links' : null,
+        coreInformation: landingPageData.hasOwnProperty('coreInformation')
+          ? 'Core Information'
+          : null,
+      }
+    : {};
+
+  // Filter out null values (sections that don't exist in landingPageData)
+  const activeSections = Object.entries(sections).filter(([key, value]) => value !== null);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -57,7 +77,7 @@ const SectionTitle = () => {
         {isDropdownOpen && (
           <div className="absolute left-0 mt-2 w-60 rounded-[6px] shadow-lg bg-white border border-gray-100">
             <div className="" role="menu" aria-orientation="vertical">
-              {Object.entries(sections).map(([key, value]) => (
+              {activeSections.map(([key, value]) => (
                 <button
                   key={key}
                   className={`block w-full text-left px-4 py-2.5 text-sm ${

@@ -14,22 +14,24 @@ const Page = () => {
   const setIsMobile = useThemeStore((state) => state.setIsMobile);
   const setMdaData = useThemeStore((state) => state.setMdaData);
   const setMda = useThemeStore((state) => state.setMda);
+  const setRefetchData = useThemeStore((state) => state.setRefetchData);
 
   let htmlContent = '';
 
   useEffect(() => {
-    document.querySelector('.footer').style.display = 'none';
-    document.querySelector('#header').style.display = 'none';
-
     const width = window.innerWidth;
     if (width < 800) setIsMobile(true);
-  }, []);
+  }, [mda, page]);
 
-  const { data, isError, isPending, isLoading } = useQuery({
+  const { data, isError, isPending, isLoading, refetch } = useQuery({
     queryKey: ['mda', mda],
     queryFn: () => getMda(mda),
     staleTime: 1000 * 60 * 60,
   });
+
+  useEffect(() => {
+    setRefetchData(refetch);
+  }, [refetch, setRefetchData]);
 
   useEffect(() => {
     if (data?.length > 0) {
@@ -46,6 +48,8 @@ const Page = () => {
   switch (page) {
     case 'admin':
       return <Admin />;
+    case 'draft':
+      return <ThemeSelector theme={data[0]?.theme} data={data[0]} />;
     default:
       return <ThemeSelector theme={data[0]?.theme} data={data[0]} />;
   }

@@ -1,9 +1,26 @@
 import { Attachment, Link, Text } from 'iconoir-react';
+import { useState } from 'react';
+import { notify } from '../../../../../../../../utils/toast';
+import { uploadFile } from '../../../../../../api/admin/content';
 import { useEditDataStore } from '../../../../../../stores/editData.store';
+import { useThemeStore } from '../../../../../../stores/theme.store';
 import SectionTitle from './util/SectionTitle';
 
 const HeroSectionEdit = () => {
   const { mdaEditData, setMdaEditData } = useEditDataStore();
+  const { fullname } = useThemeStore((state) => state.mdaData);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const toggleSection = () => {
+    setMdaEditData({
+      ...mdaEditData,
+      enabledSections: {
+        ...mdaEditData.enabledSections,
+        heroSection: !mdaEditData.enabledSections?.heroSection,
+      },
+    });
+  };
 
   const handleChange = (e) => {
     setMdaEditData({
@@ -12,20 +29,68 @@ const HeroSectionEdit = () => {
     });
   };
 
-  const handleUpload = (e) => {
+  const handleUpload = async (e, name) => {
     e.preventDefault();
     const choosePhoto = document.getElementById('main_photo');
     choosePhoto.click();
 
-    choosePhoto.addEventListener('change', (e) => {
+    choosePhoto.addEventListener('change', async (e) => {
       const file = e.target.files[0];
+      if (!file) return;
+
+      if (file.size > 2 * 1024 * 1024) {
+        notify.error('File size must be less than 2MB');
+        return;
+      }
+
+      const blobUrl = URL.createObjectURL(file);
+      // Immediately update the image with blob for instant preview
+      setMdaEditData({ ...mdaEditData, main_photo: blobUrl });
+
+      setIsUploading(true);
+      setUploadProgress(0);
+
+      // Simulate progress updates
+      const progressInterval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev < 90) {
+            return Math.min(prev + Math.random() * 15, 90);
+          }
+          return prev;
+        });
+      }, 200);
+
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = (e) => {
-        setMdaEditData({
-          ...mdaEditData,
-          main_photo: e.target.result,
-        });
+      reader.onload = async (e) => {
+        // Upload in background
+        uploadFile({
+          photo: {
+            temp: name,
+            data: e.target.result,
+          },
+        })
+          .then((response) => {
+            if (response.status === 'ok') {
+              // Clear interval and set to 100%
+              clearInterval(progressInterval);
+              setUploadProgress(100);
+
+              setMdaEditData({ ...mdaEditData, main_photo: response.url });
+
+              // Clean up after a short delay
+              setTimeout(() => {
+                setIsUploading(false);
+                setUploadProgress(0);
+              }, 500);
+            }
+          })
+          .catch((err) => {
+            clearInterval(progressInterval);
+            notify.error(err.message);
+            setIsUploading(false);
+            setUploadProgress(0);
+          });
       };
     });
   };
@@ -35,8 +100,27 @@ const HeroSectionEdit = () => {
       {/* section title */}
       <SectionTitle />
 
+      {/* Enable/Disable Toggle */}
+      <div className="py-[20px] px-[30px] border-b border-gray-200 mt-[30px] bg-gray-100 -mx-[30px]">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-700">Enable Section</span>
+          <button
+            onClick={toggleSection}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+              mdaEditData.enabledSections?.heroSection ? 'bg-green-600' : 'bg-gray-300'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                mdaEditData.enabledSections?.heroSection ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
       {/* form */}
-      <form action="" className="flex flex-col gap-6 mt-[60px]">
+      <form action="" className="flex flex-col gap-6 mt-[30px]">
         <div className="flex gap-4 flex-col border-b border-gray-200 pb-6">
           <label htmlFor="hero-text" className="font-semibold text-[14px] flex gap-[1px] flex-col">
             <div>
@@ -137,15 +221,34 @@ const HeroSectionEdit = () => {
               <Attachment /> Main Photo{' '}
               <button
                 className="text-[13px] font-medium bg-green-600 text-white px-4 py-2 rounded-[6px] ml-auto cursor-pointer"
-                onClick={handleUpload}
+                onClick={(e) => handleUpload(e, `${fullname.replace(' ', '-')}-landing-page-image`)}
               >
                 Upload
               </button>
               <input type="file" id="main_photo" onChange={handleUpload} hidden />
             </p>
           </label>
-          <div className="h-[290px] w-full bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+          {isUploading && (
+            <div className="mt-2">
+              <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                <span>Uploading...</span>
+                <span>{Math.round(uploadProgress)}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-1.5">
+                <div
+                  className="bg-green-600 h-1.5 rounded-full transition-all duration-300 ease-out"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+            </div>
+          )}
+          <div className="h-[290px] w-full bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center relative">
             <img src={mdaEditData.main_photo} alt="" className="h-full" />
+            {isUploading && (
+              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
           </div>
         </div>
       </form>

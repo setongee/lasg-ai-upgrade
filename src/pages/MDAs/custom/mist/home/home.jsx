@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { ArrowUpRight } from 'iconoir-react';
+import { ArrowUpRight, Check } from 'iconoir-react';
 import { useEffect, useRef, useState } from 'react';
-import { getSingleCategory } from '../../../../../api/read/category.req';
+import { useParams } from 'react-router';
 import { getAllServicesCategory } from '../../../../../api/read/services.req';
+import { notify } from '../../../../../utils/toast';
+import { getSingleDraft } from '../../../api/admin/drafts';
 import { formattedName } from '../../../api/admin/logic';
 import Button from '../../../shared/button/Button';
 import Divider from '../../../shared/divider/Divider';
@@ -16,13 +18,37 @@ import { useEditModeStore } from '../../../stores/editMode.store';
 import { useThemeStore } from '../../../stores/theme.store';
 import './home.css';
 
-// framer motion for smooth animations
-
 const Home = ({ isEdit }) => {
   const mdaEditData = useEditDataStore((state) => state.mdaEditData);
   const mdaData = useThemeStore((state) => state.mdaData);
-  console.log(mdaData);
+
   const [landingPage, setLandingPage] = useState(mdaData?.landingPage);
+  const isFetchingDraft = useRef(false);
+
+  const { mda, page, id } = useParams();
+
+  const getDraft = async () => {
+    if (isFetchingDraft.current) return;
+    isFetchingDraft.current = true;
+
+    await getSingleDraft(id)
+      .then((response) => setLandingPage(response?.data))
+      .catch(() => {
+        notify.error('Draft could not be retrieved or has been deleted!');
+        setTimeout(() => {
+          window.location.href = `/${mda}`;
+        }, 2000);
+      })
+      .finally(() => {
+        isFetchingDraft.current = false;
+      });
+  };
+
+  useEffect(() => {
+    if (page === 'draft') {
+      getDraft();
+    }
+  }, []);
 
   useEffect(() => {
     if (isEdit) {
@@ -43,12 +69,6 @@ const Home = ({ isEdit }) => {
     enabled: !!mdaData?.fullname,
   });
 
-  const { data: icon, isLoading: iconLoading } = useQuery({
-    queryKey: ['icon', mdaData?.fullname],
-    queryFn: () => getSingleCategory(formattedName(mdaData?.fullname)),
-    enabled: !!mdaData?.fullname,
-  });
-
   // if (isLoading || iconLoading) return <Loader />;
 
   const handleComponentClick = (component) => {
@@ -57,38 +77,43 @@ const Home = ({ isEdit }) => {
 
   return (
     <div
+      data-mda="mist"
       className={`landingPage-version mx-auto my-0 ${isEdit ? 'mt-0' : 'lg:mt-[180px] mt-[115px]'}`}
       ref={componentRef}
     >
       {/* Home */}
-      <Wrapper customClass={``}>
-        <div
-          className={`home-version relative flex justify-between ${
-            isEdit && viewMode === 'edit'
-              ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
-              : ''
-          } ${selectedComponent === 'heroSection' ? '!border-green-500 active_component' : ''}`}
-          onClick={isEdit && viewMode === 'edit' ? () => handleComponentClick('heroSection') : null}
-        >
-          <div className="text-content flex flex-col">
-            <div className="main-text">{landingPage?.hero_text}</div>
-            <p>{landingPage?.hero_subtitle}</p>
-            <Button
-              customClass="bg-[#108a00] uppercase tracking-[2px] text-white rounded-[5px] flex gap-2 text-[11px]"
-              onClick={() => window.open(landingPage?.action_button_link, '_blank')}
-            >
-              {landingPage?.action_button_text} <ArrowUpRight />
-            </Button>
+      {landingPage?.enabledSections?.heroSection && (
+        <Wrapper customClass={``}>
+          <div
+            className={`home-version relative flex justify-between ${
+              isEdit && viewMode === 'edit'
+                ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
+                : ''
+            } ${selectedComponent === 'heroSection' ? '!border-green-500 active_component' : ''}`}
+            onClick={
+              isEdit && viewMode === 'edit' ? () => handleComponentClick('heroSection') : null
+            }
+          >
+            <div className="text-content flex flex-col">
+              <div className="main-text">{landingPage?.hero_text}</div>
+              <p>{landingPage?.hero_subtitle}</p>
+              <Button
+                customClass="bg-[#108a00] uppercase tracking-[2px] text-white rounded-[5px] flex gap-2 text-[11px]"
+                onClick={() => window.open(landingPage?.action_button_link, '_blank')}
+              >
+                {landingPage?.action_button_text} <ArrowUpRight />
+              </Button>
+            </div>
+            <div className="landing-photo w-[550px] h-[600px] my-10">
+              <img
+                src={landingPage?.main_photo}
+                alt="landing page"
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
-          <div className="landing-photo w-[550px] h-[600px] my-10">
-            <img
-              src={landingPage?.main_photo}
-              alt="landing page"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      </Wrapper>
+        </Wrapper>
+      )}
 
       {/* Commissioner Zone */}
       {landingPage?.enabledSections?.commissionersZone && (
@@ -101,6 +126,7 @@ const Home = ({ isEdit }) => {
           onClick={
             isEdit && viewMode === 'edit' ? () => handleComponentClick('commissionerZone') : null
           }
+          id="commissioner"
         >
           <Wrapper>
             <div className="flex wrapped lg:gap-[100px] gap-[30px] items-center justify-center flex-wrap lg:flex-nowrap">
@@ -115,22 +141,97 @@ const Home = ({ isEdit }) => {
                 </div>
               </div>
               <div className="content flex flex-col w-full sm:w-[550px]">
-                <div className="flex flex-col lg:gap-8 gap-5">
-                  <div className="text-[24px] sm:text-[32px] md:text-[40px] font-semibold comms-title leading-[130%]">
+                <div className="uppercase tracking-[2px] text-[10px] sm:text-[11px] font-semibold text-[#444]">
+                  About us - <span className="text-[#00B44E] font-bold">Who we are</span>{' '}
+                </div>
+                <div className="flex flex-col lg:gap-8 gap-4">
+                  <div className="text-[24px] sm:text-[24px] md:text-[32px] lg:text-[40px] font-semibold comms-title leading-[130%]">
                     {landingPage?.commissionersZone?.welcomeTitle}
                   </div>
-                  <p className="leading-[180%] whitespace-pre-line">
+                  <p className="leading-[170%] whitespace-pre-line text-[14px] sm:text-[16px] md:text-[18px]">
                     {landingPage?.commissionersZone?.welcomeMessage}
                   </p>
                 </div>
 
-                <div className="font-semibold mt-5 block commissioner-name">
-                  <h1>{landingPage?.commissionersZone?.commissionerName}</h1>
-                  <span className="!font-normal block">
+                {/* buttons */}
+                <div className="buttonGrp flex flex-col sm:flex-row gap-3 sm:gap-4 md:mt-4">
+                  <button
+                    className="bg-gradient-to-r from-[#1C3F3A] to-[#00B44E] text-white justify-center px-4 sm:px-6 py-3.5 sm:py-3 rounded-[4px] flex items-center gap-2 hover:opacity-90 transition-opacity uppercase text-[10px] sm:text-[11px] tracking-[2px]"
+                    onClick={() => window.open('/about#introduction', '_blank')}
+                  >
+                    About Us
+                    <ArrowUpRight className="w-4 h-4" />
+                  </button>
+                  <button
+                    className="bg-white border border-[#d3d3d3] text-[#131313] px-4 sm:px-6 py-3.5 sm:py-3 rounded-[4px] hover:bg-gray-50 transition-colors uppercase text-[10px] sm:text-[11px] tracking-[2px]"
+                    onClick={() => window.open('/about#mission', '_blank')}
+                  >
+                    Vision & Mission
+                  </button>
+                </div>
+
+                <div className="font-semibold mt-2 md:mt-5 block commissioner-name flex flex-col gap-1 sm:gap-2">
+                  <h1 className="text-[15px]! md:text-[16px]!">
+                    {landingPage?.commissionersZone?.commissionerName}
+                  </h1>
+                  <span className="!font-normal block text-[14px]! md:text-[15px]! leading-[140%] w-[90%] sm:w-[360px]">
                     {landingPage?.commissionersZone?.commissionerTitle}
                   </span>
                 </div>
               </div>
+            </div>
+          </Wrapper>
+        </section>
+      )}
+
+      {/* Core Information Cards */}
+      {landingPage?.enabledSections?.coreInformation && (
+        <section
+          className={`bg-[#fff] lg:py-[30px] mb-[80px] py-[0px] coreInformationSection ${
+            isEdit && viewMode === 'edit'
+              ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
+              : ''
+          } ${selectedComponent === 'coreInformation' ? '!border-green-500 active_component' : ''}`}
+          onClick={
+            isEdit && viewMode === 'edit' ? () => handleComponentClick('coreInformation') : null
+          }
+        >
+          <Wrapper>
+            <div className="topic__hand text-[24px] sm:text-[28px] md:text-[35px] leading-[140%] font-semibold text-center mb-[50px] leading-[130%] w-full mx-auto sm:w-[70%] md:w-[600px]">
+              {landingPage?.coreInformation?.title ||
+                'You can type in your preferred title for the core information section'}
+            </div>
+            <div className="cards flex flex-col lg:flex-row gap-[30px] justify-center">
+              {landingPage?.coreInformation?.cards?.map((card, index) => (
+                <div
+                  key={index}
+                  className="card__blaze bg-[#F9F9FB] p-8 rounded-[4px] flex flex-col gap-5 w-full lg:w-1/3"
+                >
+                  <div className="text__container">
+                    <div className="card__title text-[20px] font-semibold mb-3 w-[240px] h-[110px] underline">
+                      {card.title}
+                    </div>
+                    <p className="text-[15px] leading-[170%] mb-5">{card.description}</p>
+                    <div className="checklist flex flex-col gap-3 my-12 ">
+                      {card.keyPoints?.map((point, pointIndex) => (
+                        <div
+                          key={pointIndex}
+                          className="itemInfo flex items-center gap-2 text-[14px]"
+                        >
+                          <Check className="w-4 h-4 text-[#00B44E]" /> {point}
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      className="bg-gradient-to-r from-[#1C3F3A] to-[#00B44E] text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-[4px] flex items-center justify-center gap-2 hover:opacity-90 transition-opacity uppercase text-[10px] sm:text-[11px] tracking-[2px] w-full"
+                      onClick={() => card.link && window.open(card.link, '_blank')}
+                    >
+                      Learn More
+                      <ArrowUpRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </Wrapper>
         </section>
@@ -155,8 +256,8 @@ const Home = ({ isEdit }) => {
 
       {/* Core MDA specific services */}
       {landingPage?.enabledSections?.services && landingPage?.servicesData?.length > 0 && (
-        <section className="bg-[#e6edef] md:py-10 py-5 pb-10">
-          <ServicesComponent data={services?.data} icon={icon} name={mdaData?.fullname} />
+        <section className="bg-[#e6edef] md:py-20 py-5 pb-10">
+          <ServicesComponent data={services?.data} name={mdaData?.fullname} />
         </section>
       )}
 

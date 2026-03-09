@@ -64,7 +64,15 @@ export default function Header() {
   }, [target]);
 
   useEffect(() => {
-    ReactGA.pageview(pathname);
+    // Only track pageview if ReactGA is initialized and cookies are accepted
+    try {
+      if (typeof ReactGA !== 'undefined' && ReactGA.ga()) {
+        ReactGA.pageview(pathname);
+      }
+    } catch (error) {
+      // Silently fail if ReactGA is not initialized
+      console.warn('ReactGA not initialized:', error.message);
+    }
   }, []);
 
   const setActiveState = (page) => {

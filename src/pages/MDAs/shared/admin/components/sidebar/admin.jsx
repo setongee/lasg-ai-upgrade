@@ -7,16 +7,15 @@ import {
   FlashSolid,
   GraduationCapSolid,
   HeartSolid,
-  MessageTextSolid,
   MultiBubbleSolid,
   PocketSolid,
   TextSquareSolid,
   WhiteFlagSolid,
 } from 'iconoir-react';
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-export default function Admin({ baseurl }) {
+export default function Admin({ baseurl, mdaType }) {
   let { id } = useParams();
 
   useEffect(() => {
@@ -24,9 +23,20 @@ export default function Admin({ baseurl }) {
   }, [id]);
 
   const getActive = async () => {
+    // Remove all current-active classes from all menu items
+    const allActiveElements = document.querySelectorAll('.current-active');
+    allActiveElements.forEach((element) => {
+      element.classList.remove('current-active');
+    });
+
+    // Add current-active class to the new active element
     const getElementToBeActive = document.querySelector(`.${id}-admin`);
-    getElementToBeActive.classList.add('current-active');
+    if (getElementToBeActive) {
+      getElementToBeActive.classList.add('current-active');
+    }
   };
+
+  let navigate = useNavigate();
 
   const menuItemsList = {
     overview: [
@@ -106,12 +116,6 @@ export default function Admin({ baseurl }) {
         id: 'services-admin',
       },
       {
-        name: 'Messages',
-        href: `${baseurl}/messages`,
-        icon: <MessageTextSolid />,
-        id: 'messages-admin',
-      },
-      {
         name: 'Subscribers',
         href: `${baseurl}/subscribers`,
         icon: <HeartSolid />,
@@ -120,19 +124,42 @@ export default function Admin({ baseurl }) {
     ],
   };
 
+  const menuItemsListServices = {
+    Services: [
+      {
+        name: 'Services',
+        href: `${baseurl}/services`,
+        icon: <AppNotificationSolid />,
+        id: 'services-admin',
+      },
+    ],
+  };
+
   return (
     <div className="menu__links">
-      {Object.entries(menuItemsList).map(([key, value]) => (
-        <section className="nav-section">
-          <div className="section-title-admin">{key}</div>
-          {Object.entries(value).map(([key, value]) => (
-            <a href={value.href} className={`link ${value.id}`}>
-              <div className="icon">{value.icon}</div>
-              <div className="text">{value.name}</div>
-            </a>
+      {mdaType === 'full'
+        ? Object.entries(menuItemsList).map(([key, value]) => (
+            <section className="nav-section">
+              <div className="section-title-admin">{key}</div>
+              {Object.entries(value).map(([key, value]) => (
+                <div onClick={() => navigate(value.href)} className={`link ${value.id}`}>
+                  <div className="icon">{value.icon}</div>
+                  <div className="text">{value.name}</div>
+                </div>
+              ))}
+            </section>
+          ))
+        : Object.entries(menuItemsListServices).map(([key, value]) => (
+            <section className="nav-section">
+              <div className="section-title-admin">{key}</div>
+              {Object.entries(value).map(([key, value]) => (
+                <div onClick={() => navigate(value.href)} className={`link ${value.id}`}>
+                  <div className="icon">{value.icon}</div>
+                  <div className="text">{value.name}</div>
+                </div>
+              ))}
+            </section>
           ))}
-        </section>
-      ))}
     </div>
   );
 }
