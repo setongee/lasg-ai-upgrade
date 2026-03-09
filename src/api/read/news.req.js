@@ -24,9 +24,9 @@ export const getAllNews = async (page, topic) => {
 };
 
 export const getAllNewsByMda = async (mda) => {
-  console.log(mda);
+  mda;
   const response = await axios.get(`${base_url}/get/all/${mda}`);
-  console.log(response);
+  response;
   if (response.status === 200) {
     return response.data;
   } else {

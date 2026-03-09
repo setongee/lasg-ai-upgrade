@@ -1,22 +1,15 @@
-import React,{useState, useEffect} from 'react'
+import { useEffect, useState } from 'react';
 
+export default function ImageComp({ src }) {
+  const [dataSrc, setDataSrc] = useState(src);
 
-export default function ImageComp({src}) {
+  useEffect(() => {
+    dataSrc;
+  }, [dataSrc]);
 
-    const [dataSrc, setDataSrc] = useState(src);
-
-    useEffect(() => {
-        console.log(dataSrc);
-    }, [dataSrc]);
-    
   return (
-
     <div className="newsImage">
-
-        <img src={dataSrc} alt="" />
-
+      <img src={dataSrc} alt="" />
     </div>
-
-  )
-
+  );
 }

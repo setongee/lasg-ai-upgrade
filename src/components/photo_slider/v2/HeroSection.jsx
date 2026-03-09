@@ -114,7 +114,7 @@ export default function HeroSection() {
   };
 
   useEffect(() => {
-    console.log(languagePreference);
+    languagePreference;
   }, [languagePreference, setLanguagePreference]);
 
   useEffect(() => {
@@ -128,7 +128,7 @@ export default function HeroSection() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showLanguageMenu]);
 
-  console.log(languagePreference);
+  languagePreference;
 
   return (
     <div className={`slider home ${darkmode ? 'dark' : 'light'}`}>

@@ -219,8 +219,7 @@ const generateImage = async (prompt, filename, autoCrop = false) => {
   const response = result.response;
 
   // Debug: log full response structure
-  console.log(
-    'Gemini image response candidates:',
+  ('Gemini image response candidates:',
     JSON.stringify(
       response.candidates?.map((c) => ({
         parts: c.content?.parts?.map((p) => ({
@@ -230,8 +229,7 @@ const generateImage = async (prompt, filename, autoCrop = false) => {
       })),
       null,
       2
-    )
-  );
+    ));
 
   for (const part of response.candidates[0].content.parts) {
     if (part.inlineData) {

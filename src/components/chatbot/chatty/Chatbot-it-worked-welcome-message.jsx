@@ -246,7 +246,7 @@ ${history}
     }
   }, []);
 
-  console.log(welcomeSuggestions);
+  welcomeSuggestions;
 
   // Simple time-based greeting and citizen suggestions
   useEffect(() => {
@@ -594,8 +594,8 @@ Format: question1||question2||question3||question4||question5||question6`;
         let mdaSpecificContext = '';
         let currentMdaName = '';
 
-        console.log('Current MDA data:', mdaData);
-        console.log('Current Mda from store:', currentMda);
+        ('Current MDA data:', mdaData);
+        ('Current Mda from store:', currentMda);
 
         if (mdaData && Object.keys(mdaData).length > 0) {
           currentMdaName = mdaData.fullname || mdaData.name || currentMda;
@@ -609,7 +609,7 @@ Format: question1||question2||question3||question4||question5||question6`;
                 ?.map((s) => s.name)
                 .filter(Boolean)
                 .slice(0, 5) || [];
-            console.log('Services fetched:', services);
+            ('Services fetched:', services);
           } catch (err) {
             console.error('Could not fetch services:', err);
           }
@@ -643,9 +643,9 @@ Departments: ${agencies.length > 0 ? agencies.join(', ') : 'multiple departments
 Resources: ${resources.length > 0 ? resources.join(', ') : 'various resources'}
 Contact: ${mdaData.contact?.email ? 'email available' : 'contact information available'}
 `;
-          console.log('MDA Context built:', mdaSpecificContext);
+          ('MDA Context built:', mdaSpecificContext);
         } else {
-          console.log('No MDA data available, using fallback');
+          ('No MDA data available, using fallback');
           return [];
         }
 
@@ -674,16 +674,16 @@ Service-Focused Examples:
 
 Make them unique and specific to this response and ${currentMdaName} services.`;
 
-        console.log('Prompt being sent:', prompt);
+        ('Prompt being sent:', prompt);
         const result = await model.generateContent(prompt);
         const responseText = result.response.text();
-        console.log('Raw API response:', responseText);
+        ('Raw API response:', responseText);
         const followups = responseText
           .split('||')
           .map((q) => q.trim())
           .filter(Boolean)
           .slice(0, 5);
-        console.log('Final follow-ups:', followups);
+        ('Final follow-ups:', followups);
         return followups;
       } catch (err) {
         console.error('Follow-up generation error:', err);

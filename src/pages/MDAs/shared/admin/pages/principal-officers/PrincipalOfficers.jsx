@@ -86,7 +86,7 @@ const People = ({ mda_data }) => {
             submitData();
           });
         } catch (error) {
-          console.log(error.message);
+          error.message;
           setIsLoading(false);
         }
       };
@@ -173,7 +173,7 @@ const People = ({ mda_data }) => {
             );
           });
         } catch (error) {
-          console.log(error.message);
+          error.message;
         }
       };
     }

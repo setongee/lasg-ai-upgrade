@@ -13,13 +13,13 @@ const ServicesEngine = ({ data, selectView, mda }) => {
 
   const handleEdit = (service) => {
     // Handle edit functionality
-    console.log('Edit service:', service);
+    ('Edit service:', service);
   };
 
   const handleDelete = (service) => {
     if (window.confirm(`Are you sure you want to delete "${service.name}"?`)) {
       // Handle delete functionality
-      console.log('Delete service:', service);
+      ('Delete service:', service);
     }
   };
 
@@ -166,7 +166,7 @@ const ServicesEngine = ({ data, selectView, mda }) => {
                 <div className="tr__item flex act--item mt-5 overflow-x-auto">
                   <button
                     className="action !bg-gray-800 !text-white"
-                    onClick={() => console.log('View service:', service)}
+                    onClick={() => ('View service:', service)}
                   >
                     <div className="flex items-center justify-center">
                       <ArrowUpRight fontSize={9} strokeWidth={1.8} />

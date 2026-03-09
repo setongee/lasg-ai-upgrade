@@ -141,7 +141,7 @@ export default function Header() {
   //         const b = parseInt(rgb[2]);
   //         const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
-  //         console.log(
+  //         (
   //           'Background color:',
   //           computedBg,
   //           'Luminance:',
@@ -152,12 +152,12 @@ export default function Header() {
   //         setIsTextDark(luminance > 0.5); // Light background = dark text
   //       } else {
   //         // Fallback to dark text (black) if color detection fails
-  //         console.log('Color detection failed, using default dark text (black)');
+  //         ('Color detection failed, using default dark text (black)');
   //         setIsTextDark(true);
   //       }
   //     } else {
   //       // Fallback to dark text (black) if no element found
-  //       console.log('No element found below header, using default dark text (black)');
+  //       ('No element found below header, using default dark text (black)');
   //       setIsTextDark(true);
   //     }
   //   };

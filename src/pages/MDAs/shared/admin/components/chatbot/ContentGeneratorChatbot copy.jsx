@@ -106,7 +106,7 @@ const ContentGeneratorChatbot = ({
       if (onContentGenerated) {
         onContentGenerated(content);
       } else {
-        console.log('Generated content:', content);
+        ('Generated content:', content);
       }
 
       // Reset form

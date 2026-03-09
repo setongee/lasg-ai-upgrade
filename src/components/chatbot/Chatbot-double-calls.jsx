@@ -2,7 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@supabase/supabase-js';
 import { Xmark } from 'iconoir-react';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useLocation } from 'react-router';
 import remarkGfm from 'remark-gfm';
@@ -106,7 +106,7 @@ const Chatbot = ({ pageContext }) => {
       if (!chatWindowRef.current) return;
       const { scrollTop, scrollHeight, clientHeight } = chatWindowRef.current;
       const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
-      // console.log(isAtBottom);
+      // (isAtBottom);
       setShowScrollButton(!isAtBottom);
       isUserScrolling.current = !isAtBottom;
     };

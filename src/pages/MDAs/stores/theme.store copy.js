@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 // Helper function to safely store large data
 const safeStorage = {
@@ -17,7 +17,8 @@ const safeStorage = {
       // Compress the data before storing
       const compressed = JSON.stringify(value);
       // Check if the data is too large (leaving some room for other data)
-      if (new Blob([compressed]).size > 2 * 1024 * 1024) { // 2MB limit
+      if (new Blob([compressed]).size > 2 * 1024 * 1024) {
+        // 2MB limit
         console.warn('Data too large for localStorage, storing only critical fields');
         // Store only essential data
         const essentialData = {
@@ -27,7 +28,7 @@ const safeStorage = {
             name: value.state.mdaData?.name,
             mda: value.state.mdaData?.mda,
             // Add other critical fields as needed
-          }
+          },
         };
         localStorage.setItem(name, JSON.stringify(essentialData));
       } else {
@@ -53,21 +54,23 @@ const useThemeStore = create(
       isMobile: false,
       setIsMobile: (value) => set(() => ({ isMobile: value })),
       mda: '',
-      setMda: (value) => set((state) => {
-        // Only update if the value has changed
-        if (state.mda !== value) {
-          return { mda: value };
-        }
-        return state;
-      }),
+      setMda: (value) =>
+        set((state) => {
+          // Only update if the value has changed
+          if (state.mda !== value) {
+            return { mda: value };
+          }
+          return state;
+        }),
       mdaData: {},
-      setMdaData: (value) => set((state) => {
-        // Only update if the value has changed
-        if (JSON.stringify(state.mdaData) !== JSON.stringify(value)) {
-          return { mdaData: value };
-        }
-        return state;
-      }),
+      setMdaData: (value) =>
+        set((state) => {
+          // Only update if the value has changed
+          if (JSON.stringify(state.mdaData) !== JSON.stringify(value)) {
+            return { mdaData: value };
+          }
+          return state;
+        }),
     }),
     {
       name: 'mda-theme-storage',
@@ -77,14 +80,14 @@ const useThemeStore = create(
         mda: state.mda,
       }),
       onRehydrateStorage: () => (state) => {
-        console.log('hydration starts');
+        ('hydration starts');
         return (state, error) => {
           if (error) {
             console.error('Error during hydration:', error);
             // Clear corrupted data
             localStorage.removeItem('mda-theme-storage');
           } else {
-            console.log('hydration finished');
+            ('hydration finished');
           }
         };
       },

@@ -63,10 +63,10 @@ export const addSubscriber = async (data) => {
 };
 
 export const getSubsciptionsByMda = async (mdaId) => {
-  console.log(mdaId);
+  mdaId;
   try {
     const response = await axios.get(`${base_url}/mda/${mdaId}`);
-    console.log(response);
+    response;
     return response.data;
   } catch (error) {
     return error.response?.data || 'Something went wrong!';

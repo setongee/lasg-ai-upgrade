@@ -19,7 +19,7 @@ const CoreInformationEdit = ({ saveDraft }) => {
     }
   };
 
-  console.log(mdaEditData);
+  mdaEditData;
 
   const toggleSection = () => {
     setMdaEditData({

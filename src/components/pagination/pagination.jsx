@@ -1,5 +1,5 @@
 import { NavArrowLeft, NavArrowRight } from 'iconoir-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './pagination.scss';
 
@@ -81,7 +81,7 @@ export default function Pagination({ size, page, topic }) {
 
   // const handleChangePage = e => {
 
-  //     console.log(e.target.value)
+  //     (e.target.value)
 
   // }
 

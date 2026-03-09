@@ -35,7 +35,7 @@ export default function YoutubeSocials({ id, viewMode }) {
     playerRef.current = event.target;
   };
 
-  console.log(viewMode);
+  viewMode;
 
   return (
     <div className="social-section flex flex-col items-center w-full gap-[60px] px-4 sm:px-6 md:px-8">

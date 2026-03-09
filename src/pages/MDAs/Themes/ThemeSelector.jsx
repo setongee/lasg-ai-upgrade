@@ -12,7 +12,7 @@ const ThemeSelector = ({ slug, theme, isEdit, data }) => {
   if (!data) return <NotFound />;
   if (data?.isOffline && page !== 'admin') return <Offline />;
 
-  console.log(data);
+  data;
 
   switch (theme) {
     case 'health':

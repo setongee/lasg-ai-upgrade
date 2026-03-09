@@ -2,7 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@supabase/supabase-js';
 import MDReactComponent from 'markdown-react-js';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { CONTEXT } from '../context';
 import './chatbot.css';
 
@@ -123,7 +123,7 @@ ${d.content || ''}
     setLoading(false);
   }
 
-  console.log(messages);
+  messages;
 
   return (
     <div className="chatParent glass-card">

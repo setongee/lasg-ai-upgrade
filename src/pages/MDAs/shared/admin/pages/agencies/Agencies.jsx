@@ -114,7 +114,7 @@ const Agency = ({ mda_data }) => {
           }, 3000);
         }, 1000);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => err);
   };
 
   return (

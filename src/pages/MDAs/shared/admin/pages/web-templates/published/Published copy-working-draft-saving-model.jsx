@@ -78,7 +78,7 @@ const Published = () => {
 
       setLastSavedAt(new Date());
       setOriginalData(data ? data : mdaEditData);
-      console.log('Draft auto-saved successfully');
+      ('Draft auto-saved successfully');
     } catch (error) {
       console.error('Auto-save failed:', error);
     } finally {

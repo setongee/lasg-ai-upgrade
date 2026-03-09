@@ -6,7 +6,7 @@ const addLoggingData = async (data) => {
   try {
     await axios.post(baseUrl, data);
   } catch (error) {
-    console.log(error);
+    error;
   }
 };
 
@@ -16,7 +16,7 @@ const getLoggingData = async (id) => {
     const response = await axios.get(baseUrl);
     return response.data;
   } catch (error) {
-    console.log(error);
+    error;
   }
 };
 

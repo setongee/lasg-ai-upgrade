@@ -21,7 +21,7 @@ function App() {
   const currentPage = location.pathname.replace('/', ''); // e.g. "health"
   const { isPublicRoute, isDynamicPath, isAdminRoute } = useRouteType();
 
-  console.log(isAdminRoute);
+  isAdminRoute;
 
   useEffect(() => {
     const cookieInfo = Cookies.get('lasgConsent');

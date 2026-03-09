@@ -18,7 +18,7 @@ export const templates = [
     createdAt: formatDate3(new Date().toISOString()),
     thumbnail:
       'https://firebasestorage.googleapis.com/v0/b/lasg-a9f5c.appspot.com/o/template-library%2Fbytetec.jpg?alt=media&token=a2025ca6-6d9e-4c18-9626-7b84ce34463c',
-    preview_link: 'theme1',
+    preview_link: 'mist',
     theme: 'mist',
   },
   {

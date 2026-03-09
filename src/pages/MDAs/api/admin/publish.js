@@ -10,7 +10,7 @@ const auth = JSON.parse(window.localStorage.getItem('MDA__TOKEN'));
 const page = window.location.pathname.split('/')[3];
 
 export const publishPage = async (data) => {
-  console.log(data);
+  data;
   if (!auth || !auth.token) {
     notify.error('You are not authorized to access this page');
     window.location.href = `/${data.mda}/admin/${page}`;
@@ -51,7 +51,7 @@ export const getPublishBucketsByDraftId = async (id) => {
 };
 
 export const updatePublishDraftRequest = async (id, data) => {
-  console.log(data);
+  data;
   const response = await axios.put(`${base_url}/update-data/${id}`, data);
 
   if (response.status === 200) {

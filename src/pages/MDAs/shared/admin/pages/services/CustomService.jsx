@@ -112,7 +112,7 @@ const CustomService = ({ selectView, mda, handleCheck }) => {
     });
   };
 
-  console.log(data.categories);
+  data.categories;
 
   const generateKeywords = async () => {
     if (!data.name || !data.short) {

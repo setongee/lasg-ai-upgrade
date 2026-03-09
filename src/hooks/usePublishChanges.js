@@ -30,7 +30,7 @@ export const usePublishChanges = () => {
             updatedData = updateObjectByPath(updatedData, path, response.url);
           }
         } catch (error) {
-          console.log(error);
+          error;
           // Continue with other uploads even if one fails
         }
       }

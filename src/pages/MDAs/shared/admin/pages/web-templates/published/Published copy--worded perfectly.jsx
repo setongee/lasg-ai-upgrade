@@ -72,7 +72,7 @@ const Published = () => {
       });
 
       setLastSavedAt(new Date());
-      console.log('Draft auto-saved successfully');
+      ('Draft auto-saved successfully');
     } catch (error) {
       console.error('Auto-save failed:', error);
     } finally {
@@ -112,7 +112,7 @@ const Published = () => {
       } else {
         // Load existing draft data
         const response = await getSingleDraft(activeDraftId);
-        console.log(response.data);
+        response.data;
         if (response.data) {
           setMdaEditData(response.data);
           setOriginalData(response.data);
@@ -143,7 +143,7 @@ const Published = () => {
     };
   }, [activeDraftId, mdaEditData, viewMode]);
 
-  console.log(mdaEditData);
+  mdaEditData;
 
   useEffect(() => {
     setDevice(deviceSize);

@@ -2,7 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@supabase/supabase-js';
 import MDReactComponent from 'markdown-react-js';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { CONTEXT } from '../context';
 import './chatbot.css';
 
@@ -124,7 +124,7 @@ const Chatbot = () => {
     setLoading(false);
   }
 
-  console.log(response);
+  response;
 
   return (
     <>

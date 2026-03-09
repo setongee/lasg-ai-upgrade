@@ -18,7 +18,7 @@ export default function ResourcesType2() {
       (resource) => resource?.category.toLowerCase().replace(/\s+/g, '-') === id
     );
 
-    console.log(`/${data?.slug}/resources/`);
+    `/${data?.slug}/resources/`;
 
     return (
       <div className="resources">

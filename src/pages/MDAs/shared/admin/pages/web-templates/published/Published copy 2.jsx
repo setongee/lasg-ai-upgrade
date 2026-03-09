@@ -111,7 +111,7 @@ const Published = () => {
     }
   }, [mda_data, draftId, draftList, setMdaEditData, mdaEditData]);
 
-  console.log(draftId, mdaEditData);
+  (draftId, mdaEditData);
 
   useEffect(() => {
     setDevice(deviceSize);

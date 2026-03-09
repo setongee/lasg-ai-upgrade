@@ -1,28 +1,25 @@
-import React, { useState } from "react";
-import { Editor } from 'primereact/editor';        
-import "primereact/resources/themes/lara-light-teal/theme.css";
+import { Editor } from 'primereact/editor';
+import 'primereact/resources/themes/lara-light-teal/theme.css';
+import { useState } from 'react';
 
-export default function LASGEditor({value, readOnly, submittableText}) {
+export default function LASGEditor({ value, readOnly, submittableText }) {
+  const [text, setText] = useState(value);
 
-    const [text, setText] = useState(value);
+  const renderedHtml = (e) => {
+    setText(e);
+    submittableText(e);
+  };
 
-    const renderedHtml = (e) => {
+  text;
 
-        setText(e);
-        submittableText(e);
-
-    } 
-
-    console.log(text)
-
-    return (
-
-        <div className="card">
-
-            <Editor value={text} onTextChange={(e) => renderedHtml(e.htmlValue)} style={{ height: '650px' }} readOnly = {true} />
-
-        </div>
-
-    )
+  return (
+    <div className="card">
+      <Editor
+        value={text}
+        onTextChange={(e) => renderedHtml(e.htmlValue)}
+        style={{ height: '650px' }}
+        readOnly={true}
+      />
+    </div>
+  );
 }
-        

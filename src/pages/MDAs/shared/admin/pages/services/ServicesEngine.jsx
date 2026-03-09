@@ -16,7 +16,7 @@ const ServicesEngine = ({ data, selectView, mdaData }) => {
   const [viewModal, setViewModal] = useState(false);
 
   const auth = JSON.parse(window.localStorage.getItem('MDA__TOKEN'));
-  console.log(serviceItem);
+  serviceItem;
 
   const filteredServices = data?.filter((service) => {
     if (!searchTerm) return true;

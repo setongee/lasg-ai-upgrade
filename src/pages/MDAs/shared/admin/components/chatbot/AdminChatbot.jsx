@@ -217,7 +217,7 @@ const AdminChatbot = ({
       if (onContentGenerated) {
         onContentGenerated(content);
       } else {
-        console.log('Generated content:', content);
+        ('Generated content:', content);
       }
 
       setInput('');

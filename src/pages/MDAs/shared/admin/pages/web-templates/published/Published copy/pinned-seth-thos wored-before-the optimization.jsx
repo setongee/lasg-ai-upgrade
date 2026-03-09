@@ -75,7 +75,6 @@ const Published = () => {
 
       setLastSavedAt(new Date());
       setOriginalData(mdaEditData);
-      console.log('Draft auto-saved successfully');
     } catch (error) {
       console.error('Auto-save failed:', error);
     } finally {
@@ -160,7 +159,7 @@ const Published = () => {
     };
   }, [activeDraftId, mdaEditData, viewMode, originalData, setOriginalData]);
 
-  console.log(mdaEditData);
+  mdaEditData;
 
   useEffect(() => {
     setDevice(deviceSize);

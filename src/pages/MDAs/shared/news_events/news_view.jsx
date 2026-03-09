@@ -67,7 +67,7 @@ export default function News_view({ topic }) {
       </div>
     );
 
-  console.log(sub_data);
+  sub_data;
 
   if (error) return 'An error has occurred: ' + error.message;
 
