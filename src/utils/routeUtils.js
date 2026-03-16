@@ -14,7 +14,6 @@ export const checkRouteType = (pathname) => {
       isPublicRoute: false,
       isAdminRoute: false,
       isDynamicPath: true,
-      publicRoutes,
     };
   }
 
