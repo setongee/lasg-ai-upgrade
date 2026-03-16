@@ -7,6 +7,19 @@ export const checkRouteType = (pathname) => {
   // Remove leading/trailing slashes and split into segments
   const pathSegments = pathname.replace(/^\/+|\/+$/g, '').split('/');
 
+  // Check if it's a subdomain (not allowed)
+  const hasSubdomain = window.location.hostname.split('.').length > 2;
+  if (hasSubdomain) {
+    return {
+      isPublicRoute: false,
+      isAdminRoute: false,
+      isDynamicPath: true,
+      publicRoutes,
+    };
+  }
+
+  console.log(pathname);
+
   // List of all public routes (excluding dynamic parameters)
   const publicRoutes = [
     '', // root path
@@ -24,6 +37,9 @@ export const checkRouteType = (pathname) => {
     'search',
     'connect',
     'privacy',
+    'news',
+    'events',
+    'government',
   ];
 
   // Check if the path is an admin route (/:mda/admin)
@@ -34,6 +50,10 @@ export const checkRouteType = (pathname) => {
     // For the root path
     if (route === '' && pathSegments.length === 0) return true;
 
+    // For exact route matches (like /news, /services, etc.) - handle additional segments
+    if (route === pathSegments[0]) return true;
+
+    // For nested routes (like /government/elected_officials/governor/view)
     const routeSegments = route.split('/');
     if (routeSegments.length !== pathSegments.length) return false;
 
@@ -48,6 +68,7 @@ export const checkRouteType = (pathname) => {
     isPublicRoute,
     isAdminRoute,
     isDynamicPath,
+    publicRoutes,
   };
 };
 

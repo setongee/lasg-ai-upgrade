@@ -317,7 +317,7 @@ const AdminChatbot = ({
                   type="button"
                   onClick={handleGenerate}
                   disabled={isLoading}
-                  className="send-button"
+                  className="admin-send-button"
                   title="Generate content"
                 >
                   <ArrowUp />

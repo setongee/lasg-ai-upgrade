@@ -1,5 +1,6 @@
 import { ArrowUpRight, CartPlus, Check, Eye } from 'iconoir-react';
 import { useEffect, useState } from 'react';
+import { frontend_url } from '../../../../../../../api/read/environment';
 import { updateAdminData } from '../../../../../api/admin/content';
 import { createRequestTemplate } from '../../../../../api/admin/template';
 import { useThemeStore } from '../../../../../stores/theme.store';
@@ -119,30 +120,43 @@ const Library = () => {
                 </div> */}
 
                 <div className="flex items-center gap-2 mt-1">
-                  <button
-                    className={`text-[13px] cursor-pointer pr-5 px-4 py-2 rounded h-[100%] flex items-center gap-2 border ${
-                      activeTheme === template.theme
-                        ? 'bg-green-600 text-white border-green-600'
-                        : 'bg-gray-800 text-white border-transparent'
-                    }`}
-                    onClick={() => updateTheme(template.theme, template.name)}
-                    disabled={loadingTemplate === template.theme}
-                  >
-                    {activeTheme === template.theme ? (
-                      <Check fontSize={12} />
-                    ) : (
-                      <CartPlus fontSize={12} />
-                    )}
-                    {loadingTemplate === template.theme
-                      ? 'Loading...'
-                      : activeTheme === template.theme
-                        ? 'Template in Use'
-                        : 'Use Template'}
-                  </button>
-                  {activeTheme !== template.theme && (
-                    <button className="text-gray-500 text-[13px] cursor-pointer pr-5 px-4 py-2 rounded h-[100%] flex items-center gap-2 border border-gray-300">
-                      <Eye /> Preview
-                    </button>
+                  {template.theme === 'coming' ? (
+                    <div className="text-gray-500 text-[13px] px-4 py-2 rounded border border-gray-300 bg-gray-50 font-medium">
+                      Coming Soon
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        className={`text-[13px] cursor-pointer pr-5 px-4 py-2 rounded h-[100%] flex items-center gap-2 border ${
+                          activeTheme === template.theme
+                            ? 'bg-green-600 text-white border-green-600'
+                            : 'bg-gray-800 text-white border-transparent'
+                        }`}
+                        onClick={() => updateTheme(template.theme, template.name)}
+                        disabled={loadingTemplate === template.theme}
+                      >
+                        {activeTheme === template.theme ? (
+                          <Check fontSize={12} />
+                        ) : (
+                          <CartPlus fontSize={12} />
+                        )}
+                        {loadingTemplate === template.theme
+                          ? 'Loading...'
+                          : activeTheme === template.theme
+                            ? 'Template in Use'
+                            : 'Use Template'}
+                      </button>
+                      {activeTheme !== template.theme && (
+                        <a
+                          href={`${frontend_url}/${template.preview_link}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-500! text-[13px] cursor-pointer pr-5 px-4 py-2 rounded h-[100%] flex items-center gap-2 border border-gray-300 hover:bg-gray-50 transition-colors"
+                        >
+                          <Eye /> Preview
+                        </a>
+                      )}
+                    </>
                   )}
                 </div>
               </div>

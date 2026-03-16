@@ -5,6 +5,7 @@ import {
   CoolingSquareSolid,
   DownloadSquareSolid,
   FlashSolid,
+  GoogleDocs,
   GraduationCapSolid,
   HeartSolid,
   MultiBubbleSolid,
@@ -116,6 +117,12 @@ export default function Admin({ baseurl, mdaType }) {
         id: 'services-admin',
       },
       {
+        name: 'Form Builder',
+        href: `${baseurl}/forms`,
+        icon: <GoogleDocs />,
+        id: 'forms-admin',
+      },
+      {
         name: 'Subscribers',
         href: `${baseurl}/subscribers`,
         icon: <HeartSolid />,
@@ -131,6 +138,12 @@ export default function Admin({ baseurl, mdaType }) {
         href: `${baseurl}/services`,
         icon: <AppNotificationSolid />,
         id: 'services-admin',
+      },
+      {
+        name: 'Form Builder',
+        href: `${baseurl}/forms`,
+        icon: <GoogleDocs />,
+        id: 'forms-admin',
       },
     ],
   };

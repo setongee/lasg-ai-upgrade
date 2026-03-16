@@ -11,20 +11,26 @@ export default function YoutubeSocials({ id, viewMode }) {
   const playerRef = useRef(null);
   const socials = useThemeStore((state) => state.mdaData)?.contact?.socials;
 
+  const defaultSocials = {
+    x: '#',
+    facebook: '#',
+    youtube: '#',
+    instagram: '#',
+  };
+
+  const activeSocials = socials || defaultSocials;
+
   const opts = {
     playerVars: { autoplay: 0 },
     width: '100%',
   };
 
-  // Cleanup effect for YouTube player
   useEffect(() => {
     return () => {
-      // Clean up YouTube player instance if it exists
       if (playerRef.current && typeof playerRef.current.destroy === 'function') {
         try {
           playerRef.current.destroy();
         } catch (error) {
-          // Silently fail if destroy is not available or already destroyed
           console.warn('YouTube player cleanup failed:', error.message);
         }
       }
@@ -63,9 +69,9 @@ export default function YoutubeSocials({ id, viewMode }) {
         </div>
 
         <div className="social-icons flex flex-wrap justify-center gap-[30px] sm:gap-[40px] md:gap-[50px]">
-          {socials.hasOwnProperty('x') && (
+          {activeSocials.x && (
             <a
-              href={socials.x}
+              href={activeSocials.x}
               target="_blank"
               rel="noreferrer"
               className="social-icon h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-110"
@@ -74,9 +80,9 @@ export default function YoutubeSocials({ id, viewMode }) {
             </a>
           )}
 
-          {socials.hasOwnProperty('facebook') && (
+          {activeSocials.facebook && (
             <a
-              href={socials.facebook}
+              href={activeSocials.facebook}
               target="_blank"
               rel="noreferrer"
               className="social-icon h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-110"
@@ -85,9 +91,9 @@ export default function YoutubeSocials({ id, viewMode }) {
             </a>
           )}
 
-          {socials.hasOwnProperty('youtube') && (
+          {activeSocials.youtube && (
             <a
-              href={socials.youtube}
+              href={activeSocials.youtube}
               target="_blank"
               rel="noreferrer"
               className="social-icon h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-110"
@@ -96,9 +102,9 @@ export default function YoutubeSocials({ id, viewMode }) {
             </a>
           )}
 
-          {socials.hasOwnProperty('instagram') && (
+          {activeSocials.instagram && (
             <a
-              href={socials.instagram}
+              href={activeSocials.instagram}
               target="_blank"
               rel="noreferrer"
               className="social-icon h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-110"

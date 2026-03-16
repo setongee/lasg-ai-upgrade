@@ -2,7 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { authenticateToken, loginUser, refreshToken } from '../../../api/auth/auth';
 import logo from '../../../custom/health/assets/lasg__logo.png';
+import { useThemeStore } from '../../../stores/theme.store';
 import Dashboard from '../dashboard/Dashboard';
+import Onboarding from '../onboarding/Onboarding';
 import './auth.css';
 
 export default function Auth() {
@@ -11,6 +13,7 @@ export default function Auth() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const mdaData = useThemeStore((state) => state.mdaData);
 
   const navigate = useNavigate();
   const { mda } = useParams();
@@ -207,6 +210,8 @@ export default function Auth() {
       </div>
     );
   }
+
+  if (mdaData && !mdaData?.isVerified) return <Onboarding />;
 
   return <Dashboard />;
 }

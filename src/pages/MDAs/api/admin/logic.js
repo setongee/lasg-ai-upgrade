@@ -13,6 +13,7 @@ const mda = window.location.pathname.split('/')[1];
 
 // helper for formatted name
 export const formattedName = (str) => {
+  console.log(str);
   return str.replaceAll(' ', '').replaceAll(',', '_').replaceAll('&', '_').toLowerCase();
 };
 
@@ -75,6 +76,7 @@ export const addSingleService = async (data, categoryName) => {
       keywords: [],
       short: `Explore and get up-to-date services for ${categoryName} through integrated digital portals.`,
       icon: {},
+      isOffline: true,
     });
 
     if (newCategory?.status === 'ok' && newCategory?.data?.length > 0) {

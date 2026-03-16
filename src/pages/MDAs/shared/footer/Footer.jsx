@@ -8,7 +8,8 @@ import {
   X,
   Youtube,
 } from 'iconoir-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 import Wrapper from '../Wrapper/Wrapper';
 import './Footer.css';
 
@@ -28,8 +29,10 @@ export default function Footer({ data }) {
     }
   }, []);
 
+  const { page } = useParams();
+
   return (
-    <div className="footer__mda">
+    <div className={`footer__mda ${page === 'forms' && 'bg-white!'}`}>
       <Wrapper>
         <div className="footerContent">
           <div className="topPart">

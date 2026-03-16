@@ -1,3 +1,4 @@
+import { ArrowLeft } from 'iconoir-react';
 import { useState } from 'react';
 import { useParams } from 'react-router';
 import { updateAdminData } from '../../../../api/admin/content';
@@ -5,19 +6,25 @@ import { useThemeStore } from '../../../../stores/theme.store';
 import ContentGeneratorChatbot from './ContentGeneratorChatbot';
 import { themeInitialData } from './theme-initial-data';
 
-const ContentGeneratorExample = () => {
+const ContentGeneratorExample = ({ prevStep, selectedTheme }) => {
   const [generatedContent, setGeneratedContent] = useState(null);
   const mdaData = useThemeStore((state) => state.mdaData);
   const { mda } = useParams();
 
-  const landingPage = themeInitialData[mdaData?.theme];
+  const landingPage = themeInitialData[selectedTheme];
 
   const update = async (content) => {
     await updateAdminData(
       mdaData?._id,
       { landingPage: content, isVerified: true },
-      'updated website content'
+      'updated the website content'
     ).then(() => (window.location.href = `/${mda}/admin/published`));
+    console.log(content);
+  };
+
+  const handleSkipGeneration = () => {
+    // Update with current landing page data without AI generation
+    update(landingPage);
   };
 
   const handleContentGenerated = (content) => {
@@ -63,11 +70,41 @@ const ContentGeneratorExample = () => {
 
   return (
     <div style={{ padding: '20px' }}>
+      <div className="flex items-center gap-2 mb-8 relative">
+        <div
+          onClick={prevStep}
+          className="cursor-pointer p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
+          <ArrowLeft />
+        </div>
+        <h1 className="text-[18px] font-semibold absolute left-1/2 -translate-x-1/2 mt-[2px]">
+          Generate Content
+        </h1>
+      </div>
+
       <ContentGeneratorChatbot
         onContentGenerated={handleContentGenerated}
         mdaFullName={mdaData?.fullname || ''}
         mdaType={mdaData?.theme || 'default'}
       />
+      <div style={{ marginTop: '40px', textAlign: 'center' }}>
+        <button
+          onClick={handleSkipGeneration}
+          className="hover:bg-gray-800!"
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#6b7280',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '14px',
+            marginRight: '10px',
+          }}
+        >
+          Skip AI Generation
+        </button>
+      </div>
     </div>
   );
 };

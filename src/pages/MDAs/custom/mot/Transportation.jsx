@@ -1,6 +1,11 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router';
+
 const Transportation = () => {
   const { page } = useParams();
+
+  useEffect(() => {}, []);
+
   return (
     <div>
       <iframe

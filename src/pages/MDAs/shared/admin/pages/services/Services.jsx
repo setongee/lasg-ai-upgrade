@@ -16,7 +16,11 @@ const Services = () => {
     setView(view);
   };
 
-  const { data: services, isLoading } = useQuery({
+  const {
+    data: services,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ['services', mdaData?.fullname, view],
     queryFn: () => getAllServicesCategory(formattedName(mdaData?.fullname)),
     enabled: !!mdaData?.fullname,
@@ -33,6 +37,8 @@ const Services = () => {
             selectView={selectView}
             isLoading={isLoading}
             mdaData={mdaData}
+            services={services}
+            refetch={refetch}
           />
         );
       case 'category':
@@ -45,7 +51,7 @@ const Services = () => {
           />
         );
       case 'new-service':
-        return <NewService selectView={selectView} services={services?.data} />;
+        return <NewService selectView={selectView} services={services?.data} refetch={refetch} />;
       default:
         return <Loader />;
     }

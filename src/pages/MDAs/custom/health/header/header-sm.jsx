@@ -2,12 +2,15 @@ import { ArrowUpRight, Menu, Xmark } from 'iconoir-react';
 import { useState } from 'react';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
+import { useThemeStore } from '../../../stores/theme.store';
 import lasg__logo from '../assets/lasg__logo.png';
 
 const HeaderSm = ({ customClass, fullname }) => {
   const { mda, page } = useParams();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const mdaData = useThemeStore((state) => state.mdaData);
+  const isMdaTypeService = mdaData?.type === 'service';
 
   return (
     <div className={`w-full p-2 flex items-center justify-between ${customClass}`}>
@@ -29,7 +32,9 @@ const HeaderSm = ({ customClass, fullname }) => {
       </div>
 
       {isMenuOpen && (
-        <div className="flex flex-col gap-10 text-[13px] tracking-[4px] uppercase fixed top-[0px] bg-[#fff] left-0 w-full z-10 h-[100vh] px-[10%] py-[120px] border-t-[1px] border-[#eee] overflow-y-auto">
+        <div
+          className={`${isMdaTypeService ? 'hidden!' : ''} flex flex-col gap-10 text-[13px] tracking-[4px] uppercase fixed top-[0px] bg-[#fff] left-0 w-full z-10 h-[100vh] px-[10%] py-[120px] border-t-[1px] border-[#eee] overflow-y-auto`}
+        >
           <div
             className={
               page === '' || page === undefined ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'

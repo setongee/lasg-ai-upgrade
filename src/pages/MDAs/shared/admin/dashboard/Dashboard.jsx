@@ -6,7 +6,7 @@ import './dashboard.css';
 
 // pages Section
 import { useThemeStore } from '../../../stores/theme.store';
-import Onboarding from '../onboarding/Onboarding';
+import FormsZone from '../../forms/Forms';
 import Agency from '../pages/agencies/Agencies';
 import Contact from '../pages/contact/Contact';
 import Overview from '../pages/overview/Overview';
@@ -23,26 +23,50 @@ import Published from '../pages/web-templates/published/Published';
 
 const Dashboard = () => {
   const mdaData = useThemeStore((state) => state.mdaData);
+  const isVerified = useThemeStore((state) => state.mdaData)?.isVerified;
   let { id, mda } = useParams();
   const navigate = useNavigate();
   const mdaType = useThemeStore((state) => state.mdaData)?.type;
 
   useEffect(() => {
     if (!id && mda) {
-      navigate(`/${mda}/admin/dashboard`);
+      return navigate(`/${mda}/admin/dashboard`);
     }
   }, [id, mda, mdaData]);
 
-  const getPage = () => {
-    if (mdaData && !mdaData?.isVerified) {
-      return navigate(`/${mda}/admin/onboarding`);
-    }
+  if (!isVerified) {
+    return navigate(`/${mda}/admin/onboarding`);
+  }
 
-    // Restrict routing for non-full MDA types - only allow services
-    if (mdaType !== 'full' && id !== 'services') {
+  const getPage = () => {
+    // Define allowed routes for different MDA types
+    const serviceTypeRoutes = ['services', 'forms'];
+    const fullTypeRoutes = [
+      'dashboard',
+      'vision',
+      'agencies',
+      'people',
+      'responsibility',
+      'resources',
+      'contact',
+      'published',
+      'drafts',
+      'library',
+      'services',
+      'subscribers',
+      'forms',
+    ];
+
+    // Get allowed routes based on MDA type
+    const allowedRoutes = mdaType === 'full' ? fullTypeRoutes : serviceTypeRoutes;
+
+    // Check if current route is allowed
+    if (!allowedRoutes.includes(id)) {
+      // Redirect to services if trying to access unauthorized route
       return (window.location.href = `/${mda}/admin/services`);
     }
 
+    // Render the appropriate page based on id
     if (id == 'dashboard') return <Overview />;
     if (id == 'vision') return <Vision mda_data={mdaData} />;
     if (id == 'agencies') return <Agency mda_data={mdaData} />;
@@ -66,10 +90,7 @@ const Dashboard = () => {
     // More
     if (id == 'services') return <Services />;
     if (id == 'subscribers') return <Subscribers />;
-
-    if (id === 'onboarding') {
-      return <Onboarding />;
-    }
+    if (id == 'forms') return <FormsZone />;
   };
 
   return (

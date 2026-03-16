@@ -25,7 +25,7 @@ export default function Sidebar() {
   const mdaType = useThemeStore((state) => state.mdaData)?.type;
 
   return (
-    <div className="sidebar ">
+    <div className="sidebar">
       <IconoirProvider
         iconProps={{
           strokeWidth: 2,

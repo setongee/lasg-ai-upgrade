@@ -8,6 +8,7 @@ const HeaderLg = ({ customClass, fullname }) => {
   const { mda, page } = useParams();
   const navigate = useNavigate();
   const mdaData = useThemeStore((state) => state.mdaData);
+  const isMdaTypeService = mdaData?.type === 'service';
 
   return (
     <div className={`w-full p-2 flex items-center justify-between ${customClass}`}>
@@ -18,7 +19,9 @@ const HeaderLg = ({ customClass, fullname }) => {
         <p className="text-[11px] uppercase tracking-[2px] w-[250px]">{fullname}</p>
       </div>
 
-      <div className="flex items-center gap-7 text-[11px] tracking-[2px] uppercase text-white">
+      <div
+        className={`${isMdaTypeService ? 'hidden!' : ''} flex items-center gap-7 text-[11px] tracking-[2px] uppercase`}
+      >
         <div
           className={
             page === '' || page === undefined ? '!text-[#fbbf24] font-bold' : '!text-white'

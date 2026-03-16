@@ -1,9 +1,10 @@
-import { Attachment, Link, Text } from 'iconoir-react';
+import { Attachment, Link, StarSolid, Text } from 'iconoir-react';
 import { useState } from 'react';
 import { notify } from '../../../../../../../../utils/toast';
 import { uploadFile } from '../../../../../../api/admin/content';
 import { useEditDataStore } from '../../../../../../stores/editData.store';
 import { useThemeStore } from '../../../../../../stores/theme.store';
+import AiPhoto from '../../../../components/AiPhoto';
 import SectionTitle from './util/SectionTitle';
 
 const HeroSectionEdit = () => {
@@ -11,6 +12,8 @@ const HeroSectionEdit = () => {
   const { fullname } = useThemeStore((state) => state.mdaData);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [useAiGeneration, setUseAiGeneration] = useState(false);
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
 
   const toggleSection = () => {
     setMdaEditData({
@@ -219,15 +222,62 @@ const HeroSectionEdit = () => {
           <label htmlFor="" className="font-semibold text-[14px] flex gap-[1px] flex-col">
             <p className="flex gap-2 items-center">
               <Attachment /> Main Photo{' '}
-              <button
-                className="text-[13px] font-medium bg-green-600 text-white px-4 py-2 rounded-[6px] ml-auto cursor-pointer"
-                onClick={(e) => handleUpload(e, `${fullname.replace(' ', '-')}-landing-page-image`)}
-              >
-                Upload
-              </button>
-              <input type="file" id="main_photo" onChange={handleUpload} hidden />
             </p>
           </label>
+
+          {/* Tab Switcher */}
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            <button
+              type="button"
+              className={`flex-1 py-2 px-4 rounded-md text-[13px] font-medium transition-all ${
+                !useAiGeneration
+                  ? 'bg-white text-green-700 shadow-sm font-semibold'
+                  : 'text-gray-600 hover:text-gray-800'
+              }`}
+              onClick={() => setUseAiGeneration(false)}
+            >
+              Upload
+            </button>
+            <button
+              type="button"
+              className={`flex-1 py-2 px-4 rounded-md text-[13px] font-medium transition-all flex items-center justify-center gap-1 ${
+                useAiGeneration
+                  ? 'bg-white text-green-700 shadow-sm font-semibold'
+                  : 'text-gray-600 hover:text-gray-800'
+              }`}
+              onClick={() => setUseAiGeneration(true)}
+            >
+              <StarSolid className="w-3 h-3" />
+              AI Generate
+            </button>
+          </div>
+
+          {/* AI Generation Interface */}
+          {useAiGeneration && (
+            <AiPhoto
+              onImageGenerated={(imageUrl) =>
+                setMdaEditData({ ...mdaEditData, main_photo: imageUrl })
+              }
+              mdaFullName={fullname}
+              onLoadingChange={setIsAiGenerating}
+            />
+          )}
+
+          {/* Local Upload Interface */}
+          {!useAiGeneration && (
+            <>
+              <input type="file" id="main_photo" onChange={handleUpload} hidden />
+              <button
+                type="button"
+                className="text-[13px] font-medium bg-green-600 text-white px-4 py-2 rounded-[6px] cursor-pointer w-full"
+                onClick={(e) => handleUpload(e, `${fullname.replace(' ', '-')}-landing-page-image`)}
+              >
+                Choose File to Upload
+              </button>
+            </>
+          )}
+
+          {/* Upload Progress */}
           {isUploading && (
             <div className="mt-2">
               <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
@@ -242,9 +292,11 @@ const HeroSectionEdit = () => {
               </div>
             </div>
           )}
+
+          {/* Image Preview */}
           <div className="h-[290px] w-full bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center relative">
-            <img src={mdaEditData.main_photo} alt="" className="h-full" />
-            {isUploading && (
+            <img src={mdaEditData.main_photo} alt="" className="h-full w-full object-cover" />
+            {(isUploading || isAiGenerating) && (
               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               </div>

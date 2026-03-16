@@ -4,4 +4,11 @@ const environment = {
 };
 const env = environment.live;
 
-export { env };
+const frontend_url_env = {
+  test: 'http://localhost:5173',
+  live: 'https://lagosstate.gov.ng',
+};
+
+const frontend_url = frontend_url_env.live;
+
+export { env, frontend_url };

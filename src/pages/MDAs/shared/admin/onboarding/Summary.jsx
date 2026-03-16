@@ -1,5 +1,6 @@
 import { ArrowUpRight } from 'iconoir-react';
 import { useEffect, useState } from 'react';
+import { frontend_url } from '../../../../../api/read/environment';
 
 const Summary = ({ nextStep, data }) => {
   const [userDetails, setUserDetails] = useState({ firstname: '', lastname: '', role: '' });
@@ -43,9 +44,9 @@ const Summary = ({ nextStep, data }) => {
             Slug (lasg page URL)
           </label>
           <div className="flex justify-between">
-            <p className="font-medium">http://localhost:5173/{data?.slug}</p>
+            <p className="font-medium">{`${frontend_url}/${data?.slug}`}</p>
             <a
-              href={`http://localhost:5173/${data?.slug}`}
+              href={`${frontend_url}/${data?.slug}`}
               target="_blank"
               rel="noopener noreferrer"
               className="!text-green-700 cursor-pointer text-[14px] font-medium flex items-center gap-1"

@@ -145,7 +145,7 @@
   width: 100%;
 }
 
-.send-button {
+.admin-send-button {
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -218,7 +218,7 @@
   animation-delay: -0.16s;
 }
 
-.send-button:disabled {
+.admin-send-button:disabled {
   background: #94a3b8;
   cursor: not-allowed;
 }

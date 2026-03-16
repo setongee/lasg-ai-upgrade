@@ -8,6 +8,7 @@ import Chatbot from './components/chatbot/Chatbot';
 import Footer from './components/footer/footer';
 import Header from './components/header/header';
 import Cookie from './cookie';
+import { useThemeStore } from './pages/MDAs/stores/theme.store';
 import RouterClass from './routes/router';
 import './styles/root.css';
 import './styles/toast.css';
@@ -19,9 +20,10 @@ function App() {
   const { pathname } = useLocation();
   const location = useLocation();
   const currentPage = location.pathname.replace('/', ''); // e.g. "health"
-  const { isPublicRoute, isDynamicPath, isAdminRoute } = useRouteType();
+  const { isPublicRoute, isDynamicPath, isAdminRoute, publicRoutes } = useRouteType();
+  const { mdaData } = useThemeStore();
 
-  isAdminRoute;
+  console.log(isAdminRoute, isPublicRoute);
 
   useEffect(() => {
     const cookieInfo = Cookies.get('lasgConsent');
@@ -49,11 +51,11 @@ function App() {
   return (
     <div className="App">
       {/* Application Header */}
-      {!isAdminRoute || isPublicRoute ? <Header /> : null}
+      {isPublicRoute ? <Header /> : null}
       {/* Application Router */}
       <RouterClass />
       {/* Application Footer */}
-      {!isAdminRoute || isPublicRoute ? <Footer /> : null}
+      {isPublicRoute ? <Footer /> : null}
       {/* Toast Notifications */}
       <Toaster
         position="top-right"

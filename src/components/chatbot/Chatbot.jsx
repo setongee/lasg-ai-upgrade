@@ -1,12 +1,15 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@supabase/supabase-js';
-import { ArrowUp, Language, NavArrowDown, Xmark } from 'iconoir-react';
+import { ArrowDown, ArrowUp, Language, NavArrowDown, Xmark } from 'iconoir-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useLocation } from 'react-router';
 import remarkGfm from 'remark-gfm';
-import { getAllServicesCategory } from '../../api/read/services.req';
+import { getAllMembers } from '../../api/read/executives.req';
+import { getAllMdas } from '../../api/read/mda.req';
+import { getAllServices, getAllServicesCategory } from '../../api/read/services.req';
 import { formattedName } from '../../pages/MDAs/api/admin/logic';
+import pdf from '../../pages/MDAs/shared/assets/sectionsIcons/pdf.png';
 import { useThemeStore } from '../../pages/MDAs/stores/theme.store';
 import { useApp } from '../../stores/app.store';
 import { useChatStore } from '../../stores/chat.store';
@@ -51,28 +54,47 @@ const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env
 const suggestionCache = new Map();
 const CACHE_DURATION = 10 * 60 * 1000; // 10 min
 
+// ---- Personnel keywords — used to skip stale PDF chunks for people questions ----
+const PERSONNEL_KEYWORDS = [
+  'commissioner',
+  'governor',
+  'chief of staff',
+  'deputy governor',
+  'ssg',
+  'secretary to the state',
+  'head of service',
+  'special adviser',
+  'special advisor',
+  'leadership',
+  'cabinet',
+  'executive council',
+  'who leads',
+  'who is the',
+  'who are the',
+  'ministers',
+  'political',
+];
+
 const Chatbot = ({ pageContext }) => {
-  // start of chat store
+  // ---- Chat store ----
   const checkIsChatOpen = useChatStore((state) => state.checkIsChatOpen);
   const setCheckIsChatOpen = useChatStore((state) => state.setCheckIsChatOpen);
   const ChatStoreMessage = useChatStore((state) => state.messages);
   const addMessage = useChatStore((state) => state.addMessage);
-  // end of chat store
 
-  // MDA data from theme store
+  // ---- MDA data from theme store ----
   const mdaData = useThemeStore((state) => state.mdaData);
   const currentMda = useThemeStore((state) => state.mda);
 
   const safePage = typeof pageContext === 'string' ? pageContext.toLowerCase() : '';
   const ministryInfo = MINISTRY_CONTEXT_MAP[safePage] || null;
+  const isGeneralPage = !pageContext || pageContext.trim() === 'general' || pageContext === '';
 
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: `Hello! I'm here to help you access services quickly and easily.
-
-What service would you like to access today?`,
+      content: `Hello! I'm here to help you access services quickly and easily.\n\nWhat service would you like to access today?`,
     },
   ]);
   const [mdaServices, setMdaServices] = useState([]);
@@ -92,7 +114,7 @@ What service would you like to access today?`,
   const setLanguagePreference = useChatStore((state) => state.setLanguagePreference);
   const languagePreference = useChatStore((state) => state.languagePreference);
 
-  // General Lagos State Information
+  // ---- General LASG live data ----
   const [executiveCouncil, setExecutiveCouncil] = useState([]);
   const [allServices, setAllServices] = useState([]);
   const [allMdas, setAllMdas] = useState([]);
@@ -105,17 +127,19 @@ What service would you like to access today?`,
     ha: { name: 'Hausa', code: 'ha' },
   };
 
-  // ---- Functions to fetch General Lagos State Information ----
+  // ── Fetch live general LASG data ─────────────────────────────────────────────
   const fetchExecutiveCouncil = useCallback(async () => {
     try {
       const members = await getAllMembers();
-      if (members && members.length > 0) {
-        // Format to only include name and position (excluding email and phone)
-        const formattedMembers = members.map((member) => ({
-          name: member.name || 'N/A',
-          position: member.position || member.title || member.role || 'N/A',
-        }));
-        setExecutiveCouncil(formattedMembers);
+      if (Array.isArray(members) && members.length > 0) {
+        // getAllMembers returns { fullname, position, photo, email, ... }
+        setExecutiveCouncil(
+          members.map((m) => ({
+            name: m.fullname || m.name || 'N/A',
+            position: m.position || 'N/A',
+            email: m.email || null,
+          }))
+        );
       }
     } catch (err) {
       console.error('Error fetching executive council:', err);
@@ -124,9 +148,11 @@ What service would you like to access today?`,
 
   const fetchAllServices = useCallback(async () => {
     try {
-      const services = await getAllServices();
-      if (services && services.data) {
-        setAllServices(services.data);
+      const res = await getAllServices();
+      const data = res?.data || res;
+      if (Array.isArray(data) && data.length > 0) {
+        // getAllServices returns { name, short, url, categories, ... }
+        setAllServices(data);
       }
     } catch (err) {
       console.error('Error fetching all services:', err);
@@ -135,30 +161,170 @@ What service would you like to access today?`,
 
   const fetchAllMdas = useCallback(async () => {
     try {
-      const mdas = await getAllMdas();
-      if (mdas && mdas.length > 0) {
-        setAllMdas(mdas);
+      const res = await getAllMdas();
+      const data = res?.data || res;
+      if (Array.isArray(data) && data.length > 0) {
+        // getAllMdas returns { name, type, subdomain, description, email, address, ... }
+        setAllMdas(data);
       }
     } catch (err) {
       console.error('Error fetching all MDAs:', err);
     }
   }, []);
 
-  // Fetch general information when on main page (not MDA specific)
   useEffect(() => {
-    const isGeneralPage = !pageContext || pageContext.trim() === 'general' || pageContext === '';
     if (isGeneralPage) {
       fetchExecutiveCouncil();
       fetchAllServices();
       fetchAllMdas();
     }
-  }, [pageContext, fetchExecutiveCouncil, fetchAllServices, fetchAllMdas]);
+  }, [isGeneralPage, fetchExecutiveCouncil, fetchAllServices, fetchAllMdas]);
 
   // ---- Single chat session per lifecycle ----
   const chatSessionRef = useRef(null);
   const location = useLocation();
 
-  // ---- Memoized ministry context ----
+  // ── Build general LASG context string from live data ─────────────────────────
+  const generalLagosContext = useMemo(() => {
+    if (!isGeneralPage) return '';
+
+    // Group members by role type for cleaner context
+    const governor = executiveCouncil.find(
+      (m) =>
+        m.position?.toLowerCase().includes('governor') &&
+        !m.position?.toLowerCase().includes('deputy') &&
+        !m.position?.toLowerCase().includes('lt.')
+    );
+    const deputyGovernor = executiveCouncil.find(
+      (m) =>
+        m.position?.toLowerCase().includes('deputy governor') ||
+        m.position?.toLowerCase().includes('lt. governor')
+    );
+    const chiefOfStaff = executiveCouncil.find(
+      (m) =>
+        m.position?.toLowerCase().includes('chief of staff') &&
+        !m.position?.toLowerCase().includes('deputy')
+    );
+    const deputyChiefOfStaff = executiveCouncil.find((m) =>
+      m.position?.toLowerCase().includes('deputy chief of staff')
+    );
+    const ssg = executiveCouncil.find(
+      (m) =>
+        m.position?.toLowerCase().includes('secretary to the state') ||
+        m.position?.toLowerCase().includes('ssg')
+    );
+    const headOfService = executiveCouncil.find((m) =>
+      m.position?.toLowerCase().includes('head of service')
+    );
+    const commissioners = executiveCouncil.filter((m) =>
+      m.position?.toLowerCase().includes('commissioner')
+    );
+    const specialAdvisers = executiveCouncil.filter((m) =>
+      m.position?.toLowerCase().includes('special advis')
+    );
+    const others = executiveCouncil.filter((m) => {
+      const pos = m.position?.toLowerCase() || '';
+      return (
+        !pos.includes('governor') &&
+        !pos.includes('chief of staff') &&
+        !pos.includes('secretary to the state') &&
+        !pos.includes('ssg') &&
+        !pos.includes('head of service') &&
+        !pos.includes('commissioner') &&
+        !pos.includes('special advis')
+      );
+    });
+
+    // Group MDAs by type
+    const ministries = allMdas.filter((m) => m.type === 'ministry');
+    const agencies = allMdas.filter((m) => m.type === 'agency');
+    const parastatals = allMdas.filter((m) => m.type === 'parastatal');
+    const otherMdas = allMdas.filter((m) => !['ministry', 'agency', 'parastatal'].includes(m.type));
+
+    return `
+🏛️ LAGOS STATE GOVERNMENT — CURRENT LIVE DATA (always prefer this over any document for people and leadership)
+══════════════════════════════════════════════════════════
+
+📌 EXECUTIVE LEADERSHIP:
+${governor ? `• Governor: ${governor.name}` : ''}
+${deputyGovernor ? `• Deputy Governor: ${deputyGovernor.name}` : ''}
+${chiefOfStaff ? `• Chief of Staff: ${chiefOfStaff.name}` : ''}
+${deputyChiefOfStaff ? `• Deputy Chief of Staff: ${deputyChiefOfStaff.name}` : ''}
+${ssg ? `• Secretary to the State Government (SSG): ${ssg.name}` : ''}
+${headOfService ? `• Head of Service: ${headOfService.name}` : ''}
+
+📌 COMMISSIONERS (${commissioners.length} total):
+${
+  commissioners.length > 0
+    ? commissioners.map((m) => `• ${m.name} — ${m.position}`).join('\n')
+    : '- Loading...'
+}
+
+📌 SPECIAL ADVISERS:
+${
+  specialAdvisers.length > 0
+    ? specialAdvisers.map((m) => `• ${m.name} — ${m.position}`).join('\n')
+    : '- None listed'
+}
+${
+  others.length > 0
+    ? `\n📌 OTHER COUNCIL MEMBERS:\n${others.map((m) => `• ${m.name} — ${m.position}`).join('\n')}`
+    : ''
+}
+
+══════════════════════════════════════════════════════════
+🏢 GOVERNMENT MINISTRIES (${ministries.length}):
+${
+  ministries.length > 0
+    ? ministries
+        .map(
+          (m) =>
+            `• ${m.name}${m.subdomain ? ` [${m.subdomain}]` : ''}${m.description ? ` — ${m.description}` : ''}${m.email ? ` | ${m.email}` : ''}`
+        )
+        .join('\n')
+    : '- Loading...'
+}
+
+🏢 AGENCIES (${agencies.length}):
+${
+  agencies.length > 0
+    ? agencies
+        .map(
+          (m) =>
+            `• ${m.name}${m.subdomain ? ` [${m.subdomain}]` : ''}${m.description ? ` — ${m.description}` : ''}${m.email ? ` | ${m.email}` : ''}${m.address ? ` | ${m.address}` : ''}`
+        )
+        .join('\n')
+    : '- Loading...'
+}
+${
+  parastatals.length > 0
+    ? `\n🏢 PARASTATALS (${parastatals.length}):\n${parastatals.map((m) => `• ${m.name}${m.subdomain ? ` [${m.subdomain}]` : ''}${m.description ? ` — ${m.description}` : ''}`).join('\n')}`
+    : ''
+}
+${
+  otherMdas.length > 0
+    ? `\n🏢 OTHER MDAs:\n${otherMdas.map((m) => `• ${m.name}${m.description ? ` — ${m.description}` : ''}`).join('\n')}`
+    : ''
+}
+
+══════════════════════════════════════════════════════════
+⚙️ AVAILABLE SERVICES (${allServices.length} total):
+${
+  allServices.length > 0
+    ? allServices
+        .map(
+          (s) =>
+            `• ${s.name}${s.short ? ` — ${s.short}` : ''}${s.categories?.length > 0 ? ` [${s.categories.join(', ')}]` : ''}${s.url ? ` → ${s.url}` : ''}`
+        )
+        .join('\n')
+    : '- Loading...'
+}
+
+Official Portal: https://lagosstate.gov.ng
+`;
+  }, [isGeneralPage, executiveCouncil, allMdas, allServices]);
+
+  // ── Memoized system prompt ────────────────────────────────────────────────────
   const ministryContext = useMemo(() => {
     const history = messages
       .slice(-6)
@@ -167,15 +333,15 @@ What service would you like to access today?`,
 
     const languageInstruction =
       languagePreference !== 'en'
-        ? `\n\n🌍 CRITICAL LANGUAGE REQUIREMENT:\nYou MUST respond EXCLUSIVELY in ${LANGUAGES[languagePreference].name} language, regardless of what language the user writes in. Even if the user writes in English, you must respond in ${LANGUAGES[languagePreference].name}. This is a strict requirement.`
+        ? `\n\n🌍 CRITICAL LANGUAGE REQUIREMENT:\nYou MUST respond EXCLUSIVELY in ${LANGUAGES[languagePreference].name} language, regardless of what language the user writes in. This is a strict requirement.`
         : '';
 
-    // Build rich MDA context if available
-    let mdaContext = '';
-    let generalLagosContext = '';
+    let contextBlock = '';
 
     if (mdaData && Object.keys(mdaData).length > 0) {
-      mdaContext = `
+      // ── MDA-specific page ──
+      contextBlock = `
+**CURRENT MDA CONTEXT:**
 🏛️ **DETAILED MDA INFORMATION:**
 **Full Name:** ${mdaData.fullname || mdaData.name || currentMda}
 **Slug:** ${mdaData.slug || currentMda}
@@ -191,7 +357,7 @@ What service would you like to access today?`,
         mdaData.contact?.socials
           ? Object.entries(mdaData.contact.socials)
               .map(([platform, url]) => `${platform}: ${url}`)
-              .join('\n')
+              .join(', ')
           : 'No social media available'
       }
 
@@ -199,7 +365,7 @@ What service would you like to access today?`,
 ${
   mdaData.people
     ? mdaData.people
-        .map((person) => `- ${person.name || 'N/A'} (${person.role || 'Position not specified'})`)
+        .map((p) => `- ${p.name || 'N/A'} (${p.role || 'Position not specified'})`)
         .join('\n')
     : '- No people information available'
 }
@@ -208,7 +374,7 @@ ${
 ${
   mdaData.agencies
     ? mdaData.agencies
-        .map((agency) => `- ${agency.name || 'Agency name'} (${agency.category || 'department'})`)
+        .map((a) => `- ${a.name || 'Agency name'} (${a.category || 'department'})`)
         .join('\n')
     : '- No agencies information available'
 }
@@ -216,12 +382,7 @@ ${
 **Resources:**
 ${
   mdaData.resources
-    ? mdaData.resources
-        .map(
-          (resource) =>
-            `- ${resource.name || 'Resource title'}: Download available at ${resource.url || 'No URL available'}`
-        )
-        .join('\n')
+    ? mdaData.resources.map((r) => `- ${r.name || 'Resource'}: ${r.url || 'No URL'}`).join('\n')
     : '- No resources information available'
 }
 
@@ -232,81 +393,32 @@ ${
         .map(([key, value]) => `- ${key}: ${value}`)
         .join('\n')
     : '- No statistics available'
-}
-`;
+}`;
+    } else if (isGeneralPage) {
+      // ── General LASG page — inject full live data ──
+      contextBlock = generalLagosContext;
     } else {
-      // Build general Lagos State context when not on MDA page
-      const isGeneralPage = !pageContext || pageContext.trim() === 'general' || pageContext === '';
-
-      if (isGeneralPage) {
-        generalLagosContext = `
-🏛️ **LAGOS STATE GOVERNMENT INFORMATION:**
-
-**Executive Council:**
-${
-  executiveCouncil.length > 0
-    ? executiveCouncil
-        .slice(0, 10) // Limit to top 10 for context
-        .map((member) => `- ${member.name} (${member.position})`)
-        .join('\n')
-    : '- Executive council information being loaded...'
-}
-
-**Available Services:**
-${
-  allServices.length > 0
-    ? allServices
-        .slice(0, 15) // Limit to top 15 services for context
-        .map((service) => `- ${service.name || service.title}`)
-        .join('\n')
-    : '- Services information being loaded...'
-}
-
-**Government Agencies (MDAs):**
-${
-  allMdas.length > 0
-    ? allMdas
-        .slice(0, 12) // Limit to top 12 MDAs for context
-        .map((mda) => `- ${mda.name}`)
-        .join('\n')
-    : '- MDAs information being loaded...'
-}
-
-**Key Service Categories:**
-- Healthcare Services (ILERA EKO, LASHMA)
-- Business & Economy (LIRS, LSETF, LASRIC)
-- Transportation (LAMATA, LASTMA)
-- Education & Youth Development
-- Environment & Waste Management (LAWMA, LASEPA)
-- Security & Emergency Services
-- Housing & Urban Development
-- Tourism & Culture
-
-**Official Government Portal:** https://lagosstate.gov.ng
-`;
-      }
+      contextBlock = `
+**MINISTRY CONTEXT:**
+**${ministryInfo ? ministryInfo.name : 'Lagos State Ministry or Department'}**
+${ministryInfo ? `Official Website: ${ministryInfo.url}` : ''}`;
     }
 
     return `
 ${CONTEXT}
 
-You are assisting a user browsing the "${safePage}" section of the Lagos State Government website.
+You are assisting a user on the "${safePage || 'Lagos State Government'}" section of the Lagos State Government website.
 
-${
-  mdaContext
-    ? `**CURRENT MDA CONTEXT:**${mdaContext}`
-    : generalLagosContext
-      ? `**GENERAL LAGOS STATE CONTEXT:**${generalLagosContext}`
-      : `If this section corresponds to a ministry, interpret it as:
-**${ministryInfo ? ministryInfo.name : 'the appropriate Lagos State Ministry or Department'}**
-${ministryInfo ? `Official Website: ${ministryInfo.url}` : ''}`
-}
+${contextBlock}
 
-🧭 Behavioural Rules:
+🧭 BEHAVIOURAL RULES:
+- CRITICAL: For questions about current leadership, commissioners, governor, deputy governor, chief of staff, SSG, head of service, or any government personnel — ALWAYS use the live data provided above in this system context. NEVER source personnel names or roles from uploaded documents, as those are historical and may be outdated.
+- Uploaded knowledge base documents are ONLY authoritative for policies, budgets, financial reports, procedures, and non-personnel content.
+- When citing a document, note its title and year if available, and remind the user that personnel/leadership information in that document may no longer be current.
 - Answer questions with verified Lagos-specific details.
+- When answering from knowledge base documents, mention the document name.
 - Include official links where applicable.
 - Redirect politely if unrelated to Lagos State.
-- Use the detailed information above to provide specific, accurate responses about services, contacts, and resources.
 ${languageInstruction}
 
 📚 Recent Conversation:
@@ -319,10 +431,8 @@ ${history}
     languagePreference,
     mdaData,
     currentMda,
-    executiveCouncil,
-    allServices,
-    allMdas,
-    pageContext,
+    isGeneralPage,
+    generalLagosContext,
   ]);
 
   useEffect(() => {
@@ -330,7 +440,7 @@ ${history}
       chatSessionRef.current = null;
       initializeChatSession();
     }
-  }, [languagePreference, setLanguagePreference]);
+  }, [languagePreference]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -338,7 +448,6 @@ ${history}
         setShowLanguageMenu(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showLanguageMenu]);
@@ -367,305 +476,184 @@ ${history}
     }
   }, []);
 
-  welcomeSuggestions;
-
-  // Simple time-based greeting and citizen suggestions
+  // ── MDA welcome content ───────────────────────────────────────────────────────
   useEffect(() => {
     const generateWelcomeContent = async () => {
-      if (mdaData?.fullname) {
-        try {
-          // Get time-based greeting
-          const hour = new Date().getHours();
-          let greeting = 'Hello';
-          if (hour < 12) greeting = 'Good morning';
-          else if (hour < 17) greeting = 'Good afternoon';
-          else greeting = 'Good evening';
+      if (!mdaData?.fullname) return;
+      try {
+        const hour = new Date().getHours();
+        const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
-          // Get services for suggestions
-          const servicesData = await getAllServicesCategory(formattedName(mdaData.fullname));
-          const services = servicesData?.data || [];
-          setMdaServices(services);
+        const servicesData = await getAllServicesCategory(formattedName(mdaData.fullname));
+        const services = servicesData?.data || [];
+        setMdaServices(services);
 
-          // Generate 10 intelligent citizen suggestions based on MDA's core actions
-          const suggestions = [];
+        const suggestions = services
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 5)
+          .map((s) => `How to access ${s.name}?`);
 
-          // Add 4-5 services if available
-          if (services.length > 0) {
-            const shuffledServices = [...services].sort(() => Math.random() - 0.5);
-            shuffledServices.slice(0, 5).forEach((service) => {
-              suggestions.push(`How to access ${service.name}?`);
-            });
-          }
+        const intelligentQuestions = [];
+        const ministryName = mdaData.fullname?.toLowerCase() || '';
 
-          // Generate intelligent questions based on MDA's core purpose and data
-          const intelligentQuestions = [];
-
-          // Leadership and governance questions
-          if (mdaData.people?.leadership) {
-            intelligentQuestions.push(
-              `Who is the current ${mdaData.people.leadership[0]?.title || 'head'} of ${mdaData.fullname}?`
-            );
-            intelligentQuestions.push(
-              `How can I schedule a meeting with ${mdaData.people.leadership[0]?.title || 'leadership'}?`
-            );
-          }
-          if (mdaData.people?.departments) {
-            intelligentQuestions.push(
-              `Which department handles ${mdaData.people.departments[0]?.responsibilities?.[0] || 'citizen services'}?`
-            );
-          }
-
-          // Service and program questions based on MDA type
-          const ministryName = mdaData.fullname?.toLowerCase() || '';
-          if (ministryName.includes('health')) {
-            intelligentQuestions.push(
-              `What health programs are currently available for citizens?`,
-              `How do I get medical assistance or health insurance?`,
-              `Where can I find vaccination centers near me?`,
-              `What are the requirements for health facility registration?`
-            );
-          } else if (ministryName.includes('education')) {
-            intelligentQuestions.push(
-              `How do I apply for scholarships or educational grants?`,
-              `What schools are under your jurisdiction?`,
-              `How can I access educational resources for my children?`,
-              `What teacher certification programs do you offer?`
-            );
-          } else if (ministryName.includes('transport')) {
-            intelligentQuestions.push(
-              `How do I apply for driver's licenses or vehicle permits?`,
-              `What public transportation options are available?`,
-              `How can I report road safety issues?`,
-              `Where can I find information about road projects?`
-            );
-          } else if (
-            ministryName.includes('finance') ||
-            ministryName.includes('budget') ||
-            ministryName.includes('economic')
-          ) {
-            intelligentQuestions.push(
-              `How can I access budget information and financial reports?`,
-              `What economic development programs are available?`,
-              `How do I apply for business grants or funding?`,
-              `Where can I find tax information and payment options?`
-            );
-          } else if (ministryName.includes('technology') || ministryName.includes('innovation')) {
-            intelligentQuestions.push(
-              `What technology initiatives are currently running?`,
-              `How can I participate in innovation programs?`,
-              `Where can I access digital services and platforms?`,
-              `What tech training opportunities are available?`
-            );
-          } else {
-            // Generic questions for other ministries
-            intelligentQuestions.push(
-              `What are the main services provided to citizens?`,
-              `How can I participate in community programs?`,
-              `What public facilities are available for citizens?`,
-              `How do I file complaints or provide feedback?`
-            );
-          }
-
-          // Contact and location questions
-          if (mdaData.contact?.address) {
-            intelligentQuestions.push(`What are your office hours and location?`);
-          }
-          if (mdaData.contact?.phone || mdaData.contact?.email) {
-            intelligentQuestions.push(`What's the best way to reach you for urgent matters?`);
-          }
-
-          // Add recent/trending questions
+        if (ministryName.includes('health')) {
           intelligentQuestions.push(
-            `What new initiatives or programs have been launched recently?`,
-            `How is ${mdaData.fullname} serving the community this year?`,
-            `What achievements has ${mdaData.fullname} accomplished recently?`
+            'What health programs are available for citizens?',
+            'How do I get medical assistance or health insurance?',
+            'Where can I find vaccination centers near me?',
+            'What are the requirements for health facility registration?'
           );
-
-          // Fill remaining slots with intelligent questions
-          const remainingSlots = 10 - suggestions.length;
-          const shuffledQuestions = [...intelligentQuestions].sort(() => Math.random() - 0.5);
-          shuffledQuestions.slice(0, remainingSlots).forEach((question) => {
-            suggestions.push(question);
-          });
-
-          // Shuffle all suggestions and take exactly 10
-          const finalSuggestions = [...suggestions].sort(() => Math.random() - 0.5).slice(0, 10);
-
-          setWelcomeSuggestions(finalSuggestions);
-
-          // Set simple greeting message
-          setMessages([
-            {
-              role: 'assistant',
-              content: `${greeting}! Welcome to ${mdaData.fullname}. How can I help you today?`,
-            },
-          ]);
-        } catch (err) {
-          console.error('Could not generate welcome content:', err);
-          // Fallback greeting
-          const hour = new Date().getHours();
-          let greeting = 'Hello';
-          if (hour < 12) greeting = 'Good morning';
-          else if (hour < 17) greeting = 'Good afternoon';
-          else greeting = 'Good evening';
-
-          setWelcomeSuggestions([
-            `How can I help you today?`,
-            `What services are available?`,
-            `Tell me about ${mdaData.fullname}`,
-            `How can I contact ${mdaData.fullname}?`,
-            `What programs do you offer?`,
-            `Where are you located?`,
-            `Who leads ${mdaData.fullname}?`,
-            `What departments exist in ${mdaData.fullname}?`,
-            `Can I visit ${mdaData.fullname}?`,
-            `What are the office hours?`,
-          ]);
-
-          setMessages([
-            {
-              role: 'assistant',
-              content: `${greeting}! Welcome to ${mdaData.fullname}. How can I help you today?`,
-            },
-          ]);
+        } else if (ministryName.includes('education')) {
+          intelligentQuestions.push(
+            'How do I apply for scholarships or educational grants?',
+            'What schools are under your jurisdiction?',
+            'What teacher certification programs do you offer?'
+          );
+        } else if (ministryName.includes('transport')) {
+          intelligentQuestions.push(
+            "How do I apply for driver's licenses or vehicle permits?",
+            'What public transportation options are available?',
+            'How can I report road safety issues?'
+          );
+        } else if (
+          ministryName.includes('finance') ||
+          ministryName.includes('budget') ||
+          ministryName.includes('economic')
+        ) {
+          intelligentQuestions.push(
+            'How can I access budget information and financial reports?',
+            'What economic development programs are available?',
+            'Where can I find tax information and payment options?'
+          );
+        } else if (ministryName.includes('technology') || ministryName.includes('innovation')) {
+          intelligentQuestions.push(
+            'What technology initiatives are currently running?',
+            'How can I participate in innovation programs?',
+            'What tech training opportunities are available?'
+          );
+        } else {
+          intelligentQuestions.push(
+            'What are the main services provided to citizens?',
+            'How can I participate in community programs?',
+            'How do I file complaints or provide feedback?'
+          );
         }
+
+        if (mdaData.contact?.address)
+          intelligentQuestions.push('What are your office hours and location?');
+        if (mdaData.contact?.phone || mdaData.contact?.email)
+          intelligentQuestions.push("What's the best way to reach you for urgent matters?");
+        intelligentQuestions.push(
+          `What new initiatives has ${mdaData.fullname} launched recently?`,
+          `What achievements has ${mdaData.fullname} accomplished recently?`
+        );
+
+        const remainingSlots = 10 - suggestions.length;
+        intelligentQuestions
+          .sort(() => Math.random() - 0.5)
+          .slice(0, remainingSlots)
+          .forEach((q) => suggestions.push(q));
+
+        setWelcomeSuggestions(suggestions.sort(() => Math.random() - 0.5).slice(0, 10));
+        setMessages([
+          {
+            role: 'assistant',
+            content: `${greeting}! Welcome to ${mdaData.fullname}. How can I help you today?`,
+          },
+        ]);
+      } catch (err) {
+        console.error('Could not generate MDA welcome content:', err);
+        const hour = new Date().getHours();
+        const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+        setWelcomeSuggestions([
+          `What services are available?`,
+          `Tell me about ${mdaData.fullname}`,
+          `How can I contact ${mdaData.fullname}?`,
+          `What programs do you offer?`,
+          `Where are you located?`,
+          `Who leads ${mdaData.fullname}?`,
+        ]);
+        setMessages([
+          {
+            role: 'assistant',
+            content: `${greeting}! Welcome to ${mdaData.fullname}. How can I help you today?`,
+          },
+        ]);
       }
     };
-
     generateWelcomeContent();
   }, [mdaData?.fullname]);
 
-  // General Lagos State welcome content generation
+  // ── General LASG welcome content ─────────────────────────────────────────────
   useEffect(() => {
-    const generateGeneralWelcomeContent = async () => {
-      const isGeneralPage = !pageContext || pageContext.trim() === 'general' || pageContext === '';
+    if (!isGeneralPage || mdaData?.fullname) return;
 
-      if (isGeneralPage && !mdaData?.fullname) {
-        try {
-          // Get time-based greeting
-          const hour = new Date().getHours();
-          let greeting = 'Hello';
-          if (hour < 12) greeting = 'Good morning';
-          else if (hour < 17) greeting = 'Good afternoon';
-          else greeting = 'Good evening';
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
-          // Generate 10 intelligent suggestions for general Lagos State
-          const suggestions = [];
+    const suggestions = [];
 
-          // Executive Council suggestions
-          if (executiveCouncil.length > 0) {
-            suggestions.push('Who leads Lagos State Executive Council?');
-            suggestions.push('Tell me about the state leadership');
-          }
+    // Pull from live data once it's loaded
+    if (executiveCouncil.length > 0) {
+      suggestions.push('Who are the current Lagos State Commissioners?');
+      suggestions.push('Who leads Lagos State Government?');
+    }
+    if (allServices.length > 0) {
+      allServices
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 4)
+        .forEach((s) => suggestions.push(`How to access ${s.name}?`));
+    }
+    if (allMdas.length > 0) {
+      suggestions.push('Which government agency handles my needs?');
+      suggestions.push('List all Lagos State MDAs');
+    }
 
-          // Services suggestions
-          if (allServices.length > 0) {
-            const shuffledServices = [...allServices].sort(() => Math.random() - 0.5);
-            shuffledServices.slice(0, 4).forEach((service) => {
-              suggestions.push(`How to access ${service.name || service.title}?`);
-            });
-          }
+    const fallback = [
+      'What healthcare services are available?',
+      'How do I start a business in Lagos?',
+      'What transportation options exist?',
+      'How can I pay my taxes?',
+      'What emergency services are available?',
+      'How do I contact Lagos State Government?',
+      'What digital services are available?',
+    ];
+    const remaining = 10 - suggestions.length;
+    fallback
+      .sort(() => Math.random() - 0.5)
+      .slice(0, remaining)
+      .forEach((q) => suggestions.push(q));
 
-          // MDA exploration suggestions
-          if (allMdas.length > 0) {
-            suggestions.push('Which government agency handles my needs?');
-            suggestions.push('Explore Lagos State MDAs');
-          }
-
-          // General service categories
-          const categorySuggestions = [
-            'What healthcare services are available?',
-            'How do I start a business in Lagos?',
-            'What transportation options exist?',
-            'How can I pay my taxes?',
-            'Where can I get educational support?',
-            'What emergency services are available?',
-          ];
-
-          const shuffledCategories = [...categorySuggestions].sort(() => Math.random() - 0.5);
-          shuffledCategories.slice(0, 3).forEach((suggestion) => {
-            suggestions.push(suggestion);
-          });
-
-          // Fill remaining slots with general Lagos State questions
-          const generalQuestions = [
-            'How do I contact Lagos State Government?',
-            'What are the working hours of government offices?',
-            'Where can I find official government forms?',
-            'How do I report issues to the government?',
-            'What digital services are available?',
-          ];
-
-          const remainingSlots = 10 - suggestions.length;
-          const shuffledGeneral = [...generalQuestions].sort(() => Math.random() - 0.5);
-          shuffledGeneral.slice(0, remainingSlots).forEach((question) => {
-            suggestions.push(question);
-          });
-
-          // Shuffle all suggestions and take exactly 10
-          const finalSuggestions = [...suggestions].sort(() => Math.random() - 0.5).slice(0, 10);
-
-          setWelcomeSuggestions(finalSuggestions);
-
-          // Set general greeting message
-          setMessages([
-            {
-              role: 'assistant',
-              content: `${greeting}! Welcome to Lagos State Government. How can I help you access government services today?`,
-            },
-          ]);
-        } catch (err) {
-          console.error('Could not generate general welcome content:', err);
-          // Fallback greeting
-          const hour = new Date().getHours();
-          let greeting = 'Hello';
-          if (hour < 12) greeting = 'Good morning';
-          else if (hour < 17) greeting = 'Good afternoon';
-          else greeting = 'Good evening';
-
-          setWelcomeSuggestions([
-            'How can I help you today?',
-            'What government services are available?',
-            'Tell me about Lagos State Government',
-            'How can I contact government offices?',
-            'What programs do you offer?',
-            'Where are government offices located?',
-            'Who leads Lagos State?',
-            'What departments exist in the government?',
-            'Can I visit government offices?',
-            'What are the office hours?',
-          ]);
-
-          setMessages([
-            {
-              role: 'assistant',
-              content: `${greeting}! Welcome to Lagos State Government. How can I help you today?`,
-            },
-          ]);
-        }
-      }
-    };
-
-    generateGeneralWelcomeContent();
-  }, [pageContext, mdaData?.fullname, executiveCouncil, allServices, allMdas]);
+    setWelcomeSuggestions(suggestions.sort(() => Math.random() - 0.5).slice(0, 10));
+    setMessages([
+      {
+        role: 'assistant',
+        content: `${greeting}! Welcome to Lagos State Government. How can I help you access government services today?`,
+      },
+    ]);
+  }, [
+    isGeneralPage,
+    mdaData?.fullname,
+    executiveCouncil.length,
+    allServices.length,
+    allMdas.length,
+  ]);
 
   useEffect(() => {
     if (checkIsChatOpen) {
       scrollToBottom();
       document.body.style.overflow = 'hidden';
       initializeChatSession();
-      // Auto-focus input when chat opens
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
-    } else document.body.style.overflow = 'auto';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
   }, [checkIsChatOpen]);
 
-  // check from store
   useEffect(() => {
-    if (ChatStoreMessage !== '') {
-      handleSubmit(ChatStoreMessage);
-    }
+    if (ChatStoreMessage !== '') handleSubmit(ChatStoreMessage);
     addMessage('');
   }, [ChatStoreMessage, checkIsChatOpen]);
 
@@ -685,7 +673,6 @@ ${history}
       setShowScrollButton(!isAtBottom);
       isUserScrolling.current = !isAtBottom;
     };
-
     const chatEl = chatWindowRef.current;
     if (chatEl) chatEl.addEventListener('scroll', handleScroll);
     return () => chatEl && chatEl.removeEventListener('scroll', handleScroll);
@@ -695,32 +682,19 @@ ${history}
     setSuggestions(initialSuggestions);
   }, [initialSuggestions]);
 
-  // Refocus input after messages are updated
   useEffect(() => {
-    if (checkIsChatOpen && !loading && inputRef.current) {
-      inputRef.current.focus();
-    }
+    if (checkIsChatOpen && !loading && inputRef.current) inputRef.current.focus();
   }, [messages, loading, checkIsChatOpen]);
 
-  // Scroll last user message to near the top
   useEffect(() => {
     const allUserMessages = document.querySelectorAll('.user-msg');
     allUserMessages.forEach((msg) => msg.classList.remove('last-user-msg'));
-
     if (allUserMessages.length > 0 && chatWindowRef.current) {
       const lastUserMessage = allUserMessages[allUserMessages.length - 1];
       lastUserMessage.classList.add('last-user-msg');
-
-      // Scroll the last user message to near the top
       setTimeout(() => {
-        const messagePosition = lastUserMessage.offsetTop;
-        const offset = 80; // Distance from top (adjust as needed)
-
-        chatWindowRef.current.scrollTo({
-          top: messagePosition - offset,
-          behavior: 'smooth',
-        });
-      }, 50); // Small delay to ensure DOM is updated
+        chatWindowRef.current.scrollTo({ top: lastUserMessage.offsetTop - 80, behavior: 'smooth' });
+      }, 50);
     }
   }, [messages]);
 
@@ -728,49 +702,24 @@ ${history}
   useEffect(() => {
     async function generateInitialSuggestions() {
       if (messages.length !== 1) return;
-
       const cacheKey = `initial_${safePage}`;
       const cached = suggestionCache.get(cacheKey);
       if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
         setInitialSuggestions(cached.data);
         return;
       }
-
       const contextName = ministryInfo?.name || pageContext || 'Lagos State Government';
-      const now = new Date();
-      const hour = now.getHours();
-      const day = now.toLocaleString('en-US', { weekday: 'long' }).toLowerCase();
-
+      const hour = new Date().getHours();
       let timeContext = '';
-      if (
-        !pageContext ||
-        pageContext.trim() === 'general' ||
-        contextName === 'Lagos State Official Website'
-      ) {
-        if (hour >= 5 && hour < 12)
-          timeContext = 'Morning — Lagos State services, permits, find a particular ministry, etc.';
+      if (isGeneralPage || contextName === 'Lagos State Official Website') {
+        if (hour >= 5 && hour < 12) timeContext = 'Morning — services, permits, ministries.';
         else if (hour >= 12 && hour < 17)
-          timeContext =
-            'Afternoon — Lagos State services, permits, find a particular ministry, etc.';
+          timeContext = 'Afternoon — services, permits, ministries.';
         else if (hour >= 17 && hour < 22)
-          timeContext =
-            'Evening — Lagos State emergencies, commute services like lagride, ferry, brt, rail lines, etc. 24-hour services, police numbers, health services, plan a visit to a ministry for the next day.';
-        else
-          timeContext =
-            'Late Night — emergencies, 24-hour services, police numbers, health services';
+          timeContext = 'Evening — emergencies, commute services, 24-hour services.';
+        else timeContext = 'Late Night — emergencies, 24-hour services, police, health.';
       }
-
-      const prompt = `Generate 6 service-focused questions (under 10 words) about accessing services from "${contextName}". ${timeContext} 
-
-Focus on practical service access questions like:
-- How to register/pay for services
-- Application processes and requirements
-- Contact information and locations
-- Document downloads and applications
-- Service eligibility and timelines
-
-Format: question1||question2||question3||question4||question5||question6`;
-
+      const prompt = `Generate 6 service-focused questions (under 10 words) about accessing services from "${contextName}". ${timeContext}\nFormat: question1||question2||question3||question4||question5||question6`;
       try {
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
         const result = await model.generateContent(prompt);
@@ -786,32 +735,87 @@ Format: question1||question2||question3||question4||question5||question6`;
         console.error('Error generating suggestions:', err);
       }
     }
-
     generateInitialSuggestions();
-  }, [pageContext, ministryInfo, safePage, messages.length]);
+  }, [pageContext, ministryInfo, safePage, messages.length, isGeneralPage]);
 
-  // ---- Retrieve relevant context from Supabase ----
+  // ── Retrieve context from BOTH services table + document chunks ───────────────
   const getRelevantLagosContext = useCallback(
     async (query) => {
       try {
         const model = genAI.getGenerativeModel({ model: 'gemini-embedding-001' });
-        const embeddingResp = await model.embedContent(`${pageContext} ${query}`);
+        const embeddingResp = await model.embedContent({
+          content: { role: 'user', parts: [{ text: `${pageContext} ${query}` }] },
+          taskType: 'RETRIEVAL_QUERY',
+          outputDimensionality: 768,
+        });
         const embedding = embeddingResp.embedding.values;
 
-        const { data, error } = await supabase.rpc('match_lagos_services', {
-          query_embedding: embedding,
-          match_threshold: 0.5,
-          match_count: 4,
-        });
+        // Detect if question is about people/leadership — skip PDF chunks if so
+        const queryIsAboutPeople = PERSONNEL_KEYWORDS.some((kw) =>
+          query.toLowerCase().includes(kw)
+        );
 
-        if (error || !data || data.length === 0) return '';
+        const [servicesResult, docsResult] = await Promise.all([
+          supabase.rpc('match_lagos_services', {
+            query_embedding: embedding,
+            match_threshold: 0.5,
+            match_count: 4,
+          }),
+          // Skip doc chunks entirely for personnel questions to avoid stale data
+          queryIsAboutPeople
+            ? Promise.resolve({ data: [], error: null })
+            : supabase.rpc('match_chunks', {
+                query_embedding: embedding,
+                match_threshold: 0.6,
+                match_count: 6,
+              }),
+        ]);
 
-        return data
-          .map((d) => `🏛️ **${d.name}**: ${d.short || ''} [Visit](${d.url || '#'})`)
-          .join('\n');
+        const contextParts = [];
+        const downloadSources = [];
+
+        if (!servicesResult.error && servicesResult.data?.length > 0) {
+          const servicesContext = servicesResult.data
+            .map((d) => `🏛️ **${d.name}**: ${d.short || ''} [Visit](${d.url || '#'})`)
+            .join('\n');
+          contextParts.push(`## Lagos State Services\n${servicesContext}`);
+        }
+
+        if (!docsResult.error && docsResult.data?.length > 0) {
+          // Dedupe by document name, keep highest similarity
+          const docMap = {};
+          for (const chunk of docsResult.data) {
+            if (
+              !docMap[chunk.document_name] ||
+              chunk.similarity > docMap[chunk.document_name].similarity
+            ) {
+              docMap[chunk.document_name] = chunk;
+            }
+          }
+
+          const docsContext = docsResult.data
+            .map(
+              (chunk) =>
+                `📄 **${chunk.document_name}** (${Math.round(chunk.similarity * 100)}% match):\n${chunk.content}`
+            )
+            .join('\n\n');
+          contextParts.push(`## Knowledge Base Documents\n${docsContext}`);
+
+          // Generate public download URLs for each unique matched doc
+          for (const doc of Object.values(docMap)) {
+            if (doc.file_path) {
+              const { data: urlData } = supabase.storage.from('pdfs').getPublicUrl(doc.file_path);
+              if (urlData?.publicUrl) {
+                downloadSources.push({ name: doc.document_name, url: urlData.publicUrl });
+              }
+            }
+          }
+        }
+
+        return { context: contextParts.join('\n\n'), downloadSources };
       } catch (err) {
         console.error('Error retrieving context:', err);
-        return '';
+        return { context: '', downloadSources: [] };
       }
     },
     [pageContext]
@@ -821,184 +825,68 @@ Format: question1||question2||question3||question4||question5||question6`;
   const generateFollowUps = useCallback(
     async (lastReply, sender) => {
       if (sender !== 'assistant') return [];
-
       try {
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
-
-        // Build MDA-specific context for follow-ups
-        let mdaSpecificContext = '';
-        let currentMdaName = '';
-        let isGeneralPage = false;
-
-        ('Current MDA data:', mdaData);
-        ('Current Mda from store:', currentMda);
+        let contextStr = '';
+        let entityName = '';
 
         if (mdaData && Object.keys(mdaData).length > 0) {
-          currentMdaName = mdaData.fullname || mdaData.name || currentMda;
-
-          // Get services from API
+          entityName = mdaData.fullname || mdaData.name || currentMda;
           let services = [];
           try {
-            const servicesData = await getAllServicesCategory(formattedName(mdaData.fullname));
+            const sd = await getAllServicesCategory(formattedName(mdaData.fullname));
             services =
-              servicesData?.data
+              sd?.data
                 ?.map((s) => s.name)
                 .filter(Boolean)
                 .slice(0, 5) || [];
-            ('Services fetched:', services);
-          } catch (err) {
-            console.error('Could not fetch services:', err);
-          }
-
-          const people = mdaData.people
-            ? mdaData.people
-                .map((p) => p.role)
-                .filter(Boolean)
-                .slice(0, 3)
-            : [];
-
-          const agencies = mdaData.agencies
-            ? mdaData.agencies
-                .map((a) => a.name)
-                .filter(Boolean)
-                .slice(0, 3)
-            : [];
-
-          const resources = mdaData.resources
-            ? mdaData.resources
-                .map((r) => r.name)
-                .filter(Boolean)
-                .slice(0, 3)
-            : [];
-
-          mdaSpecificContext = `
-CURRENT MDA: ${currentMdaName}
-Available Services: ${services.length > 0 ? services.join(', ') : 'various government services'}
-Key Leadership: ${people.length > 0 ? people.join(', ') : 'commissioner and directors'}
-Departments: ${agencies.length > 0 ? agencies.join(', ') : 'multiple departments'}
-Resources: ${resources.length > 0 ? resources.join(', ') : 'various resources'}
-Contact: ${mdaData.contact?.email ? 'email available' : 'contact information available'}
-`;
-          ('MDA Context built:', mdaSpecificContext);
+          } catch (_) {}
+          contextStr = `MDA: ${entityName}\nServices: ${services.join(', ') || 'various'}\nContact: ${mdaData.contact?.email || 'available'}`;
+        } else if (isGeneralPage) {
+          entityName = 'Lagos State Government';
+          const serviceNames = allServices
+            .slice(0, 8)
+            .map((s) => s.name)
+            .filter(Boolean);
+          const mdaNames = allMdas
+            .slice(0, 6)
+            .map((m) => m.name)
+            .filter(Boolean);
+          const leaders = executiveCouncil.slice(0, 3).map((m) => `${m.name} (${m.position})`);
+          contextStr = `Entity: Lagos State Government\nServices: ${serviceNames.join(', ') || 'healthcare, business, transport, education'}\nLeadership: ${leaders.join(', ') || 'Governor, Deputy Governor, Commissioners'}\nAgencies: ${mdaNames.join(', ') || 'various MDAs'}`;
         } else {
-          // Check if this is a general Lagos State page
-          isGeneralPage = !pageContext || pageContext.trim() === 'general' || pageContext === '';
-
-          if (isGeneralPage) {
-            currentMdaName = 'Lagos State Government';
-
-            // Use the general state information
-            const services =
-              allServices.length > 0
-                ? allServices
-                    .slice(0, 8)
-                    .map((s) => s.name || s.title)
-                    .filter(Boolean)
-                : [
-                    'healthcare',
-                    'business registration',
-                    'tax payment',
-                    'transportation',
-                    'education',
-                  ];
-
-            const leadership =
-              executiveCouncil.length > 0
-                ? executiveCouncil.slice(0, 3).map((m) => `${m.name} (${m.position})`)
-                : ['Governor', 'Deputy Governor', 'Commissioners'];
-
-            const mdas =
-              allMdas.length > 0
-                ? allMdas
-                    .slice(0, 6)
-                    .map((m) => m.name)
-                    .filter(Boolean)
-                : ['Ministry of Health', 'Ministry of Education', 'Ministry of Transportation'];
-
-            mdaSpecificContext = `
-CURRENT CONTEXT: Lagos State Government
-Available Services: ${services.join(', ')}
-Executive Council: ${leadership.join(', ')}
-Key Agencies: ${mdas.join(', ')}
-Service Categories: Healthcare, Business & Economy, Transportation, Education, Environment, Security
-Official Portal: lagosstate.gov.ng
-`;
-            ('General Lagos State Context built:', mdaSpecificContext);
-          } else {
-            ('No MDA data available, using fallback');
-            return [];
-          }
+          return [];
         }
 
-        const prompt = `You are generating service-focused follow-up questions for ${currentMdaName}. 
+        const prompt = `Generate 5 service-focused follow-up questions (under 10 words each) for ${entityName} based on:
+Response: "${lastReply.slice(0, 200)}"
+Context: ${contextStr}
+Rules: Questions must be actionable and about ${entityName} services only.
+Format: q1||q2||q3||q4||q5`;
 
-Based on this assistant response: "${lastReply.slice(0, 200)}"
-
-AND this context: ${mdaSpecificContext}
-
-Generate 5 service-focused follow-up questions (under 10 words each) separated by double pipes (||).
-
-CRITICAL REQUIREMENTS:
-${
-  isGeneralPage
-    ? `- Questions MUST be about Lagos State Government services and agencies
-- Focus on HOW to access, apply for, or use ANY Lagos State service
-- Include service names, application processes, contact methods for any state agency
-- Cover different service categories: healthcare, business, transportation, education, etc.
-- Make questions actionable and service-oriented for Lagos State generally`
-    : `- Questions MUST be about ${currentMdaName} services ONLY
-- Focus on HOW to access, apply for, or use services
-- Include service names, application processes, contact methods
-- DO NOT mention any other MDA or ministry
-- Make questions actionable and service-oriented`
-}
-
-Service-Focused Examples:
-${
-  isGeneralPage
-    ? `- "How to apply for Lagos State health insurance?"
-- "Business registration requirements in Lagos?"
-- "Pay Lagos State taxes online?"
-- "Transportation services available?"
-- "Educational support programs?"
-- "Emergency contact numbers?"
-- "Where to get government forms?"`
-    : `- "How to apply for [specific service]?"
-- "[Service name] application requirements?"
-- "Contact [service department] directly?"
-- "Download [service] application forms?"
-- "[Service] processing timeline?"
-- "Pay for [service] online?"`
-}
-
-Make them unique and specific to this response and ${isGeneralPage ? 'Lagos State Government services' : currentMdaName + ' services'}.`;
-
-        ('Prompt being sent:', prompt);
         const result = await model.generateContent(prompt);
-        const responseText = result.response.text();
-        ('Raw API response:', responseText);
-        const followups = responseText
+        return result.response
+          .text()
           .split('||')
           .map((q) => q.trim())
           .filter(Boolean)
           .slice(0, 5);
-        ('Final follow-ups:', followups);
-        return followups;
       } catch (err) {
         console.error('Follow-up generation error:', err);
         return [];
       }
     },
-    [mdaData, currentMda, pageContext, executiveCouncil, allServices, allMdas]
+    [mdaData, currentMda, isGeneralPage, executiveCouncil, allServices, allMdas]
   );
 
   // ---- Location detection ----
   const detectNeedsLocation = useCallback((message) => {
-    const locationKeywords = ['near', 'closest', 'nearby', 'around', 'in my area', 'location'];
-    return locationKeywords.some((keyword) => message.toLowerCase().includes(keyword));
+    return ['near', 'closest', 'nearby', 'around', 'in my area', 'location'].some((kw) =>
+      message.toLowerCase().includes(kw)
+    );
   }, []);
 
-  // ---- Main handleSubmit ----
+  // ── Main handleSubmit ─────────────────────────────────────────────────────────
   const handleSubmit = useCallback(
     async (customInput) => {
       const input = customInput || chatInput;
@@ -1008,14 +896,12 @@ Make them unique and specific to this response and ${isGeneralPage ? 'Lagos Stat
       setFollowUps([]);
       setIsStreaming(true);
 
-      const userMsg = { role: 'user', content: input };
-      setMessages((prev) => [...prev, userMsg]);
+      setMessages((prev) => [...prev, { role: 'user', content: input }]);
       scrollToBottom();
 
       const lga = extractLgaFromMessage(input);
       const needsLoc = needsLocationContext(input);
       const needsLocation = detectNeedsLocation(input);
-
       let activePrompt = isLocationPrompt;
 
       if (needsLoc && !lga && needsLocation) {
@@ -1034,8 +920,8 @@ Make them unique and specific to this response and ${isGeneralPage ? 'Lagos Stat
 
       if (activePrompt || isLocationPrompt) setIsLocationPrompt(null);
 
-      const assessConfidenceChunk = (text) => {
-        const uncertainKeywords = [
+      const assessConfidence = (text) => {
+        const uncertain = [
           'not sure',
           "i don't have",
           'i need to check',
@@ -1043,22 +929,18 @@ Make them unique and specific to this response and ${isGeneralPage ? 'Lagos Stat
           'unknown',
           'i am unsure',
         ];
-        const lowerText = text.toLowerCase();
-        let count = 0;
-        uncertainKeywords.forEach((kw) => {
-          if (lowerText.includes(kw)) count++;
-        });
-        return 1 - count / uncertainKeywords.length;
+        const count = uncertain.filter((kw) => text.toLowerCase().includes(kw)).length;
+        return 1 - count / uncertain.length;
       };
 
-      const fetchGoogleFallback = async (query) => {
+      const fetchFallback = async (query) => {
         try {
-          const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
-          const prompt = `Provide verified Lagos State info (official sites only) for: "${query}" in under 100 words.`;
-          const result = await model.generateContent(prompt);
-          return result.response.text();
-        } catch (err) {
-          console.error('Google fallback error:', err);
+          const m = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
+          const r = await m.generateContent(
+            `Provide verified Lagos State info (official sites only) for: "${query}" in under 100 words.`
+          );
+          return r.response.text();
+        } catch (_) {
           return '';
         }
       };
@@ -1066,41 +948,48 @@ Make them unique and specific to this response and ${isGeneralPage ? 'Lagos Stat
       try {
         await initializeChatSession();
 
-        const lagosContext = await getRelevantLagosContext(finalInput);
+        const { context: lagosContext, downloadSources } =
+          await getRelevantLagosContext(finalInput);
+
         const contextualPrompt = lagosContext
-          ? `Relevant Lagos Services:\n${lagosContext}\n\nUser Question: ${finalInput}`
+          ? `## Relevant Lagos State Context:\n${lagosContext}\n\n## Instructions\n- Prioritize Knowledge Base Documents and Services above.\n- Mention document names when referencing them.\n- For leadership/personnel questions, rely ONLY on the live data in your system context, not on documents.\n- Keep answers focused on Lagos State.\n\n## User Question\n${finalInput}`
           : finalInput;
 
         let assistantText = '';
         let fallbackTriggered = false;
 
-        setMessages((prev) => [...prev, { role: 'assistant', content: '' }]);
+        setMessages((prev) => [...prev, { role: 'assistant', content: '', downloadSources: [] }]);
 
         const result = await chatSessionRef.current.sendMessageStream(contextualPrompt);
 
         for await (const chunk of result.stream) {
           const textPart = chunk.text();
           if (!textPart) continue;
-
           assistantText += textPart;
-          const confidence = assessConfidenceChunk(textPart);
 
-          if (!fallbackTriggered && confidence < 0.6) {
+          if (!fallbackTriggered && assessConfidence(textPart) < 0.6) {
             fallbackTriggered = true;
-            const snippet = await fetchGoogleFallback(input);
+            const snippet = await fetchFallback(input);
             if (snippet) assistantText += `\n\n🔎 Latest info from Lagos State sites:\n${snippet}`;
           }
 
           setMessages((prev) => {
             const updated = [...prev];
-            const lastMsg = updated[updated.length - 1];
-            if (lastMsg.role === 'assistant') lastMsg.content = assistantText;
+            const last = updated[updated.length - 1];
+            if (last.role === 'assistant') last.content = assistantText;
             return updated;
           });
         }
 
-        setIsStreaming(false);
+        // Attach download sources after streaming completes
+        setMessages((prev) => {
+          const updated = [...prev];
+          const last = updated[updated.length - 1];
+          if (last.role === 'assistant') last.downloadSources = downloadSources;
+          return updated;
+        });
 
+        setIsStreaming(false);
         const followUpQs = await generateFollowUps(assistantText, 'assistant');
         setFollowUps(followUpQs);
       } catch (err) {
@@ -1109,7 +998,6 @@ Make them unique and specific to this response and ${isGeneralPage ? 'Lagos Stat
           ...prev,
           { role: 'assistant', content: 'Something went wrong. Please try again.' },
         ]);
-
         chatSessionRef.current = null;
       }
 
@@ -1129,60 +1017,48 @@ Make them unique and specific to this response and ${isGeneralPage ? 'Lagos Stat
     ]
   );
 
-  // Custom component for clickable services
+  // ---- Clickable service component ----
   const ClickableService = ({ children }) => {
-    const serviceName =
-      typeof children === 'string' ? children : children?.props?.children || children;
-
-    const handleServiceClick = () => {
-      // Send the service name as a user message
-      handleSubmit(serviceName);
-    };
-
+    const text = typeof children === 'string' ? children : children?.props?.children || children;
     return (
       <span
-        onClick={handleServiceClick}
+        onClick={() => handleSubmit(text)}
         style={{
           cursor: 'pointer',
           color: '#28a745',
           textDecoration: 'underline',
           fontWeight: 'bold',
         }}
-        title={`Click to ask: ${serviceName}`}
+        title={`Click to ask: ${text}`}
       >
-        {serviceName}
+        {text}
       </span>
     );
   };
 
-  // Custom markdown components
   const markdownComponents = useMemo(
     () => ({
       strong: ({ children, ...props }) => {
         const text =
           typeof children === 'string' ? children : children?.props?.children || children;
-
-        // Check if this is a service name, trending service, popular topic, or question
-        const isService = mdaServices.some((service) => text.includes(service.name));
-        const isQuestion =
-          text.includes('How to') ||
-          text.includes('Tell me about') ||
-          text.includes('Do you want to') ||
-          text.includes('Who are') ||
-          text.includes('What departments') ||
-          text.includes('How can I') ||
-          text.includes('Do you want to book');
-
-        if (isService || isQuestion) {
-          return <ClickableService>{text}</ClickableService>;
-        }
-
+        const isService = mdaServices.some((s) => text.includes(s.name));
+        const isQuestion = [
+          'How to',
+          'Tell me about',
+          'Do you want to',
+          'Who are',
+          'What departments',
+          'How can I',
+          'Do you want to book',
+        ].some((q) => text.includes(q));
+        if (isService || isQuestion) return <ClickableService>{text}</ClickableService>;
         return <strong {...props}>{children}</strong>;
       },
     }),
     [mdaServices]
   );
 
+  // ── Render ────────────────────────────────────────────────────────────────────
   return (
     <>
       <div className="bubblePage" onClick={() => setCheckIsChatOpen(true)}>
@@ -1213,11 +1089,35 @@ Make them unique and specific to this response and ${isGeneralPage ? 'Lagos Stat
                 const isUser = msg.role === 'user';
                 return (
                   <div key={i} className={`message ${isUser ? 'user-msg' : 'bot-msg'}`}>
-                    <div className={`markdown-body`}>
+                    <div className="markdown-body">
                       <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
                         {msg.content}
                       </ReactMarkdown>
                     </div>
+
+                    {/* ── Document download pills ── */}
+                    {!isUser && msg.downloadSources?.length > 0 && (
+                      <div className="chatbot-download-sources">
+                        <span className="chatbot-download-label">📎 Referenced Documents:</span>
+                        <div className="chatbot-download-list">
+                          {msg.downloadSources.map((source, idx) => (
+                            <a
+                              key={idx}
+                              href={source.url}
+                              download
+                              target="_blank"
+                              rel="noreferrer"
+                              className="chatbot-download-pill"
+                            >
+                              <img src={pdf} alt="" /> {source.name}{' '}
+                              <div className="ml-auto">
+                                <ArrowDown fontSize={9} />
+                              </div>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -1226,7 +1126,7 @@ Make them unique and specific to this response and ${isGeneralPage ? 'Lagos Stat
                 <div className="thinking">
                   <p>
                     <div className="think_img">
-                      <img src={think_img} alt="Think Image" />
+                      <img src={think_img} alt="Think" />
                     </div>
                     Eko Smart is thinking
                   </p>
@@ -1267,6 +1167,7 @@ Make them unique and specific to this response and ${isGeneralPage ? 'Lagos Stat
                 </div>
               )}
             </div>
+
             <textarea
               ref={inputRef}
               disabled={loading}
@@ -1280,6 +1181,7 @@ Make them unique and specific to this response and ${isGeneralPage ? 'Lagos Stat
                 }
               }}
             />
+
             <div
               className="language-preference flex items-center gap-[6px]"
               onClick={() => setShowLanguageMenu(!showLanguageMenu)}
@@ -1291,8 +1193,7 @@ Make them unique and specific to this response and ${isGeneralPage ? 'Lagos Stat
               <div>
                 <NavArrowDown className="text-[12px]" />
               </div>
-
-              {showLanguageMenu ? (
+              {showLanguageMenu && (
                 <LanguageModal
                   closeModal={() => setShowLanguageMenu(false)}
                   language={languagePreference}
@@ -1301,7 +1202,7 @@ Make them unique and specific to this response and ${isGeneralPage ? 'Lagos Stat
                   LANGUAGES={LANGUAGES}
                   customClass="main-lang"
                 />
-              ) : null}
+              )}
             </div>
 
             {loading ? (

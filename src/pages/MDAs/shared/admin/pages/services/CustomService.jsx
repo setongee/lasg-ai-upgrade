@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { ArrowUpRight, Check, NavArrowDown, Search, Xmark } from 'iconoir-react';
+import { ArrowRight, ArrowUpRight, Check, NavArrowDown, Search, Xmark } from 'iconoir-react';
 import { useEffect, useRef, useState } from 'react';
 import { getAllCategory } from '../../../../../../api/read/category.req';
+import { frontend_url } from '../../../../../../api/read/environment';
 import { notify } from '../../../../../../utils/toast';
 import { addSingleService, formattedName } from '../../../../api/admin/logic';
+import { api } from '../../../forms/api';
 import LASGEditor from '../../components/text-editor/lasg_custom_editor';
 import { generateKeywordsWithAI } from '../utils/ai/ai-generator';
 
@@ -12,26 +14,45 @@ const CustomService = ({ selectView, mda, handleCheck }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [keywordInput, setKeywordInput] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [showFormsDropdown, setShowFormsDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  const formsDropdownRef = useRef(null);
 
   const {
     data: categoriesData,
-    isLoading,
+    isLoading: categoriesLoading,
     isError,
   } = useQuery({
     queryKey: ['categories'],
     queryFn: getAllCategory,
   });
 
+  const { data: formsData, isLoading: formsLoading } = useQuery({
+    queryKey: ['forms', mda.slug],
+    queryFn: () => api.getFormsByMda(mda.slug),
+    enabled: !!mda.slug,
+  });
+
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Close categories dropdown if clicking outside
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
+      }
+      // Close forms dropdown if clicking outside
+      if (formsDropdownRef.current && !formsDropdownRef.current.contains(event.target)) {
+        setShowFormsDropdown(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const handleFormSelect = (form) => {
+    const publicUrl = `${frontend_url}/${form.mda}/forms/${form._id}`;
+    setData({ ...data, url: publicUrl });
+    setShowFormsDropdown(false);
+  };
 
   const handleToggleCategory = (category) => {
     const isSelected = data.categories?.some((c) => c._id === category._id);
@@ -232,7 +253,7 @@ const CustomService = ({ selectView, mda, handleCheck }) => {
                   </div>
                 </div>
                 <div className="overflow-y-auto flex-1">
-                  {isLoading ? (
+                  {categoriesLoading ? (
                     <div className="p-4 text-center text-[14px] text-gray-500">
                       Loading categories...
                     </div>
@@ -328,14 +349,64 @@ const CustomService = ({ selectView, mda, handleCheck }) => {
           {/* url */}
           <div className="flex flex-col gap-1.5">
             <label className="text-[14px] font-semibold">URL link</label>
-            <input
-              type="text"
-              name="url"
-              value={data?.url}
-              onChange={handleChange}
-              className="ring-1 rounded-[4px] py-2.5 px-3 text-[14px] outline-none focus:ring-green-600 bg-white ring-gray-200 "
-              placeholder="Enter the URL link here..."
-            />
+            <div className="relative" ref={formsDropdownRef}>
+              <input
+                type="text"
+                name="url"
+                value={data?.url}
+                onChange={handleChange}
+                className="ring-1 rounded-[4px] py-2.5 px-3 text-[14px] outline-none focus:ring-green-600 bg-white ring-gray-200 w-full"
+                placeholder="Enter the URL link here..."
+              />
+              <button
+                type="button"
+                onClick={() => setShowFormsDropdown(!showFormsDropdown)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+              >
+                Attach Forms
+              </button>
+
+              {/* Forms Dropdown */}
+              {showFormsDropdown && (
+                <div className="absolute top-full right-0 mt-1 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                  <div className="p-3 border-b border-gray-200">
+                    <p className="text-sm font-semibold text-gray-700">Select a form</p>
+                  </div>
+                  <div className="max-h-60 overflow-y-auto">
+                    {formsLoading ? (
+                      <div className="p-3 text-center text-sm text-gray-500">Loading forms...</div>
+                    ) : formsData?.data?.length > 0 ? (
+                      formsData.data.map((form) => (
+                        <button
+                          key={form._id}
+                          type="button"
+                          onClick={() => handleFormSelect(form)}
+                          className="w-full text-left px-3 py-2 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                        >
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium text-gray-900 flex">
+                              {form.title} <ArrowRight className="ml-auto text-[9px]" />
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              Created on -{' '}
+                              {new Date(form.createdAt).toLocaleDateString('en-NG', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                              })}
+                            </span>
+                          </div>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-3 text-center text-sm text-gray-500">
+                        No forms available
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

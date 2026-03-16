@@ -8,7 +8,7 @@ import ConfirmModal from '../../../confirmModal/confirm-modal';
 import Modal from '../../../modal/Modal';
 import EditService from './EditService';
 
-const ServicesEngine = ({ data, selectView, mdaData }) => {
+const ServicesEngine = ({ data, selectView, isLoading, mdaData, services, refetch }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showEditServiceItem, setShowEditServiceItem] = useState(false);
   const [serviceItem, setServiceItem] = useState(null);
@@ -182,6 +182,8 @@ const ServicesEngine = ({ data, selectView, mdaData }) => {
             selectView={selectView}
             service={serviceItem}
             setShowEditServiceItem={setShowEditServiceItem}
+            services={services}
+            refetch={refetch}
           />
         </Modal>
       )}

@@ -472,6 +472,57 @@
   }
 }
 
+/* chatbot sources */
+
+.chatbot-download-sources {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.chatbot-download-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #001e06;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.chatbot-download-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.chatbot-download-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #131313;
+  text-decoration: none;
+  transition: background 0.15s;
+  cursor: pointer;
+  width: 100%;
+
+  img {
+    width: 18px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+}
+
+.chatbot-download-pill:hover {
+  background: #dbeafe;
+}
+
 @media (max-width: 660px) {
   .bubblePage {
     margin: 16px;
@@ -524,6 +575,8 @@
     }
   }
 }
+
+/* close chatbot sources */
 
 @media (max-width: 600px) {
   .chat-window {

@@ -73,10 +73,14 @@ const Home = ({ isEdit }) => {
     setSelectedComponent(component);
   };
 
+  const isMdaTypeService = mdaData?.type === 'service';
+
   return (
     <div
       data-mda="mof"
-      className={`landingPage-version mx-auto my-0 ${isEdit ? 'mt-0' : 'lg:mt-[0px] mt-[0px]'}`}
+      className={`landingPage-version mx-auto my-0 ${
+        isEdit ? 'mt-0' : isMdaTypeService ? 'lg:mt-[110px] mt-[80px]' : 'mt-0]'
+      }`}
       ref={componentRef}
     >
       {/* Home */}
@@ -116,7 +120,7 @@ const Home = ({ isEdit }) => {
 
       {/* Core MDA specific services */}
       {landingPage?.enabledSections?.services && (
-        <section className="bg-[#e6edef] md:py-20 py-5 pb-10">
+        <section className="bg-[#e6edef] md:py-20 py-16 pb-10">
           <ServicesComponent data={services?.data} name={mdaData?.fullname} />
         </section>
       )}

@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
-import { useVisitTracker } from '../../hooks/useVisitTracker';
 import { getMda } from './api/data';
 import Admin from './shared/admin/Admin';
 import Loader from './shared/loader/loader';
@@ -16,14 +15,12 @@ const Page = () => {
   const setMda = useThemeStore((state) => state.setMda);
   const setRefetchData = useThemeStore((state) => state.setRefetchData);
 
-  let htmlContent = '';
-
   useEffect(() => {
     const width = window.innerWidth;
     if (width < 800) setIsMobile(true);
   }, [mda, page]);
 
-  const { data, isError, isPending, isLoading, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['mda', mda],
     queryFn: () => getMda(mda),
     staleTime: 1000 * 60 * 60,
@@ -41,7 +38,7 @@ const Page = () => {
     }
   }, [data, mda, setMda, setMdaData]);
 
-  useVisitTracker(mda, page === undefined ? 'home' : page);
+  // useVisitTracker(mda, page === undefined ? 'home' : page);
 
   if (isLoading) return <Loader />;
 

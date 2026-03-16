@@ -69,6 +69,8 @@ const Home = ({ isEdit }) => {
     enabled: !!mdaData?.fullname,
   });
 
+  const isMdaTypeService = mdaData?.type === 'service';
+
   // if (isLoading || iconLoading) return <Loader />;
 
   const handleComponentClick = (component) => {
@@ -78,7 +80,9 @@ const Home = ({ isEdit }) => {
   return (
     <div
       data-mda="mist"
-      className={`landingPage-version mx-auto my-0 ${isEdit ? 'mt-0' : 'lg:mt-[180px] mt-[115px]'}`}
+      className={`landingPage-version mx-auto my-0 ${
+        isEdit ? 'mt-0' : isMdaTypeService ? 'lg:mt-[120px] mt-[80px]' : 'lg:mt-[180px] mt-[115px]'
+      }`}
       ref={componentRef}
     >
       {/* Home */}
@@ -255,8 +259,8 @@ const Home = ({ isEdit }) => {
       )}
 
       {/* Core MDA specific services */}
-      {landingPage?.enabledSections?.services && landingPage?.servicesData?.length > 0 && (
-        <section className="bg-[#e6edef] md:py-20 py-5 pb-10">
+      {landingPage?.enabledSections?.services && (
+        <section className="bg-[#e6edef] md:py-20 py-16 pb-10">
           <ServicesComponent data={services?.data} name={mdaData?.fullname} />
         </section>
       )}
