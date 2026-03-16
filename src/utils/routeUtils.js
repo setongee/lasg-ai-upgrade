@@ -8,7 +8,11 @@ export const checkRouteType = (pathname) => {
   const pathSegments = pathname.replace(/^\/+|\/+$/g, '').split('/');
 
   // Check if it's a subdomain (not allowed)
-  const hasSubdomain = window.location.hostname.split('.').length > 2;
+  // Proper subdomain detection - exclude known main domains
+  const hostname = window.location.hostname;
+  const mainDomains = ['lagosstate.gov.ng', 'www.lagosstate.gov.ng', 'localhost'];
+  const hasSubdomain = !mainDomains.includes(hostname) && hostname.split('.').length > 2;
+
   if (hasSubdomain) {
     return {
       isPublicRoute: false,
