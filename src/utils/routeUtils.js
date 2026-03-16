@@ -18,8 +18,6 @@ export const checkRouteType = (pathname) => {
     };
   }
 
-  console.log(pathname);
-
   // List of all public routes (excluding dynamic parameters)
   const publicRoutes = [
     '', // root path

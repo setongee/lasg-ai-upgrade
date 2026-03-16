@@ -114,21 +114,16 @@ export default function HeroSection() {
   };
 
   useEffect(() => {
-    languagePreference;
-  }, [languagePreference, setLanguagePreference]);
-
-  useEffect(() => {
     const handleClickOutside = (event) => {
       if (showLanguageMenu && !event.target.closest('.language-preference')) {
         setShowLanguageMenu(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    // Use click instead of mousedown to avoid conflict with language selector
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, [showLanguageMenu]);
-
-  languagePreference;
 
   return (
     <div className={`slider home ${darkmode ? 'dark' : 'light'}`}>
@@ -176,9 +171,14 @@ export default function HeroSection() {
               <button className="send-chat" onClick={() => handleSendMessage()}>
                 <ArrowUp strokeWidth={2} />
               </button>
+
               <div
                 className="language-preference flex items-center gap-[6px]"
-                onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowLanguageMenu(true);
+                }}
               >
                 <div>
                   <Language className="text-[12px]" />
