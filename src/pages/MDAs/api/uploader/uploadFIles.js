@@ -35,13 +35,19 @@ const compressImage = (file, maxWidth = 2560, maxHeight = 1440, quality = 0.9) =
 export const uploadDocument = async (file, folderName) => {
   let processedFile = file;
 
-  // Compress if it's an image larger than 2MB
-  if (file.type.startsWith('image/') && file.size > 2 * 1024 * 1024) {
+  // Compress if it's an image larger than 1MB (more aggressive)
+  if (file.type.startsWith('image/') && file.size > 1 * 1024 * 1024) {
     try {
       processedFile = await compressImage(file);
       console.log(
         `Compressed image from ${(file.size / 1024 / 1024).toFixed(2)}MB to ${(processedFile.size / 1024 / 1024).toFixed(2)}MB`
       );
+
+      // If still too large, compress more aggressively
+      if (processedFile.size > 5 * 1024 * 1024) {
+        processedFile = await compressImage(file, 1920, 1080, 0.7);
+        console.log(`Further compressed to ${(processedFile.size / 1024 / 1024).toFixed(2)}MB`);
+      }
     } catch (error) {
       console.warn('Image compression failed, uploading original:', error);
     }
