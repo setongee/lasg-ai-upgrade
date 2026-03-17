@@ -132,6 +132,14 @@ const AiPhoto = ({ onImageGenerated, mdaFullName, onLoadingChange }) => {
       throw new Error('No image returned from Gemini');
     } catch (error) {
       console.error('Image generation error:', error);
+
+      // Handle specific 413 error
+      if (error.response?.status === 413) {
+        throw new Error(
+          'Generated image is too large for upload. Please try generating a simpler image or contact support.'
+        );
+      }
+
       throw error;
     }
   };
