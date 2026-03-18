@@ -11,11 +11,12 @@ import {
   publishPage,
   updatePublishDraftRequest,
 } from '../../../../../api/admin/publish';
+import ConfirmModal from '../../../../../shared/confirmModal/confirm-modal';
+import Modal from '../../../../../shared/modal/Modal';
 import { useEditDataStore } from '../../../../../stores/editData.store';
 import { useEditModeStore } from '../../../../../stores/editMode.store';
 import { useThemeStore } from '../../../../../stores/theme.store';
 import ThemeSelector from '../../../../../Themes/ThemeSelector';
-import ConfirmModal from '../../../../confirmModal/confirm-modal';
 import AdminChatbot from '../../../components/chatbot/AdminChatbot';
 import TemplateContainer from '../templates-container/TemplateContainer';
 import CommissionerZoneEdit from './componentEditModal/CommissionerZoneEdit';
@@ -65,7 +66,9 @@ const Published = () => {
 
   // store draft publishing status here;
   const [isDraftPublishCreated, setIsDraftPublishCreated] = useState(null);
-  const [publishId, setPublishId] = useState('');
+  const [publishId, setPublishId] = useState(null);
+  const [showRejectionModal, setShowRejectionModal] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   // Check if MDA has changed and clear edit data if needed
   useEffect(() => {
@@ -89,7 +92,7 @@ const Published = () => {
       // if not published, set isDraftPublishCreated to false
       getPublishBucketsByDraftId(activeDraftId).then((response) => {
         if (response?.data) {
-          setIsDraftPublishCreated(response.data.status);
+          setIsDraftPublishCreated(response.data);
           setPublishId(response.data._id);
         } else {
           setIsDraftPublishCreated(null);
@@ -327,7 +330,7 @@ const Published = () => {
   const renderDraftStatusMessage = () => {
     if (!isDraftPublishCreated) return null;
 
-    if (isDraftPublishCreated === 'pending') {
+    if (isDraftPublishCreated?.status === 'pending') {
       return (
         <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-2 rounded-md mb-4 w-full text-center text-[15px] -mt-[14px] font-medium">
           This draft is awaiting content approval at the moment, you can still make changes to it.
@@ -335,7 +338,7 @@ const Published = () => {
       );
     }
 
-    if (isDraftPublishCreated === 'published') {
+    if (isDraftPublishCreated?.status === 'published') {
       return (
         <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-2 rounded-md mb-4 w-full text-center text-[15px] -mt-[14px] font-medium">
           This draft has been approved and is now live.
@@ -343,15 +346,26 @@ const Published = () => {
       );
     }
 
-    if (isDraftPublishCreated === 'rejected') {
+    if (isDraftPublishCreated?.status === 'rejected') {
       return (
         <div className="bg-red-100 border border-red-400 text-red-800 px-4 py-2 rounded-md mb-4 w-full text-center text-[15px] -mt-[14px] font-medium">
-          This draft has been rejected. Please make the necessary changes and resubmit.
+          This draft has been rejected. Please make the necessary changes and resubmit.{' '}
+          <span
+            className="text-white cursor-pointer ml-2 text-sm bg-red-600 px-2 py-[6px] rounded"
+            onClick={() => {
+              setRejectionReason(
+                isDraftPublishCreated.reasonForRejection || 'No rejection reason provided'
+              );
+              setShowRejectionModal(true);
+            }}
+          >
+            View Reason
+          </span>
         </div>
       );
     }
 
-    if (isDraftPublishCreated === 'content approved') {
+    if (isDraftPublishCreated?.status === 'content approved') {
       return (
         <div className="bg-blue-100 border border-blue-400 text-blue-800 px-4 py-2 rounded-md mb-4 w-full text-center text-[15px] -mt-[14px] font-medium">
           This draft has passed content approval and currently awaiting technical approval
@@ -564,6 +578,36 @@ const Published = () => {
             />
           </div>
         </ConfirmModal>
+
+        {/* Rejection Reason Modal */}
+        <Modal
+          open={showRejectionModal}
+          onClose={() => {
+            setShowRejectionModal(false);
+            setRejectionReason('');
+          }}
+          contentStyling="max-w-md mx-auto mt-20"
+        >
+          <div className="text-center bg-white rounded-lg p-6">
+            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+              <svg
+                className="h-6 w-6 text-red-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Rejection Reason</h3>
+            <p className="text-gray-600 text-sm whitespace-pre-wrap mb-6">{rejectionReason}</p>
+          </div>
+        </Modal>
       </div>
 
       {/* admin ai content assistant chatbot */}

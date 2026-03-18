@@ -2,8 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
-import { getAllNews, getAllNewsByMda } from '../../../../api/read/news.req';
+import { getAllNewsByMda } from '../../../../api/read/news.req';
 import Loader from '../../../../components/loader/loader';
+import { useThemeStore } from '../../stores/theme.store';
 import Pagination from '../pagination/pagination';
 import './news.scss';
 import NewsComp from './NewsComp';
@@ -15,18 +16,15 @@ export default function News_Events({ topic }) {
   const { mda } = useParams();
   const [size, setSize] = useState({ length: 0, pageCount: 0 });
   const [newsCounter, setNewsCounter] = useState(0);
+  const mdaId = useThemeStore((state) => state.mdaData)?._id;
 
-  const newsData = useQuery(
-    mda === 'health'
-      ? {
-          queryKey: ['news', page, topic],
-          queryFn: () => getAllNews(Number(page - 1), topic),
-        }
-      : {
-          queryKey: ['news', mda],
-          queryFn: () => getAllNewsByMda(mda),
-        }
-  );
+  console.log(mdaId);
+
+  const newsData = useQuery({
+    queryKey: ['news', mda],
+    queryFn: () => getAllNewsByMda(mdaId),
+    enabled: !!mdaId,
+  });
 
   useEffect(() => {
     window.scroll(0, 0);
