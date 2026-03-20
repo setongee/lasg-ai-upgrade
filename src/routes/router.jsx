@@ -1,4 +1,3 @@
-import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import ElectedOfficials from '../pages/Government/electedOfficials';
 import JudiciaryOfficials from '../pages/Government/judiciaryOfficials';
@@ -12,6 +11,7 @@ import LagView from '../pages/Government/officialsView_lag';
 import SSGView from '../pages/Government/officialsView_ssg';
 import Executive__view from '../pages/Government/view/executive__view';
 import Page from '../pages/MDAs/Page';
+import LagosCyberSafe from '../pages/MDAs/custom/cybersecguide/home';
 import Connect from '../pages/connect/connect';
 import Events from '../pages/events/events';
 import Homepage from '../pages/home/homepage';
@@ -79,6 +79,9 @@ const RouterClass = () => {
 
         {/* Privacy Page */}
         <Route path="/privacy" element={<Privacy />} />
+
+        {/* special page */}
+        <Route path="/cybersecguide" element={<LagosCyberSafe />} />
 
         {/* 404 Page Not Found */}
         <Route path="*" element={<NotFound />} />

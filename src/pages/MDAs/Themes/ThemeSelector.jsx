@@ -12,8 +12,6 @@ const ThemeSelector = ({ slug, theme, isEdit, data }) => {
   if (!data) return <NotFound />;
   if (data?.isOffline && page !== 'admin') return <Offline />;
 
-  data;
-
   switch (theme) {
     case 'health':
       return <Index isEdit={isEdit || false} />;

@@ -58,11 +58,13 @@ const Heading = () => {
       <div className="pageName font-semibold">{HeadingTitle[id]}</div>
 
       <div className="account">
-        <div className="app_status flex gap-[10px] items-center">
-          <p>Offline Mode</p>
-          <ToggleSlider status={mdaData?.isOffline} changeStatus={setStatus} />
-          <p>Online Mode</p>
-        </div>
+        {mdaData?.isFirstTimePublished && (
+          <div className="app_status flex gap-[10px] items-center">
+            <p>Offline Mode</p>
+            <ToggleSlider status={mdaData?.isOffline} changeStatus={setStatus} />
+            <p>Online Mode</p>
+          </div>
+        )}
         <div className="header-navs flex gap-[14px]">
           <div className="nav-holder">
             {' '}

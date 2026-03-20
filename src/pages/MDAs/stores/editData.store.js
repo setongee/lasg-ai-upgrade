@@ -1,6 +1,23 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+// Helper function to get MDA-specific storage name
+const getStorageName = () => {
+  try {
+    if (typeof window !== 'undefined') {
+      const token = window.localStorage.getItem('MDA__TOKEN');
+      if (token) {
+        const parsed = JSON.parse(token);
+        const mdaIdentifier = parsed.mda || parsed.slug || 'default';
+        return `edit-data-storage-${mdaIdentifier}`;
+      }
+    }
+  } catch (error) {
+    console.warn('Could not determine MDA for storage key:', error);
+  }
+  return 'edit-data-storage-default';
+};
+
 const useEditDataStore = create(
   persist(
     (set) => ({
@@ -33,7 +50,7 @@ const useEditDataStore = create(
         }),
     }),
     {
-      name: 'edit-data-storage',
+      name: getStorageName(),
       partialize: (state) => ({
         activeDraftId: state.activeDraftId,
         mdaEditData: state.mdaEditData,
