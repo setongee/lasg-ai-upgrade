@@ -1,14 +1,7 @@
-import React from 'react'
-import './container.scss'
+import './container.scss';
 
-const Container = (props) => {
+const Container = ({ children, customStyle }) => {
+  return <div className={`guidePack ${customStyle}`}> {children} </div>;
+};
 
-    return (
-
-        <div className='guidePack'> {props.children} </div>
-
-    )
-
-}
-
-export default Container
+export default Container;

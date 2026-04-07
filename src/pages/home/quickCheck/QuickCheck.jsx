@@ -1,14 +1,81 @@
-import { motion } from 'framer-motion';
-import { ArrowUpRight, IconoirProvider } from 'iconoir-react';
+import { ArrowDown, ArrowUpRight, IconoirProvider } from 'iconoir-react';
 import line from '../../../assets/icons/random/line__lasg.svg';
-import housing from '../../../assets/services__illustrations/housing.svg';
-import learn from '../../../assets/services__illustrations/learn.svg';
-import travel from '../../../assets/services__illustrations/travel.svg';
-import work from '../../../assets/services__illustrations/workinlagos.svg';
 import Container from '../../../components/container/container';
-import Controls from '../../../components/control/controls';
 import '../../../styles/components/quickService/quickService.scss';
-import { SplitText } from '../SplitText';
+
+// Card data array for better maintainability
+const quickCheckCards = [
+  {
+    id: 'housing',
+    title: 'Find Housing & Property Services in Lagos',
+    description:
+      'Access housing permits, land services, and property management solutions in Lagos.',
+    image:
+      'https://res.cloudinary.com/dirmxkznt/image/upload/q_auto/f_auto/v1775550824/housing-lagos_cw0gvs.jpg',
+    attr: 'Photo by <a href="https://unsplash.com/@joaccord?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Joshua Oluwagbemiga</a> on <a href="https://unsplash.com/photos/beige-and-brown-concrete-house-under-blue-sky--W9baa2VIBU?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>',
+    href: '/services/housingandlands',
+    buttonText: 'View Services',
+    delay: 0.1,
+  },
+  {
+    id: 'tourism',
+    title: 'Find and Explore Tourism & Visitor Services',
+    description:
+      'Access tourism, travel, and visitor services designed to help you experience the best of Lagos.',
+    image:
+      'https://res.cloudinary.com/dirmxkznt/image/upload/q_auto/f_auto/v1775550825/tourism_sn31vi.jpg',
+    attr: 'Photo by <a href="https://unsplash.com/@joaccord?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Joshua Oluwagbemiga</a> on <a href="https://unsplash.com/photos/beige-and-brown-concrete-house-under-blue-sky--W9baa2VIBU?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>',
+    href: '/services/tourism_culture',
+    buttonText: 'View Services',
+    delay: 0.2,
+  },
+  {
+    id: 'jobs',
+    title: 'Discover Work & Employment Services in Lagos',
+    description:
+      'Access employment, business, and regulatory services driving sustainable growth in Lagos.',
+    image:
+      'https://res.cloudinary.com/dirmxkznt/image/upload/q_auto/f_auto/v1775551078/work-lagos_cmd6ou.jpg',
+    attr: "Photo by <a href='https://unsplash.com/@ninthgrid_?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText'>Ninthgrid</a> on <a href='https://unsplash.com/photos/a-group-of-people-standing-next-to-each-other-ti8cT-DKwes?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText'>Unsplash</a>",
+    href: '/services/jobopportunities',
+    buttonText: 'View Services',
+    delay: 0.3,
+  },
+  {
+    id: 'education',
+    title: 'Find Lagos state Education & School Services',
+    description:
+      'Access education services, school systems, and learning resources that support excellence across Lagos.',
+    image:
+      'https://res.cloudinary.com/dirmxkznt/image/upload/q_auto/f_auto/v1775553412/education-lagos_oxebm0.jpg',
+    href: '/services/education',
+    buttonText: 'Explore Services',
+    delay: 0.4,
+  },
+  {
+    id: 'payment',
+    title: 'Find and Manage Payments & Government Fees',
+    description:
+      'Access taxes, levies, fines, and payment services securely and conveniently across Lagos State.',
+    image: 'https://res.cloudinary.com/dirmxkznt/image/upload/v1775552306/payment_uqrfp6.jpg',
+    attr: '',
+    href: '/services/payments_levies',
+    buttonText: 'Find Payments',
+    delay: 0.5,
+  },
+  {
+    id: 'safety',
+    title: 'Find and Manage Safety & Emergency Services',
+    description:
+      'Access security, emergency response, and public safety services whenever you need them most quickly.',
+    image:
+      'https://res.cloudinary.com/dirmxkznt/image/upload/q_auto/f_auto/v1775551670/safety_gqnnso.jpg',
+    attr: '',
+    href: '/services/disasters_emergencies',
+    buttonText: 'View Services',
+    delay: 0.6,
+  },
+];
 
 export default function QuickCheck({ darkmode }) {
   const handleServices = () => {
@@ -21,29 +88,26 @@ export default function QuickCheck({ darkmode }) {
   };
 
   return (
-    <div className={darkmode ? 'quickCheck darkmode' : 'quickCheck'} id="quickCheck">
-      <Controls target="scrollX" />
+    <div
+      className={`${darkmode ? 'quickCheck darkmode' : 'quickCheck'} bg-gray-50!`}
+      id="quickCheck"
+    >
+      {/* <Controls target="scrollX" /> */}
 
       <Container>
         <div className="getStarted">
           <div className="textString thick">
             <div className="textChange">
-              <SplitText
-                major="many"
-                initial={{ y: '100%' }}
-                whileInView={{ y: 0, transition: { duration: 1.4 } }}
-              >
-                Browse 200+ online services for citizens and businesses
-              </SplitText>
+              Find and Access 300+ Essential Public Services in Lagos State
             </div>
 
             <div className="pasty">
-              Lagos State is committed to improving access to government services online, including
-              taxes, licenses, permits, and more
+              Access everything you need from payments and permits to registrations and public
+              services on a unified digital platform designed to be faster, simpler, and secure.
             </div>
           </div>
 
-          {/* <div className="title"> Get started with Lagos State -  </div> */}
+          {/* <div className="title"> Get started with Lagos State - </div> */}
 
           <IconoirProvider
             iconProps={{
@@ -52,119 +116,41 @@ export default function QuickCheck({ darkmode }) {
               height: 16,
             }}
           >
-            <div className={darkmode ? 'quickAsapLinks darkmode' : 'quickAsapLinks'} id="scrollX">
-              <motion.a
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 1 }}
-                transition={{ delay: 0.1 }}
-                href="/services/housingandlands"
-                className="linkBin"
-              >
-                <div className="content">
-                  <div className="img_quick">
-                    <img src={housing} alt="" />
-                  </div>
-
-                  <div className="quick__title">
-                    <div className="main__text">
-                      Housing in Lagos{' '}
-                      <span>
-                        <ArrowUpRight />
-                      </span>
-                    </div>
-
-                    <p>Get info on housing, permits, OPAL membership, LUC Payments etc.</p>
-                  </div>
-
-                  <div className="button__quick"> Go to housing </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-4 lg:gap-6 mt-10 w-full">
+              {quickCheckCards.map((card) => (
+                <div
+                  key={card.id}
+                  className="p-5 bg-white rounded-[16px] flex flex-col max-w-110 md:max-w-full mx-auto"
+                >
+                  <img
+                    src={card.image}
+                    alt={card.attr}
+                    className="w-full h-50 object-cover rounded-lg"
+                  />
+                  <h3 className="text-[17px] font-semibold w-full xl:w-[75%] leading-[1.45] mt-4">
+                    {card.title}
+                  </h3>
+                  <p className="text-[15px] text-gray-600! mt-2 leading-[1.5]">
+                    {card.description}
+                  </p>
+                  <a
+                    className="text-white! flex gap-2 items-center font-medium mt-6 mb-1 text-[14px] bg-green-950 rounded-[6px] px-4 py-2 w-max"
+                    href={card.href}
+                  >
+                    View Services
+                    <ArrowUpRight className="text-green-200" />
+                  </a>
                 </div>
-              </motion.a>
-
-              <motion.a
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 1 }}
-                transition={{ delay: 0.2 }}
-                href="/services/tourism_culture"
-                className="linkBin"
-              >
-                <div className="content">
-                  <div className="img_quick">
-                    <img src={travel} alt="" />
-                  </div>
-
-                  <div className="quick__title">
-                    <div className="main__text">
-                      Visit and Tour Lagos{' '}
-                      <span>
-                        <ArrowUpRight />
-                      </span>
-                    </div>
-
-                    <p>book your trip, get a tour guide, how to process your visa</p>
-                  </div>
-
-                  <div className="button__quick"> Visit Lagos </div>
-                </div>
-              </motion.a>
-
-              <motion.a
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 1 }}
-                transition={{ delay: 0.3 }}
-                href="/services/jobopportunities"
-                className="linkBin"
-              >
-                <div className="content">
-                  <div className="img_quick">
-                    <img src={work} alt="" />
-                  </div>
-
-                  <div className="quick__title">
-                    <div className="main__text">
-                      Work in Lagos{' '}
-                      <span>
-                        <ArrowUpRight />
-                      </span>
-                    </div>
-
-                    <p>Find out things to know about working in Lagos</p>
-                  </div>
-
-                  <div className="button__quick"> Learn more </div>
-                </div>
-              </motion.a>
-
-              <motion.a
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 1 }}
-                transition={{ delay: 0.4 }}
-                href="/services/education"
-                className="linkBin"
-              >
-                <div className="content">
-                  <div className="img_quick">
-                    <img src={learn} alt="" />
-                  </div>
-
-                  <div className="quick__title">
-                    <div className="main__text">
-                      School in Lagos State{' '}
-                      <span>
-                        <ArrowUpRight />
-                      </span>
-                    </div>
-
-                    <p>Find out about schooling in Lagos and Educational services</p>
-                  </div>
-
-                  <div className="button__quick"> Go to housing </div>
-                </div>
-              </motion.a>
+              ))}
             </div>
           </IconoirProvider>
 
-          <div className="linkServices">
-            Ready to explore? <a onClick={handleServices}>Browse all services</a>
+          <div className="linkServices mt-1 bg-white py-3 px-6 rounded-[10px] shadow-gray-100 shadow-lg border border-gray-100 text-[15px] flex gap-2 items-center">
+            Ready to explore?{' '}
+            <a className="font-semibold! text-gray-700!" onClick={handleServices}>
+              Browse all services
+            </a>
+            <ArrowDown className="text-[10px] ml-1 mt-[2px]" strokeWidth={2.5} />
           </div>
         </div>
 

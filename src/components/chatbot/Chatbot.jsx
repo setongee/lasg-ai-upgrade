@@ -709,17 +709,7 @@ ${history}
         return;
       }
       const contextName = ministryInfo?.name || pageContext || 'Lagos State Government';
-      const hour = new Date().getHours();
-      let timeContext = '';
-      if (isGeneralPage || contextName === 'Lagos State Official Website') {
-        if (hour >= 5 && hour < 12) timeContext = 'Morning — services, permits, ministries.';
-        else if (hour >= 12 && hour < 17)
-          timeContext = 'Afternoon — services, permits, ministries.';
-        else if (hour >= 17 && hour < 22)
-          timeContext = 'Evening — emergencies, commute services, 24-hour services.';
-        else timeContext = 'Late Night — emergencies, 24-hour services, police, health.';
-      }
-      const prompt = `Generate 6 service-focused questions (under 10 words) about accessing services from "${contextName}". ${timeContext}\nFormat: question1||question2||question3||question4||question5||question6`;
+      const prompt = `Generate 7 engaging, conversational questions about Lagos State services. Minimum 3 words, maximum 4 words each. Must make sense and be natural. Use this style: "pay utility bills", "health services near me", "file my taxes", "emergency safety numbers", "education in Lagos", "government benefits info", "fun recreational spots", "parks and gardens", "ministry building location", "ministry contact info". Focus on everyday needs like transportation, utilities, healthcare, education, business, emergency, recreation, and government services. Make them natural requests people would actually ask. Format: question1||question2||question3||question4||question5||question6||question7`;
       try {
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
         const result = await model.generateContent(prompt);
@@ -728,7 +718,7 @@ ${history}
           .split('||')
           .map((q) => q.trim())
           .filter(Boolean)
-          .slice(0, 6);
+          .slice(0, 7);
         suggestionCache.set(cacheKey, { data: suggestions, timestamp: Date.now() });
         setInitialSuggestions(suggestions);
       } catch (err) {

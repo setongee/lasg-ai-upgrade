@@ -1,144 +1,243 @@
-.view_service_modal{
-    background-color: rgba($color: #000000, $alpha: .5);
-    height: 100dvh;
-    width: 100%;
-    position: fixed;
-    z-index: 99999;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    top: 0;
+.view_service_modal {
+  background-color: rgba($color: #000000, $alpha: 0.5);
+  height: 100dvh;
+  width: 100%;
+  position: fixed;
+  z-index: 99999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  top: 0;
 
-    .modal_item{
+  .modal_item {
+    background-color: #fff;
+    width: 700px;
+    padding: 50px;
+    position: relative;
+    margin: 80px 0;
+    overflow-y: auto;
+    height: max-content;
+    max-height: calc(100vh - 150px);
+    border-radius: 10px;
 
-        background-color:#fff;
-        width: 700px;
-        padding: 50px;
+    .closeModal {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 30px;
+      cursor: pointer;
+    }
+
+    // Scroll indicator with fade effect
+    .scroll-indicator {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 120px;
+      pointer-events: none;
+      z-index: 9999999999999;
+      display: flex;
+
+      .scroll-fade {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 200px;
+        width: 100%;
+        background: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.8) 30%,
+          rgba(255, 255, 255, 1) 80%
+        );
+        pointer-events: none;
+      }
+
+      .scroll-text {
+        // position: absolute;
         position: relative;
-        margin: 80px 0;
-        overflow-y: auto;
-        height: max-content;
-        max-height: calc(100vh - 150px);
-        border-radius: 10px;
+        bottom: 0px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        z-index: 99;
+        width: 100%;
+        // max-width: 90vw;
+        pointer-events: auto;
+        cursor: pointer;
 
-        .closeModal{
-            position: absolute;
-            top: 0;
-            right: 0;
-            margin: 30px;
-            cursor: pointer;
+        span {
+          font-size: 12px;
+          color: #666;
+          color: #fff;
+          font-weight: 500;
+          white-space: nowrap;
+          background: rgba(255, 255, 255, 0.95);
+          background-color: #1c3f3a;
+          padding: 8px 16px;
+          border-radius: 9px;
+          box-shadow: 0 2px 25px rgba(0, 0, 0, 0.05);
+          text-align: center;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-weight: 600;
+          border: 1px solid #eee;
+          cursor: pointer;
         }
 
-        .modal_info{
-
-            line-height: 24px;
-            text-align: justify;
-
-            p, li, ol, ul, a{
-                font-size: 14px !important;
-            }
-
-            ol, ul{
-                margin-left: 14px;
-                margin-top: 5px;
-            }
-
-            a{
-                color: var(--primary25);
-                text-decoration: underline;
-            }
-
-            iframe{
-                width: 100%;
-                height: 300px;
-            }
-
-            img{
-                width: 100%;
-                height: 300px;
-                object-fit: cover;
-            }
-
+        .scroll-arrow {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 24px;
+          height: 24px;
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 50%;
+          backdrop-filter: blur(10px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-
-        .modal_theme{
-
-            background-color: #deeee0;
-            width: max-content;
-            font-size: 10px;
-            margin-bottom: 20px;
-            padding: 3px;
-            color: var(--primary25);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-
-        }
-
-        .modal_title{
-
-            font-size: 28px;
-            width : 80%;
-            text-transform: capitalize;
-            font-weight: 500;
-            margin-bottom: 40px;
-
-        }
-
-        .modal_CTA{
-
-            padding: 15px 22px;
-            margin-top: 50px;
-            background-color: var(--primary25);
-            width: max-content;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            background-color: #1C3F3A;
-            border-radius: 5px;
-
-        }
-
+      }
     }
+
+    @keyframes bounce {
+      0% {
+        transform: translateY(30px);
+      }
+      50% {
+        transform: translateY(40px);
+      }
+      100% {
+        transform: translateY(-300px);
+      }
+    }
+
+    @keyframes pulse {
+      0%,
+      100% {
+        opacity: 0.6;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+    }
+
+    .bounce-arrow {
+      animation: bounce 2s infinite;
+    }
+
+    .modal_info {
+      line-height: 155%;
+      //   text-align: justify;
+      p,
+      li,
+      ol,
+      ul,
+      a {
+        font-size: 16px !important;
+      }
+
+      ol,
+      ul {
+        margin-left: 0px;
+        margin-top: 0px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      ol {
+        list-style: inside;
+        list-style-type: decimal;
+      }
+
+      a {
+        color: green !important;
+        font-weight: 500 !important;
+        text-decoration: underline !important;
+      }
+
+      iframe {
+        width: 100%;
+        height: 300px;
+      }
+
+      img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+      }
+    }
+
+    .modal_theme {
+      background-color: #deeee0;
+      width: max-content;
+      font-size: 10px;
+      margin-bottom: 20px;
+      padding: 3px;
+      color: var(--primary25);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+    }
+
+    .modal_title {
+      font-size: 28px;
+      width: 80%;
+      text-transform: capitalize;
+      font-weight: 500;
+      margin-bottom: 40px;
+    }
+
+    .modal_CTA {
+      padding: 15px 22px;
+      margin-top: 50px;
+      background-color: var(--primary25);
+      width: max-content;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      background-color: #1c3f3a;
+      border-radius: 5px;
+    }
+  }
 }
 
-@media (max-width : 750px) {
-
-    .view_service_modal{
-
-        .modal_item{
-
-            width: 90%;
-
-        }
-
+@media (max-width: 750px) {
+  .view_service_modal {
+    .modal_item {
+      width: 90%;
     }
+  }
 }
 
-@media (max-width : 500px) {
+@media (max-width: 500px) {
+  .view_service_modal {
+    background-color: #fff;
+    .modal_item {
+      width: 100%;
+      border-radius: 0;
+      //   position: absolute;
+      max-height: 100vh;
+      bottom: 0;
+      padding: 30px;
+      margin: 0;
+      padding-bottom: 60px;
 
-    .view_service_modal{
-
-        .modal_item{
-
-            width: 100%;
-            border-radius: 20px 20px 0 0;
-            position: absolute;
-            bottom: 0;
-            padding: 30px;
-            margin: 0;
-
-            .modal_title{
-                width: 100%;
-                font-size: 24px;
-                font-weight: 600;
-                line-height: 32px;
-                margin-top: 10px;
-                margin-bottom: 30px;
-            }
-
-        }
-
+      .modal_title {
+        width: 100%;
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 32px;
+        margin-top: 10px;
+        margin-bottom: 30px;
+      }
     }
+  }
 }

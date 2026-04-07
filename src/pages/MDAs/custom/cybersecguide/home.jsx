@@ -1,4 +1,14 @@
-import { ArrowRight, Check, Menu, Minus, Plus, Xmark } from 'iconoir-react';
+import {
+  ArrowRight,
+  Check,
+  MapPin,
+  Menu,
+  Message,
+  Minus,
+  Plus,
+  Safari,
+  Xmark,
+} from 'iconoir-react';
 import { useState } from 'react';
 import Wrapper from '../../shared/Wrapper/Wrapper';
 import './guide.css';
@@ -6,6 +16,9 @@ import CyberRiskOverview from './RiskOverview';
 
 const PDF_URL =
   'https://res.cloudinary.com/dirmxkznt/image/upload/v1773876046/Title-_2026_Cybersecurity_Guidelines_for_Businesses_Public_Institutions_in_Lagos_State_1__compressed_fnueaw.pdf';
+
+const PDF_FULL_URL =
+  'https://res.cloudinary.com/dirmxkznt/raw/upload/v1774204976/LASG_CYBERSECURITY_GUIDELINES_2_epzgbf.docx';
 
 const faqs = [
   {
@@ -286,7 +299,7 @@ export default function LagosCyberSafe() {
               </a>
             </li>
             <li>
-              <a href="#faq" onClick={() => setMobileMenuOpen(false)}>
+              <a href="#footer" onClick={() => setMobileMenuOpen(false)}>
                 Contact
               </a>
             </li>
@@ -572,14 +585,14 @@ export default function LagosCyberSafe() {
               </div>
             ))}
           </div>
-          <a href={PDF_URL} target="_blank" rel="noopener noreferrer" className="btn-cta-main">
+          <a href={PDF_FULL_URL} target="_blank" rel="noopener noreferrer" className="btn-cta-main">
             <DownloadIcon size={16} /> Download the Full Guidelines PDF
           </a>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer>
+      <footer id="footer">
         <div className="footer-top">
           <div className="footer-brand">
             <h3>Lagos CyberSafe 2026</h3>
@@ -609,36 +622,59 @@ export default function LagosCyberSafe() {
             </ul>
           </div>
           <div className="footer-col">
-            <h4>Contact Info</h4>
+            <h4>Nigeria Computer Emergency Response Team</h4>
             <ul>
               <li>
-                <span>📧 mist@lagosstate.gov.ng</span>
+                <span className="flex items-center gap-2 border-b-2 border-green-950 pb-2">
+                  <Message fontSize={11} className="mt-[2px] text-green-300" /> incident@cert.gov.ng
+                </span>
               </li>
               <li>
-                <span>🌐 lagosstate.gov.ng</span>
+                <span className="flex items-center gap-2 border-b-2 border-green-950 pb-2">
+                  <Safari fontSize={11} className="mt-[2px] text-green-300" /> https://cert.gov.ng/
+                </span>
               </li>
               <li>
-                <span>📍 Alausa, Ikeja, Lagos</span>
-              </li>
-              <li>
-                <span>Lagos State, Nigeria</span>
+                <span className="flex items-center gap-2 border-b-amber-50">
+                  <MapPin fontSize={11} className="mt-[2px] text-green-300" /> Abuja, Nigeria
+                </span>
               </li>
             </ul>
           </div>
           <div className="footer-col">
-            <h4>Social Media</h4>
+            <h4>Lagos MIST Social Media</h4>
             <ul>
               <li>
-                <a href="#">Twitter / X</a>
+                <a href="https://twitter.com/lagosmist" target="_blank" rel="noopener noreferrer">
+                  Twitter / X
+                </a>
               </li>
               <li>
-                <a href="#">LinkedIn</a>
+                <a
+                  href="https://www.linkedin.com/company/lagos-state-ministry-of-innovation-science-and-technology/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  LinkedIn
+                </a>
               </li>
               <li>
-                <a href="#">Facebook</a>
+                <a
+                  href="https://www.facebook.com/lagosmist"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Facebook
+                </a>
               </li>
               <li>
-                <a href="#">Instagram</a>
+                <a
+                  href="https://www.instagram.com/lagosmist"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Instagram
+                </a>
               </li>
             </ul>
           </div>

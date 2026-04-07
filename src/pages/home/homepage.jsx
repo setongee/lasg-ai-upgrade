@@ -12,11 +12,13 @@ const Homepage = () => {
   const darkmode = useApp((state) => state.darkmode);
 
   return (
-    <div className="home" style={{ background: darkmode ? '#000' : '#fff' }}>
-      <HeroSection />
+    <div className="home">
+      <div className="bg-[#f0f7f673]">
+        <HeroSection />
+      </div>
       <Stat darkmode={darkmode} />
-      <NewQuick />
       <QuickCheck darkmode={darkmode} />
+      <NewQuick />
       <Services bgColor="#f0f7f6" location="home" data_limit={100} />
       <NewsCarrier />
     </div>

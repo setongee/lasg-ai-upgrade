@@ -142,16 +142,16 @@ export default function HeroSection() {
 
       {showSearchModal ? <SearchQuery query={searchQuery} closeModal={closeSearchModal} /> : null}
 
-      <Container>
+      <Container customStyle="">
         <div className="photo_container">
           <div className="home__content">
-            <div className={`text__area ${darkmode ? 'dark' : 'light'}`}>
+            <div className="text__area">
               Smarter Access to Lagos Services for{' '}
               <span style={{ color: '#108a00' }}>Everyone</span>
             </div>
             {/* <p>Empowering citizens with easier access to state services and opportunities.</p> */}
           </div>
-          <div className={`lasg-ai-chatbot ${darkmode ? 'dark' : 'light'}`}>
+          <div className={`lasg-ai-chatbot`}>
             <div className="chat-textarea">
               <div className="hero-type"></div>
 
@@ -208,10 +208,9 @@ export default function HeroSection() {
                     key={index}
                     onClick={() => handleClickSuggestion(item)}
                   >
-                    <p>{item}</p>
-                    <div className="arrowDesign">
-                      <ArrowUpRight />
-                    </div>
+                    <p className="flex items-center gap-2">
+                      {item} <ArrowUpRight fontSize={10} />
+                    </p>
                   </div>
                 ))}
             </div>

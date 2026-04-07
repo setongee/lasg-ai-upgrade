@@ -8,7 +8,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 0;
+    padding: 18px 56px;
     background: #fff;
     /* border-bottom: 1px solid #f0f0f0; */
     position: sticky;
@@ -115,7 +115,7 @@
   .hero {
     display: flex;
     min-height: 600px;
-    /* padding: 0 56px; */
+    padding: 0 56px;
     align-items: center;
     gap: 40px;
     position: relative;
@@ -868,19 +868,19 @@
     margin-bottom: 40px;
   }
   .footer-brand h3 {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
     color: #fff;
     margin-bottom: 8px;
   }
   .footer-brand p {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.4);
+    font-size: 14px;
+    color: #fff;
     line-height: 1.7;
     max-width: 220px;
   }
   .footer-col h4 {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     color: rgba(255, 255, 255, 0.7);
     margin-bottom: 14px;
@@ -893,16 +893,16 @@
     margin-bottom: 8px;
   }
   .footer-col ul li a {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.4);
+    font-size: 13px;
+    color: #eee;
     text-decoration: none;
   }
   .footer-col ul li a:hover {
     color: rgba(255, 255, 255, 0.8);
   }
   .footer-col ul li span {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.4);
+    font-size: 13px;
+    color: #eee;
   }
   .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.08);

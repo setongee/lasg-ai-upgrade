@@ -333,7 +333,7 @@ export default function Header() {
                 {/* <div className="button__search"><div className="parentName searching" onClick={ () => openModal() } > <Search height={17} width={17} strokeWidth={2.4}/> Search </div></div> */}
 
                 <div className="button__search">
-                  <div className="parentName searching">Search</div>
+                  {/* <div className="parentName searching">Search</div> */}
                 </div>
               </div>
             </Container>
