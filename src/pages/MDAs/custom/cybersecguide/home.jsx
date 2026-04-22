@@ -645,13 +645,13 @@ export default function LagosCyberSafe() {
             <h4>Lagos MIST Social Media</h4>
             <ul>
               <li>
-                <a href="https://twitter.com/lagosmist" target="_blank" rel="noopener noreferrer">
+                <a href="https://x.com/lasgmist" target="_blank" rel="noopener noreferrer">
                   Twitter / X
                 </a>
               </li>
               <li>
                 <a
-                  href="https://www.linkedin.com/company/lagos-state-ministry-of-innovation-science-and-technology/"
+                  href="https://www.linkedin.com/company/lasgmist/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -660,7 +660,7 @@ export default function LagosCyberSafe() {
               </li>
               <li>
                 <a
-                  href="https://www.facebook.com/lagosmist"
+                  href="https://facebook.com/lasgmist/?_rdc=1&_rdr#"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -669,7 +669,7 @@ export default function LagosCyberSafe() {
               </li>
               <li>
                 <a
-                  href="https://www.instagram.com/lagosmist"
+                  href="https://www.instagram.com/lasgmist/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
