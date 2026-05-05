@@ -154,7 +154,10 @@ export default function Footer({ data }) {
             <p className="text-[19px] font-semibold text-white">
               Access affordable healthcare at your fingertips!
             </p>
-            <button className="py-2.5 px-5 bg-[#90ee90] text-gray-900 rounded-[4px] font-semibold text-[15px] flex items-center gap-2 cursor-pointer w-max">
+            <button
+              onClick={() => window.open('https://ileraeko.com/')}
+              className="py-2.5 px-5 bg-[#90ee90] text-gray-900 rounded-[4px] font-semibold text-[15px] flex items-center gap-2 cursor-pointer w-max"
+            >
               Start with LASHMA <ArrowUpRight className="text-[11px]" strokeWidth={2} />
             </button>
           </div>
