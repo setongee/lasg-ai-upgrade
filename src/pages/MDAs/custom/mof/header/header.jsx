@@ -2,6 +2,7 @@ import useWindowWidth from '../../../../../hooks/useWindowWidth';
 import '../../../shared/styles/style.scss';
 import Wrapper from '../../../shared/Wrapper/Wrapper';
 import { useEditModeStore } from '../../../stores/editMode.store';
+import { useThemeStore } from '../../../stores/theme.store';
 import HeaderLg from './header-lg';
 import HeaderSm from './header-sm';
 import './header.css';
@@ -11,6 +12,7 @@ const Header = ({ fullname, isEdit }) => {
   const info = '🚀 We just launched our new website, Enjoy the new v2.0 experience';
   const viewMode = useEditModeStore((s) => s.viewMode);
   const setSelectedComponent = useEditModeStore((state) => state.setSelectedComponent);
+  const mdaData = useThemeStore((state) => state.mdaData);
 
   const handleComponentClick = (component) => {
     setSelectedComponent(component);
@@ -36,9 +38,9 @@ const Header = ({ fullname, isEdit }) => {
           }}
         >
           {isLargeScreen ? (
-            <HeaderLg customClass="h-[80px]" fullname={fullname} />
+            <HeaderLg customClass="h-[80px]" fullname={fullname} mdaData={mdaData} />
           ) : (
-            <HeaderSm customClass="h-[80px]" fullname={fullname} />
+            <HeaderSm customClass="h-[80px]" fullname={fullname} mdaData={mdaData} />
           )}
         </Wrapper>
 

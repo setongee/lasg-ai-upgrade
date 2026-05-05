@@ -1,7 +1,8 @@
 import { ArrowUpRight, BinFull, Edit, Plus, Xmark } from 'iconoir-react';
 import { useEffect, useState } from 'react';
 import { notify } from '../../../../../../utils/toast';
-import { updateAdminData, uploadDocument } from '../../../../api/admin/content';
+import { updateAdminData } from '../../../../api/admin/content';
+import { uploadDocument } from '../../../../api/uploader/uploadFIles';
 import Loader from '../../../../shared/loader/loader';
 import '../../styles/pages.scss';
 import pdff from './pdff.png';
@@ -72,13 +73,13 @@ const Resources = ({ mda_data }) => {
       try {
         setIsLoading(true);
         const updatedResources = data.resources.filter((_, idx) => idx !== index);
-        
+
         // Update local state
-        setData(prev => ({
+        setData((prev) => ({
           ...prev,
-          resources: updatedResources
+          resources: updatedResources,
         }));
-        
+
         // Set update info and let the effect handle the API call
         setUpdateInfo(`deleted resource - ${resourceToDelete.name}`);
       } catch (error) {
@@ -102,9 +103,10 @@ const Resources = ({ mda_data }) => {
 
     try {
       if (file) {
-        await uploadDocument(file, newResource.name)
+        await uploadDocument(file, `${mda_data.fullname}/resources`)
           .then((res) => {
-            newResource.url = res;
+            const url = res.data.url;
+            newResource.url = url;
             // Will be handled by the updateInfo effect
             if (isEditModalOpen) {
               data.resources[index] = { ...newResource };

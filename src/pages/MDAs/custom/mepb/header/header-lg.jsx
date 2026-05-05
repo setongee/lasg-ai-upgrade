@@ -9,12 +9,13 @@ const HeaderLg = ({ customClass, fullname }) => {
   const navigate = useNavigate();
   const mdaData = useThemeStore((state) => state.mdaData);
   const isMdaTypeService = mdaData?.type === 'service';
+  const logo = mdaData?.logo;
 
   return (
     <div className={`w-full p-2 flex items-center justify-between ${customClass}`}>
       <div className="flex items-center gap-4">
         <div className="logo overflow-hidden w-12 h-12">
-          <img src={lasg__logo} alt="Lagos State Ministry of Health" />
+          <img src={logo ? logo : lasg__logo} alt={`Lagos State ${fullname}`} />
         </div>
         <p className="text-[11px] uppercase tracking-[2px] w-[250px]">{fullname}</p>
       </div>

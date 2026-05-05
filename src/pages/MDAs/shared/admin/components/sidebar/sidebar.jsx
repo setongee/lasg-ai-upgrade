@@ -14,6 +14,8 @@ export default function Sidebar() {
   const [role, setRole] = useState('');
   const data = useThemeStore((state) => state.mdaData);
 
+  const mda_logo = data?.logo;
+
   useEffect(() => {
     const user = window.localStorage.getItem('MDA__TOKEN');
     const parser = JSON.parse(user);
@@ -33,9 +35,9 @@ export default function Sidebar() {
       >
         <div className="mainMenu">
           <div className="menu__heading">
-            <div className="menu__controller flex justify-between items-center">
-              <div className="logo-mda">
-                <img src={logo} alt="Lagos State MIST Logo" />
+            <div className="menu__controller flex justify-between items-center flex-wrap gap-4!">
+              <div className="logo-mda w-15! h-15!">
+                <img src={mda_logo || logo} alt={`Lagos State ${data?.fullname} Logo`} />
               </div>{' '}
               <p>{data?.fullname} Admin Portal</p>
             </div>

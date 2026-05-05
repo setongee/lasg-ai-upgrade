@@ -58,7 +58,6 @@ export default function Footer({ data }) {
               </a>
             </div>
           </div>
-
           <div className="linksPart flex">
             <div className="linkHolder flex flex-col fritz">
               <div className="linkHeader thick_500">Contact Us</div>
@@ -148,6 +147,16 @@ export default function Footer({ data }) {
                 </a>
               </div>
             </div>
+          </div>
+
+          {/* lashma link */}
+          <div className="flex  md:items-center justify-center gap-5 p-6 md:p-4 rounded-[0px] bg-gray-800 my-11 text-white flex-col md:flex-row">
+            <p className="text-[19px] font-semibold text-white">
+              Access affordable healthcare at your fingertips!
+            </p>
+            <button className="py-2.5 px-5 bg-[#90ee90] text-gray-900 rounded-[4px] font-semibold text-[15px] flex items-center gap-2 cursor-pointer w-max">
+              Start with LASHMA <ArrowUpRight className="text-[11px]" strokeWidth={2} />
+            </button>
           </div>
 
           <div className="footest_footer uppercase">

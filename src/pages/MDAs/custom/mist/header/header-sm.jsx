@@ -2,15 +2,14 @@ import { ArrowUpRight, Menu, Xmark } from 'iconoir-react';
 import { useState } from 'react';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
-import { useThemeStore } from '../../../stores/theme.store';
 import lasg__logo from '../assets/lasg__logo.png';
 
-const HeaderSm = ({ customClass, fullname }) => {
+const HeaderSm = ({ customClass, fullname, mdaData }) => {
   const { mda, page } = useParams();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const mdaData = useThemeStore((state) => state.mdaData);
   const isMdaTypeService = mdaData?.type === 'service';
+  const logo = mdaData?.logo;
 
   return (
     <div className={`w-full p-2 flex items-center justify-between ${customClass}`}>
@@ -20,8 +19,8 @@ const HeaderSm = ({ customClass, fullname }) => {
         }`}
       >
         <div className="brandZone flex items-center gap-4">
-          <div className="logo overflow-hidden w-10 h-10 flex-shrink-0 sm:w-12 sm:h-12">
-            <img src={lasg__logo} alt={`Lagos State ${fullname}`} />
+          <div className="logo overflow-hidden w-12 h-12">
+            <img src={logo ? logo : lasg__logo} alt={`Lagos State ${fullname}`} />
           </div>
           <p className="text-[11px] uppercase tracking-[2px]">{fullname}</p>
         </div>

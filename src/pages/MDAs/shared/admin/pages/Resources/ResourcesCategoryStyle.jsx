@@ -1,7 +1,8 @@
 import { ArrowUpRight, BinFull, Edit, Plus, Xmark } from 'iconoir-react';
 import { useEffect, useState } from 'react';
 import { notify } from '../../../../../../utils/toast';
-import { updateAdminData, uploadDocument } from '../../../../api/admin/content';
+import { updateAdminData } from '../../../../api/admin/content';
+import { uploadDocument } from '../../../../api/uploader/uploadFIles';
 import { useThemeStore } from '../../../../stores/theme.store';
 import Loader from '../../../loader/loader';
 import '../../styles/pages.scss';
@@ -111,12 +112,14 @@ const ResourcesCategoryStyle = ({ mda_data }) => {
       setIsLoading(true);
       try {
         if (file) {
-          await uploadDocument(file, newResource.name)
+          await uploadDocument(file, `${mda_data.fullname}/resources`)
             .then((res) => {
-              newResource.url = res;
+              const url = res.data.url;
+              console.log(url);
+              newResource.url = url;
               data.resources[index] = {
                 name: newResource.name,
-                url: res,
+                url: url,
                 category: newResource.category,
                 date: new Date().toISOString(), // Update date on edit
               };
@@ -186,16 +189,17 @@ const ResourcesCategoryStyle = ({ mda_data }) => {
         });
       }, 200);
 
-      await uploadDocument(file, newResource.name)
+      await uploadDocument(file, `${mda_data.fullname}/resources`)
         .then((res) => {
           clearInterval(progressInterval);
+          const url = res.data.url;
 
           // Update the resource with the actual URL
           setData((prev) => ({
             ...prev,
             resources: prev.resources.map((resource) =>
               resource.id === tempId
-                ? { ...resource, url: res, isUploading: false, uploadProgress: 100 }
+                ? { ...resource, url: url, isUploading: false, uploadProgress: 100 }
                 : resource
             ),
           }));
@@ -422,7 +426,7 @@ const ResourcesCategoryStyle = ({ mda_data }) => {
             const uploadInfo = uploadingItems[res.id];
             const isUploading = res.isUploading || uploadInfo?.status === 'uploading';
             const uploadProgress = res.uploadProgress || uploadInfo?.progress || 0;
-
+            // console.log(res);
             return (
               <div className="table__item flex" key={res.id || index}>
                 <div className="flex flex-col justify-between w-full min-w-0">
@@ -459,7 +463,7 @@ const ResourcesCategoryStyle = ({ mda_data }) => {
                     </div>
                   )}
 
-                  <div className="tr__item flex act--item mt-5 overflow-x-auto">
+                  <div className="tr__item flex act--item mt-5 overflow-x-auto no-scrollbar">
                     <div
                       className={`action !bg-gray-800 !text-white ${!res.url ? 'opacity-50 cursor-not-allowed' : ''}`}
                       onClick={() => res.url && window.open(res.url, '_blank')}

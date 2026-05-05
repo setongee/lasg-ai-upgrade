@@ -2,7 +2,9 @@ import { ArrowUpRightSquareSolid } from 'iconoir-react';
 import { useEffect, useState } from 'react';
 import { notify } from '../../../../../../utils/toast';
 import { updateAdminData } from '../../../../api/admin/content';
+import { uploadDocument } from '../../../../api/uploader/uploadFIles';
 import Loader from '../../../../shared/loader/loader';
+import genericLogo from '../../../assets/lasg__logo.png';
 import '../../styles/pages.scss';
 
 const Contact = ({ mda_data }) => {
@@ -10,6 +12,9 @@ const Contact = ({ mda_data }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [contact, setContact] = useState({});
   const [updateInfo, setUpdateInfo] = useState({});
+  const [logo, setLogo] = useState('');
+  const [logoFile, setLogoFile] = useState(null);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
 
   const onChange = (e) => {
     setContact((prev) => ({
@@ -39,11 +44,13 @@ const Contact = ({ mda_data }) => {
   useEffect(() => {
     setData(mda_data);
     setContact(mda_data.contact || {});
+    setLogo(mda_data.logo || genericLogo);
   }, [mda_data]);
 
   const updateData = () => {
     setIsLoading(true);
     data.contact = contact;
+    data.logo = logo;
 
     const changedFields = Object.entries(updateInfo)
       .filter(([_, value]) => value === 'updated' || value === 'removed')
@@ -86,6 +93,46 @@ const Contact = ({ mda_data }) => {
         setIsLoading(false);
         notify.error(err.message || 'Failed to update contact information');
       });
+  };
+
+  const updateBreandLogo = () => {
+    updateAdminData(data._id, data, 'updated brand logo');
+  };
+
+  const handleLogoFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setLogoFile(file);
+      // Show preview of selected file immediately
+      const previewUrl = URL.createObjectURL(file);
+      setLogo(previewUrl);
+    }
+  };
+
+  const handleLogoUploadSubmit = async () => {
+    if (!logoFile) {
+      notify.error('Please select a logo file first');
+      return;
+    }
+
+    setIsUploadingLogo(true);
+    try {
+      const response = await uploadDocument(logoFile, `${data?.fullname || 'mdas-logo'}`);
+      const logoUrl = typeof response === 'string' ? response : response.data.url;
+      setLogo(logoUrl);
+      data.logo = logoUrl;
+      // Clean up the object URL
+      if (logo.startsWith('blob:')) {
+        URL.revokeObjectURL(logo);
+      }
+      await updateAdminData(data._id, data, 'updated brand logo');
+      console.log(logoUrl);
+    } catch (error) {
+      console.error('Logo upload failed:', error);
+      notify.error('Failed to upload logo. Please try again.');
+    } finally {
+      setIsUploadingLogo(false);
+    }
   };
 
   return (
@@ -191,6 +238,59 @@ const Contact = ({ mda_data }) => {
             value={contact?.socials?.youtube}
             onChange={(e) => onChangeSocials(e)}
           />
+        </div>
+
+        <div className="form__child">
+          <label htmlFor="logo"> MDA Logo </label>
+          <div className="flex gap-2 items-start">
+            <input
+              type="file"
+              name="logo"
+              accept="image/*"
+              onChange={handleLogoFileSelect}
+              disabled={isUploadingLogo}
+              className="flex-1"
+              hidden
+            />
+            <div className="flex-1 border-[1px] border-[#d1d1d1] h-12 rounded-[5px]">
+              <button
+                type="button"
+                onClick={() => document.querySelector('input[name="logo"]').click()}
+                disabled={isUploadingLogo}
+                className="px-3 py-2 text-sm h-full w-full text-left"
+              >
+                {logoFile ? logoFile.name : 'Choose File'}
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={handleLogoUploadSubmit}
+              disabled={isUploadingLogo || !logoFile}
+              className="bg-gray-800 text-white font-semibold h-full rounded-[5px] px-8 text-sm"
+            >
+              {isUploadingLogo ? 'Uploading...' : 'Upload'}
+            </button>
+          </div>
+          {isUploadingLogo && <p className="text-sm text-gray-500 mt-1">Uploading logo...</p>}
+          {logo && !isUploadingLogo && (
+            <div className="mt-3 flex items-center gap-3">
+              <img
+                src={logo}
+                alt="MDA Logo Preview"
+                className="w-24 h-24 object-contain border border-gray-300 rounded p-2 bg-white"
+              />
+              <div>
+                <p className="text-sm font-medium text-gray-700">
+                  {logo.startsWith('blob:') ? 'Logo Preview' : 'Current Logo'}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {logo.startsWith('blob:')
+                    ? 'Click Upload to save this logo'
+                    : 'This logo will be displayed in the header'}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* <div className="form__child submitAction"> Submit Agency </div> */}

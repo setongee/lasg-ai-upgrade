@@ -62,10 +62,10 @@ export const uploadDocument = async (file, folderName) => {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-      maxContentLength: 10 * 1024 * 1024, // 10MB limit
-      maxBodyLength: 10 * 1024 * 1024, // 10MB limit
+      maxContentLength: 50 * 1024 * 1024, // 50MB limit
+      maxBodyLength: 50 * 1024 * 1024, // 50MB limit
     });
-    console.log(response.data);
+
     return response.data;
   } catch (error) {
     console.error('Upload failed:', error.response?.data || error.message);

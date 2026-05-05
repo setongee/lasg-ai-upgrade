@@ -60,12 +60,6 @@ const Dashboard = () => {
     // Get allowed routes based on MDA type
     const allowedRoutes = mdaType === 'full' ? fullTypeRoutes : serviceTypeRoutes;
 
-    // Check if current route is allowed
-    if (!allowedRoutes.includes(id)) {
-      // Redirect to services if trying to access unauthorized route
-      return (window.location.href = `/${mda}/admin/services`);
-    }
-
     // Render the appropriate page based on id
     if (id == 'dashboard') return <Overview />;
     if (id == 'vision') return <Vision mda_data={mdaData} />;
@@ -91,6 +85,16 @@ const Dashboard = () => {
     if (id == 'services') return <Services />;
     if (id == 'subscribers') return <Subscribers />;
     if (id == 'forms') return <FormsZone />;
+
+    // Check if current route is allowed
+    if (!allowedRoutes.includes(id)) {
+      // Redirect based on MDA type
+      if (mdaType === 'full') {
+        return (window.location.href = `/${mda}/admin/dashboard`);
+      } else {
+        return (window.location.href = `/${mda}/admin/services`);
+      }
+    }
   };
 
   return (
