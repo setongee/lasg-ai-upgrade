@@ -1,5 +1,4 @@
 import { Mail, Phone } from 'iconoir-react';
-import React from 'react';
 import { useThemeStore } from '../../stores/theme.store';
 import Wrapper from '../Wrapper/Wrapper';
 import './connect.scss';
@@ -8,7 +7,7 @@ export default function Connect() {
   const data = useThemeStore((state) => state.mdaData);
 
   return (
-    <div className="mda-connect">
+    <div className="mda-connect-finance">
       <Wrapper>
         <div className="contact">
           <div className="side1">
@@ -17,7 +16,7 @@ export default function Connect() {
                 {' '}
                 <span>Reach Out to Us</span> for Support, Inquiries, or Feedback Today!{' '}
               </h1>
-              <div className="span">Send us an email today📬 or call in</div>
+              <div className=" text-white!">Send us an email today📬 or call in</div>
             </div>
 
             <div className="connect__info">
@@ -31,7 +30,7 @@ export default function Connect() {
               </p>
 
               <div>
-                <a target="_blank" href={data?.contact?.address}>
+                <a target="_blank" className=" text-white!" href={data?.contact?.address}>
                   {' '}
                   {data?.contact?.address}{' '}
                 </a>
