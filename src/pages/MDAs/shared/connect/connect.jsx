@@ -7,7 +7,7 @@ export default function Connect() {
   const data = useThemeStore((state) => state.mdaData);
 
   return (
-    <div className="mda-connect-finance">
+    <div className="mda-connect">
       <Wrapper>
         <div className="contact">
           <div className="side1">
@@ -16,7 +16,7 @@ export default function Connect() {
                 {' '}
                 <span>Reach Out to Us</span> for Support, Inquiries, or Feedback Today!{' '}
               </h1>
-              <div className=" text-white!">Send us an email today📬 or call in</div>
+              <div className="span">Send us an email today📬 or call in</div>
             </div>
 
             <div className="connect__info">
@@ -30,7 +30,7 @@ export default function Connect() {
               </p>
 
               <div>
-                <a target="_blank" className=" text-white!" href={data?.contact?.address}>
+                <a target="_blank" href={data?.contact?.address}>
                   {' '}
                   {data?.contact?.address}{' '}
                 </a>

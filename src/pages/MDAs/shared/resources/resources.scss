@@ -1,7 +1,6 @@
-.resources-finance {
-  margin-top: 0px;
-  min-height: 50vh;
-  padding-top: 170px;
+.resources {
+  margin-top: 170px;
+  background-color: #fff !important;
 
   .about-heading {
     align-items: center;
@@ -15,18 +14,16 @@
       line-height: 130%;
       font-weight: 600;
       text-align: center;
-      color: #fff;
     }
 
     span {
       line-height: 180%;
       text-align: center;
-      color: #fff;
     }
   }
 }
 
-.vault-finance {
+.vault {
   padding-top: 50px;
   padding-bottom: 70px;
 
@@ -83,7 +80,6 @@
     border-bottom: 1px solid #eee;
     margin-bottom: 0px;
     padding-bottom: 20px;
-    color: #fff;
 
     &:hover {
       .doc__title {
@@ -143,6 +139,7 @@
     .about-heading {
       h1 {
         font-size: 32px;
+        width: 100%;
       }
     }
   }

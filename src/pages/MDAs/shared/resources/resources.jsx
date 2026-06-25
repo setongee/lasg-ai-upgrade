@@ -8,7 +8,7 @@ export default function Resources() {
   const data = useThemeStore((state) => state.mdaData);
 
   return (
-    <div className="resources-finance">
+    <div className="resources">
       <Wrapper>
         <div className="about-heading flex text-gray-900!">
           <h1>Knowledge Vault : Explore Resources & Archives</h1>
@@ -16,7 +16,7 @@ export default function Resources() {
           <span>Discover a treasure trove of resources for learning, growth, and innovation.</span>
         </div>
 
-        <div className="vault-finance">
+        <div className="vault">
           <div className="doc doc__top">
             <div className="doc__title flex gap__20">
               # Resource Title <ArrowSeparateVertical />{' '}
