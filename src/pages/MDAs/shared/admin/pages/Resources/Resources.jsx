@@ -47,10 +47,19 @@ const Resources = ({ mda_data }) => {
     setIsEditModalOpen(false);
   };
 
+  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB — nginx server limit
+
   // handle file
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        notify.error(
+          `File is too large (${(selectedFile.size / 1024 / 1024).toFixed(1)}MB). Maximum allowed size is 5MB.`
+        );
+        e.target.value = '';
+        return;
+      }
       setFile(selectedFile);
       setNewResource((prev) => ({
         ...prev,
@@ -97,6 +106,14 @@ const Resources = ({ mda_data }) => {
 
     if (!file && !isEditModalOpen) {
       notify.error('Please select a file to upload.');
+      setIsLoading(false);
+      return;
+    }
+
+    if (file && file.size > MAX_FILE_SIZE) {
+      notify.error(
+        `File is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum allowed size is 5MB.`
+      );
       setIsLoading(false);
       return;
     }

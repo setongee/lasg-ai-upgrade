@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router';
 import Connect from '../../shared/connect/connect';
 import Footer from '../../shared/footer/Footer';
+import LiveForm from '../../shared/forms/LiveForm';
 import News_Events from '../../shared/news_events/News_Events';
 import Resources from '../../shared/resources/resources';
 import { useThemeStore } from '../../stores/theme.store';
@@ -38,6 +39,8 @@ const FinanceTheme = ({ isEdit }) => {
         return <Resources />;
       case 'contact':
         return <Connect />;
+      case 'forms':
+        return <LiveForm />;
       default:
         return <Home isEdit={isEdit || false} />;
     }

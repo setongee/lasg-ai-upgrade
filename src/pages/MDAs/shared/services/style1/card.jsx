@@ -6,6 +6,7 @@ import './serviceCard.css';
 
 export default function ServiceCard({ data, logo }) {
   const [open, setOpen] = useState(false);
+  console.log(data.cta);
   return (
     <>
       <div className="serviceCardItem" onClick={() => setOpen(true)}>
