@@ -112,6 +112,21 @@
         width: 100%;
         text-align: center;
         border-radius: 5px;
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+
+      .forgotBtn {
+        background: none;
+        border: none;
+        color: var(--primary25);
+        font-size: 13px;
+        cursor: pointer;
+        text-decoration: underline;
+        padding: 4px 0;
       }
 
       label {

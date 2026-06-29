@@ -38,3 +38,23 @@ export const refreshToken = async (token, mda) => {
     return { status: 'bad', message: 'Missing Token' };
   }
 };
+
+export const requestOtp = async (email) => {
+  const response = await axios.post(`${base_url}/mda/forgot-password`, { email });
+
+  if (response.status === 200) {
+    return response.data;
+  } else {
+    return { status: 'bad', message: 'Something went wrong!' };
+  }
+};
+
+export const verifyOtp = async (email, otp) => {
+  const response = await axios.post(`${base_url}/mda/verify-otp`, { email, otp });
+
+  if (response.status === 200) {
+    return response.data;
+  } else {
+    return { status: 'bad', message: 'Something went wrong!' };
+  }
+};

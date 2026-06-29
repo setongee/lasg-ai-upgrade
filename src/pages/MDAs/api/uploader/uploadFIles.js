@@ -33,6 +33,10 @@ const compressImage = (file, maxWidth = 2560, maxHeight = 1440, quality = 0.9) =
 };
 
 export const uploadDocument = async (file, folderName) => {
+  return uploadDocumentWithProgress(file, folderName, null);
+};
+
+export const uploadDocumentWithProgress = async (file, folderName, onProgress) => {
   let processedFile = file;
 
   // Compress if it's an image larger than 1MB (more aggressive)
@@ -43,7 +47,6 @@ export const uploadDocument = async (file, folderName) => {
         `Compressed image from ${(file.size / 1024 / 1024).toFixed(2)}MB to ${(processedFile.size / 1024 / 1024).toFixed(2)}MB`
       );
 
-      // If still too large, compress more aggressively
       if (processedFile.size > 5 * 1024 * 1024) {
         processedFile = await compressImage(file, 1920, 1080, 0.7);
         console.log(`Further compressed to ${(processedFile.size / 1024 / 1024).toFixed(2)}MB`);
@@ -62,8 +65,14 @@ export const uploadDocument = async (file, folderName) => {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-      maxContentLength: 50 * 1024 * 1024, // 50MB limit
-      maxBodyLength: 50 * 1024 * 1024, // 50MB limit
+      maxContentLength: 50 * 1024 * 1024,
+      maxBodyLength: 50 * 1024 * 1024,
+      onUploadProgress: onProgress
+        ? (e) => {
+            const percent = e.total ? Math.round((e.loaded * 100) / e.total) : 0;
+            onProgress(percent);
+          }
+        : undefined,
     });
 
     return response.data;
