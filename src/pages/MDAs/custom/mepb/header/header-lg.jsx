@@ -54,6 +54,18 @@ const HeaderLg = ({ customClass, fullname }) => {
           Newsroom
         </div>
         <div
+          className={page === 'events' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
+          onClick={() => page !== 'draft' && navigate(`/${mda}/events`)}
+        >
+          Events
+        </div>
+        <div
+          className={page === 'gallery' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
+          onClick={() => page !== 'draft' && navigate(`/${mda}/gallery`)}
+        >
+          Gallery
+        </div>
+        <div
           className={page === 'contact' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
           onClick={() => page !== 'draft' && navigate(`/${mda}/contact`)}
         >

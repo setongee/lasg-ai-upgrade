@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { ArrowUpRight } from 'iconoir-react';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { getSingleCategory } from '../../../../../api/read/category.req';
@@ -7,8 +6,7 @@ import { getAllServicesCategory } from '../../../../../api/read/services.req';
 import { notify } from '../../../../../utils/toast';
 import { getSingleDraft } from '../../../api/admin/drafts';
 import { formattedName } from '../../../api/admin/logic';
-import Button from '../../../shared/button/Button';
-import Wrapper from '../../../shared/Wrapper/Wrapper';
+import HeroSection from '../../../shared/hero/HeroSection';
 import { useEditDataStore } from '../../../stores/editData.store';
 import { useEditModeStore } from '../../../stores/editMode.store';
 import { useThemeStore } from '../../../stores/theme.store';
@@ -16,10 +14,16 @@ import {
   CommissionerZone,
   CoreInformation,
   CoreServices,
+  GalleryPreview,
   NewsletterSection,
+  QuickDocuments,
   QuickServicesSection,
+  Statistics,
+  SupportLinks,
+  UpcomingEvents,
   YoutubePlayer,
 } from '../../custom-components';
+import ResourceCategories from '../../../shared/resources/resource-categories/ResourceCategories';
 import './home.css';
 
 const Home = ({ isEdit }) => {
@@ -90,49 +94,59 @@ const Home = ({ isEdit }) => {
   return (
     <div
       className={`landingPage-version mx-auto my-0 ${
-        isEdit ? 'mt-0' : isMdaTypeService ? 'lg:mt-[120px] mt-[80px]' : 'lg:mt-[180px] mt-[115px]'
+        isEdit ? 'mt-0' : isMdaTypeService ? 'lg:mt-[120px] mt-[80px]' : 'lg:mt-[115px] mt-[85px]'
       }`}
       ref={componentRef}
       data-mda="health"
     >
       {/* Home */}
       {landingPage?.enabledSections?.heroSection && (
-        <Wrapper customClass={``}>
-          <div
-            className={`home-version relative flex justify-between ${
-              isEdit && viewMode === 'edit'
-                ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
-                : ''
-            } ${selectedComponent === 'heroSection' ? '!border-green-500 active_component' : ''}`}
-            onClick={
-              isEdit && viewMode === 'edit' ? () => handleComponentClick('heroSection') : null
-            }
-          >
-            <div className="text-content flex flex-col">
-              <div className="main-text">{landingPage?.hero_text}</div>
-              <p>{landingPage?.hero_subtitle}</p>
-              <Button
-                customClass="bg-[#108a00] uppercase tracking-[2px] text-white rounded-[5px] flex gap-2 text-[11px]"
-                onClick={() => window.open(landingPage?.action_button_link, '_blank')}
-              >
-                {landingPage?.action_button_text} <ArrowUpRight />
-              </Button>
-            </div>
-            <div className="landing-photo w-[550px] h-[600px] my-10">
-              <img
-                src={landingPage?.main_photo}
-                alt="landing page"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-        </Wrapper>
+        <HeroSection
+          style={landingPage?.hero_style || 'splitPhoto'}
+          title={landingPage?.hero_text}
+          subtitle={landingPage?.hero_subtitle}
+          buttonText={landingPage?.action_button_text}
+          buttonLink={landingPage?.action_button_link}
+          images={landingPage?.hero_images}
+          legacyImage={landingPage?.main_photo}
+          slideshowEnabled={!!landingPage?.hero_slideshow}
+          bgType={landingPage?.hero_bg_type}
+          bgColor={landingPage?.hero_bg_color}
+          bgGradient={landingPage?.hero_bg_gradient}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          isSelected={selectedComponent === 'heroSection'}
+          onSelect={() => handleComponentClick('heroSection')}
+        />
+      )}
+
+      {/* Statistics */}
+      {landingPage?.enabledSections?.statistics && (
+        <Statistics
+          data={landingPage?.statistics}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )}
+
+      {/* Quick Documents */}
+      {landingPage?.enabledSections?.quickDocuments && (
+        <QuickDocuments
+          data={landingPage?.quickDocuments}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
       )}
 
       {/* Quick Services */}
       {landingPage?.enabledSections?.quickServices && landingPage?.servicesData?.length > 0 && (
         <QuickServicesSection
           data={landingPage?.servicesData}
+          backgroundColor={landingPage?.quickServices?.backgroundColor}
           isEdit={isEdit}
           viewMode={viewMode}
           selectedComponent={selectedComponent}
@@ -174,10 +188,65 @@ const Home = ({ isEdit }) => {
         />
       )}
 
+      {/* Resource Categories */}
+      {landingPage?.enabledSections?.resourceCategories && (
+        <section
+          className={`mt-[80px] ${
+            isEdit && viewMode === 'edit'
+              ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
+              : ''
+          } ${selectedComponent === 'resourceCategories' ? '!border-green-500 active_component' : ''}`}
+          onClick={
+            isEdit && viewMode === 'edit' ? () => handleComponentClick('resourceCategories') : null
+          }
+        >
+          <ResourceCategories
+            data={landingPage?.resourceCategories}
+            isEdit={isEdit}
+            mda={mda}
+            type="component"
+          />
+        </section>
+      )}
+
       {/* Youtube Component */}
       {landingPage?.enabledSections?.youtubePlayer && (
         <YoutubePlayer
           data={landingPage?.youtubePlayer}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )}
+
+      {/* Gallery Preview */}
+      {/* {landingPage?.enabledSections?.galleryPreview !== false && (
+        <GalleryPreview
+          backgroundColor={landingPage?.galleryPreview?.backgroundColor}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )} */}
+
+      {/* Upcoming Events */}
+      {/* {landingPage?.enabledSections?.upcomingEvents !== false && (
+        <UpcomingEvents
+          backgroundColor={landingPage?.upcomingEvents?.backgroundColor}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )} */}
+
+      {/* Support Links */}
+      {landingPage?.enabledSections?.supportLinks && (
+        <SupportLinks
+          data={landingPage?.supportLinks}
+          backgroundColor={landingPage?.supportLinksSettings?.backgroundColor}
           isEdit={isEdit}
           viewMode={viewMode}
           selectedComponent={selectedComponent}

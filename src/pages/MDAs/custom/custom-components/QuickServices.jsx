@@ -1,7 +1,10 @@
 import QuickServices from '../../shared/quick_services/QuickServices';
 
+const DEFAULT_BACKGROUND = 'var(--theme-section-bg, #e6edef)';
+
 const QuickServicesSection = ({
   data,
+  backgroundColor,
   isEdit = false,
   viewMode = 'view',
   selectedComponent = '',
@@ -9,9 +12,12 @@ const QuickServicesSection = ({
 }) => {
   if (!data || data.length === 0) return null;
 
+  const resolvedBackground = backgroundColor || DEFAULT_BACKGROUND;
+
   return (
     <section
-      className={`bg-[#e6edef] py-10 ${
+      style={{ backgroundColor: resolvedBackground }}
+      className={`py-10 ${
         isEdit && viewMode === 'edit'
           ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
           : ''

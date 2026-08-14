@@ -1,10 +1,11 @@
-import { ArrowUpRightSquareSolid } from 'iconoir-react';
+import { ArrowUpRightSquareSolid, Plus } from 'iconoir-react';
 import { useEffect, useState } from 'react';
 import { notify } from '../../../../../../utils/toast';
 import { updateAdminData } from '../../../../api/admin/content';
 import Loader from '../../../../shared/loader/loader';
 import LASGEditor from '../../components/text-editor/lasg_custom_editor';
 import '../../styles/pages.scss';
+import SearchInput from '../../components/searchInput/SearchInput';
 
 const Responsibilities = ({ mda_data }) => {
   const [data, setData] = useState({});
@@ -37,23 +38,28 @@ const Responsibilities = ({ mda_data }) => {
   };
 
   return (
-    <div className="table__main__body">
-      {isLoading ? <Loader customClass="" /> : null}
+    <div>
+      <div className="titleAdmin flex items-center justify-between z-90">
+        <h2 className="text-[15px] font-semibold text-gray-900">
+          MDA's Responsibilities -{' '}
+          <span className="text-[14px] font-normal text-gray-500">
+            Update the responsibilities of the MDA
+          </span>
+        </h2>
 
-      <div className="titleAdmin flex">
-        <div className="flex gap-[10px]">
-          <button
-            className="actionBtn button__primary2 flex items-center gap-1 ml-4"
-            onClick={submitData}
-            disabled={isLoading}
-          >
-            <ArrowUpRightSquareSolid fontSize={14} strokeWidth={2} />
-            {isLoading ? 'Saving...' : 'Save Changes'}
-          </button>
-        </div>
+        {/* add mda */}
+        <button
+          onClick={submitData}
+          disabled={isLoading}
+          className="bg-green-800 text-[13px] cursor-pointer py-2 px-4 flex items-center gap-1 font-medium rounded-sm text-white"
+        >
+          <Plus /> {isLoading ? 'Saving...' : 'Save Changes'}
+        </button>
       </div>
-
-      <LASGEditor dataText={setResponsible} value={data.responsibilities} />
+      <div className="table__main__body mt-15!">
+        {isLoading ? <Loader customClass="" /> : null}
+        <LASGEditor dataText={setResponsible} value={data.responsibilities} />
+      </div>
     </div>
   );
 };

@@ -6,6 +6,12 @@ import Loader from '../../../../shared/loader/loader';
 import SearchInput from '../../components/searchInput/SearchInput';
 import '../../styles/pages.scss';
 
+const CATEGORY_THEME = {
+  agency: 'bg-green-200/30 text-green-700',
+  department: 'bg-purple-200/30 text-purple-700',
+  unit: 'bg-blue-200/30 text-blue-700',
+};
+
 const Agency = ({ mda_data }) => {
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -76,14 +82,14 @@ const Agency = ({ mda_data }) => {
 
     if (filterData.length) notify.error(`${newAgency.name} already exists, try another!`);
     else {
-      data.agencies.push(newAgency);
+      data.agencies.push({ ...newAgency, updatedAt: new Date().toISOString() });
       setUpdateInfo(`added a new ${newAgency.category} - ${newAgency.name}`);
       // updateData() call is now handled by the useEffect hook
     }
   };
 
   const submitEditData = () => {
-    data.agencies[index] = newAgency;
+    data.agencies[index] = { ...newAgency, updatedAt: new Date().toISOString() };
     setUpdateInfo(`updated ${newAgency.category} - ${newAgency.name}`);
     // updateData() call is now handled by the useEffect hook
   };
@@ -118,134 +124,188 @@ const Agency = ({ mda_data }) => {
   };
 
   return (
-    <div className="table__main__body">
-      {isModalOpen ? (
-        <div className="addModal">
-          <div className="addModal__card">
-            <div className="topic"> Add Agency / Department / Unit </div>
-            <div className="closeModal" onClick={() => closeModal()}>
-              {' '}
-              <Xmark />{' '}
-            </div>
-
-            <form>
-              <div className="form__child">
-                <label htmlFor="name"> Name </label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Enter Name"
-                  value={newAgency.name}
-                  onChange={(e) => onChange(e)}
-                />
-              </div>
-
-              <div className="form__child">
-                <label htmlFor="name"> Category </label>
-                <select name="category" onChange={(e) => onChange(e)} value={newAgency.category}>
-                  <option value=""> ----- Select Category ----- </option>
-                  <option value="agency"> Agency </option>
-                  <option value="department"> Department </option>
-                  <option value="unit"> Unit </option>
-                </select>
-              </div>
-
-              <div className="form__child submitAction" onClick={submitData}>
-                {' '}
-                Submit Agency{' '}
-              </div>
-            </form>
-          </div>
+    <div>
+      <div className="titleAdmin flex items-center justify-between z-99">
+        <h2 className="text-[15px] font-semibold text-gray-900">
+          Manage Agencies / Departments / Units -{' '}
+          <span className="text-[14px] font-normal text-gray-500">Click on an item to load it</span>
+        </h2>
+        <div className=" h-10 w-[450px]">
+          <SearchInput placeholder="Search items..." value={searchTerm} onChange={setSearchTerm} />
         </div>
-      ) : null}
-
-      {isEditModalOpen ? (
-        <div className="addModal">
-          <div className="addModal__card">
-            <div className="topic"> Edit Agency / Department / Unit </div>
-            <div className="closeModal" onClick={() => closeEditModal()}>
-              {' '}
-              <Xmark />{' '}
-            </div>
-
-            <form>
-              <div className="form__child">
-                <label htmlFor="name"> Name </label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Enter Name"
-                  value={newAgency.name}
-                  onChange={(e) => onChange(e)}
-                />
-              </div>
-
-              <div className="form__child">
-                <label htmlFor="name"> Category </label>
-                <select name="category" onChange={(e) => onChange(e)} value={newAgency.category}>
-                  <option value=""> ----- Select Category ----- </option>
-                  <option value="agency"> Agency </option>
-                  <option value="department"> Department </option>
-                  <option value="unit"> Unit </option>
-                </select>
-              </div>
-
-              <div className="form__child submitAction" onClick={submitEditData}>
-                {' '}
-                Submit Agency{' '}
-              </div>
-            </form>
-          </div>
-        </div>
-      ) : null}
-
-      {isLoading ? <Loader customClass="" /> : null}
-
-      <div className="titleAdmin flex">
-        <div className="flex gap-[10px]">
-          <div className="searchField h-[100%] w-[450px]">
-            <SearchInput
-              placeholder="Search agencies, departments and units..."
-              value={searchTerm}
-              onChange={setSearchTerm}
-            />
-          </div>
-          <div className="actionBtn button__primary2 flex gap-1" onClick={() => openModal()}>
-            {' '}
-            <Plus /> Add Agency{' '}
-          </div>
-        </div>
+        {/* add mda */}
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-green-800 text-[13px] cursor-pointer py-2 px-4 flex items-center gap-1 font-medium rounded-sm text-white"
+        >
+          <Plus /> Add Agency / Department / Unit
+        </button>
       </div>
+      <div className="table__main__body mt-18!">
+        {isModalOpen ? (
+          <div className="addModal">
+            <div className="addModal__card">
+              <div className="topic"> Add Agency / Department / Unit </div>
+              <div className="closeModal" onClick={() => closeModal()}>
+                {' '}
+                <Xmark />{' '}
+              </div>
 
-      <div className="tableData">
-        {filteredAgencies.length > 0 ? (
-          filteredAgencies.map((res, index) => (
-            <div className="table__item flex">
-              <div className="flex items-center justify-between">
-                <div className="tr__item cat--item cap"> {res.category} </div>
-              </div>
-              <div className="tr__item name--item"> {res.name} </div>
-              <div className="tr__item flex act--item overflow-x-auto">
-                <div className="action" onClick={() => openEditModal(index)}>
-                  <div className="flex items-center justify-center">
-                    <Edit fontSize={11} strokeWidth={1.8} />
-                  </div>
-                  Edit
+              <form>
+                <div className="form__child">
+                  <label htmlFor="name"> Name </label>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Enter Name"
+                    value={newAgency.name}
+                    onChange={(e) => onChange(e)}
+                  />
                 </div>
-                <div className="action" onClick={() => deleteItem(index)}>
-                  <div className="flex items-center justify-center ">
-                    <BinFull fontSize={11} strokeWidth={1.8} />
-                  </div>
-                  Delete
+
+                <div className="form__child">
+                  <label htmlFor="name"> Category </label>
+                  <select name="category" onChange={(e) => onChange(e)} value={newAgency.category}>
+                    <option value=""> ----- Select Category ----- </option>
+                    <option value="agency"> Agency </option>
+                    <option value="department"> Department </option>
+                    <option value="unit"> Unit </option>
+                  </select>
                 </div>
-              </div>
+
+                <div className="form__child submitAction" onClick={submitData}>
+                  {' '}
+                  Submit Agency{' '}
+                </div>
+              </form>
             </div>
-          ))
-        ) : (
-          <div className="w-full text-[16px] text-gray-600">
-            {searchTerm ? 'No matching agencies found.' : 'No agencies available.'}
           </div>
-        )}
+        ) : null}
+
+        {isEditModalOpen ? (
+          <div className="addModal">
+            <div className="addModal__card">
+              <div className="topic"> Edit Agency / Department / Unit </div>
+              <div className="closeModal" onClick={() => closeEditModal()}>
+                {' '}
+                <Xmark />{' '}
+              </div>
+
+              <form>
+                <div className="form__child">
+                  <label htmlFor="name"> Name </label>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Enter Name"
+                    value={newAgency.name}
+                    onChange={(e) => onChange(e)}
+                  />
+                </div>
+
+                <div className="form__child">
+                  <label htmlFor="name"> Category </label>
+                  <select name="category" onChange={(e) => onChange(e)} value={newAgency.category}>
+                    <option value=""> ----- Select Category ----- </option>
+                    <option value="agency"> Agency </option>
+                    <option value="department"> Department </option>
+                    <option value="unit"> Unit </option>
+                  </select>
+                </div>
+
+                <div className="form__child submitAction" onClick={submitEditData}>
+                  {' '}
+                  Submit Agency{' '}
+                </div>
+              </form>
+            </div>
+          </div>
+        ) : null}
+
+        {isLoading ? <Loader customClass="" /> : null}
+
+        <div className="titleAdmin flex">
+          <div className="flex gap-[10px]">
+            <div className="searchField h-[100%] w-[450px]">
+              <SearchInput
+                placeholder="Search agencies, departments and units..."
+                value={searchTerm}
+                onChange={setSearchTerm}
+              />
+            </div>
+            <div className="actionBtn button__primary2 flex gap-1" onClick={() => openModal()}>
+              {' '}
+              <Plus /> Add Agency{' '}
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-[12px] bg-white overflow-x-auto drop-shadow-2xl drop-shadow-gray-300/10 pb-4">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-gray-100 text-[10px] uppercase tracking-[1.5px] text-gray-500">
+                <th className="px-6 py-5 font-semibold w-[60px]">S/N</th>
+                <th className="px-6 py-5 font-semibold">Name</th>
+                <th className="px-6 py-5 font-semibold">Agency Type</th>
+                <th className="px-6 py-5 font-semibold">Last Updated</th>
+                <th className="px-6 py-5 font-semibold text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredAgencies.length > 0 ? (
+                filteredAgencies.map((res, index) => (
+                  <tr
+                    key={index}
+                    className="border-b border-gray-100 last:border-0 hover:bg-gray-50/60"
+                  >
+                    <td className="px-6 py-4.5 text-[13px] font-medium text-gray-500">
+                      {index + 1}.
+                    </td>
+                    <td className="px-6 py-4.5 text-[13px] font-medium max-w-[320px]">
+                      <span className="line-clamp-2">{res.name}</span>
+                    </td>
+                    <td className="px-6 py-3">
+                      <span
+                        className={`px-2 py-1 rounded-[5px] uppercase text-[10px] tracking-[2px] font-bold ${
+                          CATEGORY_THEME[res.category] || CATEGORY_THEME.agency
+                        }`}
+                      >
+                        {res.category}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3 text-[14px] text-gray-500">
+                      {res.updatedAt ? new Date(res.updatedAt).toLocaleDateString() : '—'}
+                    </td>
+                    <td className="px-6 py-3">
+                      <div className="flex items-center justify-end gap-4">
+                        <button
+                          type="button"
+                          className="flex items-center gap-1.5 text-[13px] text-gray-800 hover:text-green-700 bg-gray-100/70 px-3 py-1.5 pr-4 rounded-[5px] font-medium"
+                          onClick={() => openEditModal(index)}
+                        >
+                          <Edit fontSize={9} strokeWidth={1.8} /> Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="flex items-center gap-1.5 text-[13px] text-gray-600 hover:text-red-700 bg-gray-100/70 px-3 py-1.5 pr-4 rounded-[5px] font-medium"
+                          onClick={() => deleteItem(index)}
+                        >
+                          <BinFull fontSize={10} strokeWidth={1.8} /> Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-[14px] text-gray-500">
+                    {searchTerm ? 'No matching agencies found.' : 'No agencies available.'}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -1,27 +1,12 @@
-.dashboardHeader {
-  width: calc(100% - 280px);
-  border-bottom: 1px solid #eee;
-  /* padding: 0 50px; */
-  right: 0;
-  z-index: 5;
-  position: fixed;
-}
-
 .dashboardPages {
-  width: calc(100% - 280px);
-  padding: 0 30px;
-  float: right;
-  margin-top: 80px;
-  padding-bottom: 80px;
-  padding-top: 30px;
-  background-color: #fff;
-  background-color: #f7f7f7;
-  background-color: #f9fbfc;
+  /* width: 100%; */
+  /* padding: 20px 70px; */
+  /* background-color: #f9fbfc; */
   position: relative;
 }
 
 .dashboard-body {
-  background-color: #f9fbfc;
+  /* background-color: #f9fbfc; */
   min-height: 100vh;
   width: 100%;
 }

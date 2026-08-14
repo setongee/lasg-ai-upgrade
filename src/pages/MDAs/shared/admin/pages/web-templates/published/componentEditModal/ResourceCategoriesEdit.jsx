@@ -1,7 +1,7 @@
 import { Attachment } from 'iconoir-react';
 import { useRef, useState } from 'react';
 import { notify } from '../../../../../../../../utils/toast';
-import { uploadFile } from '../../../../../../api/admin/content';
+import { uploadFileDirect } from '../../../../../../api/admin/content';
 import { useEditDataStore } from '../../../../../../stores/editData.store';
 import { useThemeStore } from '../../../../../../stores/theme.store';
 import { truncateText } from '../../../../../../../../middleware/middleware';
@@ -86,60 +86,50 @@ const ResourceCategoriesEdit = () => {
       });
     }, 200);
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = async (event) => {
-      setMdaEditData({
-        ...mdaEditData,
-        resourceCategories: {
-          ...mdaEditData.resourceCategories,
-          cards: updatedCards,
-        },
-      });
+    setMdaEditData({
+      ...mdaEditData,
+      resourceCategories: {
+        ...mdaEditData.resourceCategories,
+        cards: updatedCards,
+      },
+    });
 
-      // Upload in background without awaiting - concurrent uploads
-      uploadFile({
-        photo: {
-          temp: `${fullname.replace(' ', '-')}-resource-card-image-${index}`,
-          data: event.target.result,
-        },
-      })
-        .then((e) => {
-          if (e.status === 'ok') {
-            // Clear interval and set to 100%
-            clearInterval(progressInterval);
-            setUploadProgress((prev) => ({ ...prev, [index]: 100 }));
-
-            // Get current state to avoid race conditions
-            const currentData = useEditDataStore.getState().mdaEditData;
-            setMdaEditData({
-              ...currentData,
-              resourceCategories: {
-                ...currentData.resourceCategories,
-                cards: currentData.resourceCategories.cards.map((card, idx) =>
-                  idx === index ? { ...card, image: e.url } : card
-                ),
-              },
-            });
-
-            // Clean up after a short delay
-            setTimeout(() => {
-              setUploadingIndices((prev) => {
-                const newSet = new Set(prev);
-                newSet.delete(index);
-                return newSet;
-              });
-              setUploadProgress((prev) => {
-                const newProgress = { ...prev };
-                delete newProgress[index];
-                return newProgress;
-              });
-            }, 500);
-          }
-        })
-        .catch((err) => {
+    // Upload directly to Cloudinary (bypasses our server entirely for the file bytes)
+    uploadFileDirect(file, `${fullname.replace(' ', '-')}-resource-card-image-${index}`)
+      .then((response) => {
+        if (response.status === 'ok') {
+          // Clear interval and set to 100%
           clearInterval(progressInterval);
-          notify.error(err.message);
+          setUploadProgress((prev) => ({ ...prev, [index]: 100 }));
+
+          // Get current state to avoid race conditions
+          const currentData = useEditDataStore.getState().mdaEditData;
+          setMdaEditData({
+            ...currentData,
+            resourceCategories: {
+              ...currentData.resourceCategories,
+              cards: currentData.resourceCategories.cards.map((card, idx) =>
+                idx === index ? { ...card, image: response.url } : card
+              ),
+            },
+          });
+
+          // Clean up after a short delay
+          setTimeout(() => {
+            setUploadingIndices((prev) => {
+              const newSet = new Set(prev);
+              newSet.delete(index);
+              return newSet;
+            });
+            setUploadProgress((prev) => {
+              const newProgress = { ...prev };
+              delete newProgress[index];
+              return newProgress;
+            });
+          }, 500);
+        } else {
+          clearInterval(progressInterval);
+          notify.error(response.message || 'Failed to upload image. Please try again.');
           setUploadingIndices((prev) => {
             const newSet = new Set(prev);
             newSet.delete(index);
@@ -150,8 +140,22 @@ const ResourceCategoriesEdit = () => {
             delete newProgress[index];
             return newProgress;
           });
+        }
+      })
+      .catch((err) => {
+        clearInterval(progressInterval);
+        notify.error(err.message);
+        setUploadingIndices((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(index);
+          return newSet;
         });
-    };
+        setUploadProgress((prev) => {
+          const newProgress = { ...prev };
+          delete newProgress[index];
+          return newProgress;
+        });
+      });
   };
 
   const addCard = () => {
@@ -200,7 +204,7 @@ const ResourceCategoriesEdit = () => {
   };
 
   return (
-    <div className="fixed top-[145px] left-[280px] w-[350px] h-[calc(100vh-145px)] bg-white overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] z-90">
+    <div className="fixed top-[145px] left-0 w-[350px] h-[calc(100vh-145px)] bg-white overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] z-90">
       <SectionTitle />
 
       {/* Enable/Disable Toggle */}

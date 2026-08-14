@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
 import Connect from '../../shared/connect/connect';
+import Events from '../../shared/events/Events';
 import Footer from '../../shared/footer/Footer';
 import LiveForm from '../../shared/forms/LiveForm';
+import Gallery from '../../shared/gallery/Gallery';
 import News_Events from '../../shared/news_events/News_Events';
 import ResourcesType2 from '../../shared/resources/resources-type-2';
+import { themeCssVars } from '../../shared/utils/colorTheme';
 import { useThemeStore } from '../../stores/theme.store';
 import About from './about/About';
 import HeaderEdit from './header/edit-mode/headerEdit';
@@ -14,6 +17,7 @@ import Home from './home/home';
 const MepbTheme = ({ isEdit }) => {
   const { page } = useParams();
   const data = useThemeStore((state) => state.mdaData);
+  const themeVars = themeCssVars(data?.colorTheme);
 
   useEffect(() => {
     const footer = document.querySelector('.footer');
@@ -35,6 +39,10 @@ const MepbTheme = ({ isEdit }) => {
         return <About />;
       case 'news':
         return <News_Events topic="Health Services" />;
+      case 'events':
+        return <Events />;
+      case 'gallery':
+        return <Gallery />;
       case 'resources':
         return <ResourcesType2 />;
       case 'contact':
@@ -48,7 +56,7 @@ const MepbTheme = ({ isEdit }) => {
 
   if (isEdit) {
     return (
-      <div className="themeHolder">
+      <div className="themeHolder" style={themeVars}>
         <HeaderEdit fullname={data?.fullname} />
         {renderPage()}
         <Footer data={data} />
@@ -57,7 +65,7 @@ const MepbTheme = ({ isEdit }) => {
   }
 
   return (
-    <div className="themeHolder">
+    <div className="themeHolder" style={themeVars}>
       <Header fullname={data?.fullname} />
       {renderPage()}
       <Footer data={data} />

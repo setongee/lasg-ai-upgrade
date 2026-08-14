@@ -31,7 +31,7 @@ export default function ServiceCard({ data, logo }) {
         <div className="serviceTitle">{data.name}</div>
         <div dangerouslySetInnerHTML={{ __html: data.content }} />
         <Button
-          customClass="bg-[#108a00] mt-[50px] !py-[10px] !px-[20px] uppercase tracking-[2px] text-white rounded-[5px] flex gap-2 text-[11px]"
+          customClass="bg-[var(--theme-accent,#108a00)] mt-[50px] !py-[10px] !px-[20px] uppercase tracking-[2px] text-[var(--theme-accent-text,#ffffff)] rounded-[5px] flex gap-2 text-[11px]"
           action={() => window.open(data.url)}
         >
           {data.cta}

@@ -1,6 +1,12 @@
 export { default as CommissionerZone } from './CommissionerZone';
 export { default as CoreInformation } from './CoreInformation';
 export { default as CoreServices } from './CoreServices';
+export { default as GalleryPreview } from './GalleryPreview';
+export { default as InfoBar } from './InfoBar';
 export { default as NewsletterSection } from './Newsletter';
+export { default as QuickDocuments } from './QuickDocuments';
 export { default as QuickServicesSection } from './QuickServices';
+export { default as Statistics } from './Statistics';
+export { default as SupportLinks } from './SupportLinks';
+export { default as UpcomingEvents } from './UpcomingEvents';
 export { default as YoutubePlayer } from './YoutubePlayer';

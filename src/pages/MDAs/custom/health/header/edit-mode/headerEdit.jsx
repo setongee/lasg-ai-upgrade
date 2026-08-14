@@ -1,25 +1,33 @@
+import InfoBar from '../../../custom-components/InfoBar';
 import Wrapper from '../../../../shared/Wrapper/Wrapper';
 import '../../../../shared/styles/style.scss';
+import { useEditDataStore } from '../../../../stores/editData.store';
 import { useEditModeStore } from '../../../../stores/editMode.store';
 import HeaderLg from '../edit-mode/header-lg';
 import HeaderSm from '../edit-mode/header-sm';
 import '../header.css';
 
 const HeaderEdit = ({ fullname }) => {
-  const info = 'Emergency ( 112 ) | Mental Health ( +2349090006463 )';
+  const mdaEditData = useEditDataStore((state) => state.mdaEditData);
 
   // deviceSize
   const deviceSize = useEditModeStore((state) => state.device);
   const isLargeScreen = deviceSize === 'desktop';
+  const viewMode = useEditModeStore((state) => state.viewMode);
+  const selectedComponent = useEditModeStore((state) => state.selectedComponent);
+  const setSelectedComponent = useEditModeStore((state) => state.setSelectedComponent);
 
   return (
     <header className="sticky top-[0px] w-full z-4">
       {isLargeScreen && (
-        <div className="info-banner flex justify-center bg-[#1c3f3a]">
-          <Wrapper customClass="flex justify-center py-[8px] uppercase text-[10px] tracking-[2px] text-[#f0ead2] text-center">
-            <p>{info}</p>
-          </Wrapper>
-        </div>
+        <InfoBar
+          data={mdaEditData?.infoBar}
+          fullname={fullname}
+          isEdit
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={setSelectedComponent}
+        />
       )}
 
       <div className="glass-card">

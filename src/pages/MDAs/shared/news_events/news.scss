@@ -79,7 +79,7 @@
             font-size: 12px;
 
             span{
-                color: #009C3E;
+                color: var(--theme-accent, #009C3E);
                 font-weight: 500;
             }
 
@@ -250,7 +250,7 @@
                     font-size: 12px;
 
                     span{
-                        color: #009C3E;
+                        color: var(--theme-accent, #009C3E);
                         font-weight: 500;
                     }
                 }
@@ -441,9 +441,9 @@
                         color: var(--primary25);
                         font-weight: 700;
                         background-color: #1c3f3a;
-                        background-color: #009C3E;
-                        color: #fff;
-    
+                        background-color: var(--theme-accent, #009C3E);
+                        color: var(--theme-accent-text, #fff);
+
                     }
     
                 }

@@ -1,4 +1,7 @@
+import { isDarkBackground } from '../../shared/utils/backgroundContrast';
 import Wrapper from '../../shared/Wrapper/Wrapper';
+
+const DEFAULT_BACKGROUND = 'var(--theme-section-bg, #ffffff)';
 
 const CommissionerZone = ({
   data,
@@ -9,8 +12,14 @@ const CommissionerZone = ({
 }) => {
   if (!data) return null;
 
+  const hasCustomBackground = !!data?.backgroundColor;
+  const backgroundColor = data?.backgroundColor || DEFAULT_BACKGROUND;
+  const onDark = hasCustomBackground ? isDarkBackground(backgroundColor) : null;
+  const textClass = onDark === null ? '' : onDark ? 'text-white' : 'text-gray-900';
+
   return (
     <section
+      style={{ backgroundColor }}
       className={`bg-[#fff] flex commisioners-zone md:py-[120px] py-[50px] ${
         isEdit && viewMode === 'edit'
           ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
@@ -32,15 +41,29 @@ const CommissionerZone = ({
           </div>
           <div className="content flex flex-col w-full sm:w-[550px]">
             <div className="flex flex-col lg:gap-8 gap-5">
-              <div className="text-[24px] sm:text-[32px] md:text-[40px] font-semibold comms-title leading-[130%]">
+              <div
+                className={`text-[24px] sm:text-[32px] md:text-[40px] font-semibold comms-title leading-[130%] ${
+                  textClass
+                }`}
+              >
                 {data?.welcomeTitle}
               </div>
-              <p className="leading-[180%] whitespace-pre-line">{data?.welcomeMessage}</p>
+              <p
+                className={`leading-[180%] whitespace-pre-line ${
+                  textClass
+                }`}
+              >
+                {data?.welcomeMessage}
+              </p>
             </div>
 
             <div className="font-semibold mt-5 block commissioner-name">
-              <h1>{data?.commissionerName}</h1>
-              <span className="!font-normal block">{data?.commissionerTitle}</span>
+              <h1 className={textClass}>
+                {data?.commissionerName}
+              </h1>
+              <span className={`!font-normal block ${textClass}`}>
+                {data?.commissionerTitle}
+              </span>
             </div>
           </div>
         </div>

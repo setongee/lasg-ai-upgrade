@@ -4,7 +4,6 @@ import { notify } from '../../../../../../utils/toast';
 import { updateAdminData } from '../../../../api/admin/content';
 import Loader from '../../../../shared/loader/loader';
 import { useThemeStore } from '../../../../stores/theme.store';
-import '../../styles/pages.scss';
 
 const Vision = ({ mda_data }) => {
   const [data, setData] = useState({});
@@ -53,75 +52,89 @@ const Vision = ({ mda_data }) => {
   };
 
   return (
-    <div className="vision__body">
+    <div className="flex flex-col relative mt-[0px] bg-white w-[700px] mx-auto rounded-lg p-8 gap-8">
       {isLoading ? <Loader customClass="" /> : null}
 
-      <div className="titleAdmin flex">
+      {/* title */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-gray-800 w-[350px] mb-5">
+          Manage your MDA’s vision, mission, and strategic goals.
+        </h2>
+      </div>
+
+      {/* vision */}
+      <div className=" flex flex-col gap-3 border-b border-gray-100 pb-6">
+        <div className=" text-gray-700 text-[14px]">
+          <p className="font-bold">Our Vision</p>
+          <span className="text-gray-400 text-[14px]">
+            Describe your MDA’s long-term vision and future aspirations.
+          </span>
+        </div>
+
+        <textarea
+          name="vision"
+          placeholder="Enter vision"
+          value={data.vision}
+          onChange={(e) => {
+            setData({ ...data, vision: e.target.value });
+            setUpdateInfo({ ...updateInfo, vision: e.target.value });
+          }}
+          className="p-5 w-full resize-none text-[15px] leading-[23px] min-h-[120px] border-none outline-none bg-gray-50 rounded-lg [field-sizing:content]"
+        ></textarea>
+      </div>
+
+      {/* mission */}
+      <div className=" flex flex-col gap-3 border-b border-gray-100 pb-6">
+        <div className=" text-gray-700 text-[14px]">
+          <p className="font-bold">Our Mission</p>
+          <span className="text-gray-400 text-[14px]">
+            State your MDA’s purpose, mandate, and commitment to public service.
+          </span>
+        </div>
+
+        <textarea
+          name="mission"
+          placeholder="Enter mission"
+          value={data.mission}
+          onChange={(e) => {
+            setData({ ...data, mission: e.target.value });
+            setUpdateInfo({ ...updateInfo, mission: e.target.value });
+          }}
+          className="p-5 w-full resize-none text-[15px] leading-[23px] min-h-[120px] border-none outline-none bg-gray-50 rounded-lg [field-sizing:content]"
+        ></textarea>
+      </div>
+
+      {/* goals */}
+      <div className=" flex flex-col gap-3">
+        <div className=" text-gray-700 text-[14px]">
+          <p className="font-bold">Our Goals</p>
+          <span className="text-gray-400 text-[14px]">
+            Outline the key goals and strategic objectives of your MDA.
+          </span>
+        </div>
+
+        <textarea
+          name="goal"
+          placeholder="Enter goal"
+          value={data.goal}
+          onChange={(e) => {
+            setData({ ...data, goal: e.target.value });
+            setUpdateInfo({ ...updateInfo, goal: e.target.value });
+          }}
+          className="p-5 w-full resize-none text-[15px] leading-[23px] min-h-[120px] border-none outline-none bg-gray-50 rounded-lg [field-sizing:content]"
+        ></textarea>
+      </div>
+
+      <div className="flex text-black">
         <div className="flex gap-[10px]">
           <button
-            className="actionBtn button__primary2 flex items-center gap-1 ml-4"
+            className="py-[12px] pl-[15px] pr-5 text-white text-[13px] font-bold rounded-[5px] cursor-pointer bg-green-700 ml-auto flex items-center gap-1"
             onClick={updateData}
             disabled={isLoading}
           >
-            <ArrowUpRightSquareSolid fontSize={14} strokeWidth={2} />
+            <ArrowUpRightSquareSolid fontSize={12} strokeWidth={2} />
             {isLoading ? 'Saving...' : 'Save Changes'}
           </button>
-        </div>
-      </div>
-
-      <div className="cards">
-        <div className="card sub__card vision__card">
-          <div className="tag">Our Vision</div>
-
-          <div className="previewArea"> {data.vision} </div>
-
-          <div className="form__action">
-            <textarea
-              name="vision"
-              placeholder="Enter vision"
-              value={data.vision}
-              onChange={(e) => {
-                setData({ ...data, vision: e.target.value });
-                setUpdateInfo({ ...updateInfo, vision: e.target.value });
-              }}
-            ></textarea>
-          </div>
-        </div>
-
-        <div className="card sub__card vision__card">
-          <div className="tag">Our Mission</div>
-
-          <div className="previewArea"> {data.mission} </div>
-
-          <div className="form__action">
-            <textarea
-              name="mission"
-              placeholder="Enter mission"
-              value={data.mission}
-              onChange={(e) => {
-                setData({ ...data, mission: e.target.value });
-                setUpdateInfo({ ...updateInfo, mission: e.target.value });
-              }}
-            ></textarea>
-          </div>
-        </div>
-
-        <div className="card sub__card vision__card">
-          <div className="tag">Our Goal</div>
-
-          <div className="previewArea"> {data.goal} </div>
-
-          <div className="form__action">
-            <textarea
-              name="goal"
-              placeholder="Enter goal"
-              value={data.goal}
-              onChange={(e) => {
-                setData({ ...data, goal: e.target.value });
-                setUpdateInfo({ ...updateInfo, goal: e.target.value });
-              }}
-            ></textarea>
-          </div>
         </div>
       </div>
     </div>

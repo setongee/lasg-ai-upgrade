@@ -41,11 +41,15 @@ export const publishPage = async (data) => {
 };
 
 export const getPublishBucketsByDraftId = async (id) => {
-  const response = await axios.get(`${base_url}/view/${id}`);
-  if (response.status === 200) {
+  try {
+    const response = await axios.get(`${base_url}/view/${id}`);
     return response.data;
-  } else {
-    notify.error(response.data.message);
+  } catch (error) {
+    if (error.response?.status === 404) {
+      // No publish bucket exists yet for this draft — not an error state
+      return null;
+    }
+    notify.error(error.response?.data?.message || 'Failed to fetch publish status');
     return null;
   }
 };

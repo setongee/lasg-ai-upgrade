@@ -41,6 +41,7 @@ export const checkRouteType = (pathname) => {
     'news',
     'events',
     'government',
+    'cybersecguide',
   ];
 
   // Check if the path is an admin route (/:mda/admin)

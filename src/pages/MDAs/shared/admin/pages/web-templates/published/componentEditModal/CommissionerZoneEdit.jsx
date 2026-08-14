@@ -1,9 +1,10 @@
 import { Attachment } from 'iconoir-react';
 import { useState } from 'react';
 import { notify } from '../../../../../../../../utils/toast';
-import { uploadFile } from '../../../../../../api/admin/content';
+import { uploadFileDirect } from '../../../../../../api/admin/content';
 import { useEditDataStore } from '../../../../../../stores/editData.store';
 import { useThemeStore } from '../../../../../../stores/theme.store';
+import BackgroundColorPicker from '../../../../../colorPicker/BackgroundColorPicker';
 import SectionTitle from './util/SectionTitle';
 
 const CommissionerZoneEdit = () => {
@@ -33,8 +34,8 @@ const CommissionerZoneEdit = () => {
       const file = e.target.files[0];
       if (!file) return;
 
-      if (file.size > 2 * 1024 * 1024) {
-        notify.error('File size must be less than 2MB');
+      if (file.size > 50 * 1024 * 1024) {
+        notify.error('File size must be less than 50MB');
         return;
       }
 
@@ -51,53 +52,49 @@ const CommissionerZoneEdit = () => {
         });
       }, 200);
 
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async (e) => {
-        // Immediately update the image with base64 for instant preview
-        setMdaEditData({
-          ...mdaEditData,
-          commissionersZone: {
-            ...commissionersData,
-            commissionerImage: e.target.result,
-          },
-        });
+      // Immediately update the image with a blob preview
+      setMdaEditData({
+        ...mdaEditData,
+        commissionersZone: {
+          ...commissionersData,
+          commissionerImage: URL.createObjectURL(file),
+        },
+      });
 
-        // Upload in background
-        await uploadFile({
-          photo: {
-            temp: `${mdaData?.fullname?.replace(' ', '-')}-commissioner-photo`,
-            data: e.target.result,
-          },
-        })
-          .then((response) => {
-            if (response.status === 'ok') {
-              // Clear interval and set to 100%
-              clearInterval(progressInterval);
-              setUploadProgress(100);
-
-              setMdaEditData({
-                ...mdaEditData,
-                commissionersZone: {
-                  ...commissionersData,
-                  commissionerImage: response.url,
-                },
-              });
-
-              // Clean up after a short delay
-              setTimeout(() => {
-                setIsUploading(false);
-                setUploadProgress(0);
-              }, 500);
-            }
-          })
-          .catch((err) => {
+      // Upload directly to Cloudinary (bypasses our server entirely for the file bytes)
+      uploadFileDirect(file, `${mdaData?.fullname?.replace(' ', '-')}-commissioner-photo`)
+        .then((response) => {
+          if (response.status === 'ok') {
+            // Clear interval and set to 100%
             clearInterval(progressInterval);
-            notify.error(err.message);
+            setUploadProgress(100);
+
+            setMdaEditData({
+              ...mdaEditData,
+              commissionersZone: {
+                ...commissionersData,
+                commissionerImage: response.url,
+              },
+            });
+
+            // Clean up after a short delay
+            setTimeout(() => {
+              setIsUploading(false);
+              setUploadProgress(0);
+            }, 500);
+          } else {
+            clearInterval(progressInterval);
+            notify.error(response.message || 'Failed to upload image. Please try again.');
             setIsUploading(false);
             setUploadProgress(0);
-          });
-      };
+          }
+        })
+        .catch((err) => {
+          clearInterval(progressInterval);
+          notify.error(err.message);
+          setIsUploading(false);
+          setUploadProgress(0);
+        });
     });
   };
 
@@ -113,8 +110,20 @@ const CommissionerZoneEdit = () => {
 
   mdaEditData;
 
+  const backgroundColor = mdaEditData.commissionersZone?.backgroundColor;
+
+  const handleColorChange = (color) => {
+    setMdaEditData({
+      ...mdaEditData,
+      commissionersZone: {
+        ...mdaEditData.commissionersZone,
+        backgroundColor: color,
+      },
+    });
+  };
+
   return (
-    <div className="fixed top-[145px] left-[280px] w-[350px] h-[calc(100vh-145px)] bg-white overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] z-90">
+    <div className="fixed top-[145px] left-0 w-[350px] h-[calc(100vh-145px)] bg-white overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] z-90">
       <SectionTitle />
 
       {/* Enable/Disable Toggle */}
@@ -135,6 +144,8 @@ const CommissionerZoneEdit = () => {
           </button>
         </div>
       </div>
+
+      <BackgroundColorPicker value={backgroundColor} onChange={handleColorChange} />
 
       <div className="p-[30px]">
         <form action="" className="flex flex-col gap-6">

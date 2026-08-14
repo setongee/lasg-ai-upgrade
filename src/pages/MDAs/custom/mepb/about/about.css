@@ -2,7 +2,7 @@
   margin-top: 115px;
 
   .active-scroll-spy {
-    color: green !important;
+    color: var(--theme-accent, green) !important;
   }
 
   .navigateMenu {
@@ -76,7 +76,7 @@
         overflow: hidden;
         border-radius: 10px;
         background-color: #f4f4f4;
-        background-color: #2e7d32;
+        background-color: var(--theme-accent, #2e7d32);
         overflow: hidden;
         position: relative;
 
@@ -95,12 +95,12 @@
             border-bottom: 1px solid #f1f1f149;
             padding-bottom: 20px;
             margin-bottom: 20px;
-            color: #fff;
+            color: var(--theme-accent-text, #fff);
           }
           p {
             font-size: 16px;
             width: 80%;
-            color: #fff;
+            color: var(--theme-accent-text, #fff);
           }
         }
       }

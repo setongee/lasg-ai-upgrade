@@ -21,13 +21,16 @@ import AdminChatbot from '../../../components/chatbot/AdminChatbot';
 import TemplateContainer from '../templates-container/TemplateContainer';
 import CommissionerZoneEdit from './componentEditModal/CommissionerZoneEdit';
 import CoreInformationEdit from './componentEditModal/CoreInformationEdit';
+import GalleryPreviewEdit from './componentEditModal/GalleryPreviewEdit';
 import HeroSectionEdit from './componentEditModal/HeroSectionEdit';
+import InfoBarEdit from './componentEditModal/InfoBarEdit';
 import QuickDocumentsEdit from './componentEditModal/QuickDocumentsEdit';
 import QuickServicesEdit from './componentEditModal/QuickServicesEdit';
 import ResourceCategoriesEdit from './componentEditModal/ResourceCategoriesEdit';
 import ServicesEdit from './componentEditModal/ServicesEdit';
 import StatisticsEdit from './componentEditModal/StatisticsEdit';
 import SupportLinksEdit from './componentEditModal/SupportLinksEdit';
+import UpcomingEventsEdit from './componentEditModal/UpcomingEventsEdit';
 import YoutubePlayerEdit from './componentEditModal/YoutubePlayerEdit';
 import { contentKey } from './data_content_key';
 import './published.scss';
@@ -304,6 +307,8 @@ const Published = () => {
     switch (selectedComponent) {
       case 'heroSection':
         return <HeroSectionEdit />;
+      case 'infoBar':
+        return <InfoBarEdit />;
       case 'coreInformation':
         return <CoreInformationEdit saveDraft={saveDraft} />;
       case 'quickServices':
@@ -322,6 +327,10 @@ const Published = () => {
         return <StatisticsEdit />;
       case 'supportLinks':
         return <SupportLinksEdit />;
+      case 'galleryPreview':
+        return <GalleryPreviewEdit />;
+      case 'upcomingEvents':
+        return <UpcomingEventsEdit />;
       default:
         return null;
     }
@@ -333,7 +342,7 @@ const Published = () => {
     if (isDraftPublishCreated?.status === 'pending') {
       return (
         <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-2 rounded-md mb-4 w-full text-center text-[15px] -mt-[14px] font-medium">
-          This draft is awaiting content approval at the moment, you can still make changes to it.
+          This draft is awaiting approval at the moment, you can still make changes to it.
         </div>
       );
     }
@@ -365,25 +374,17 @@ const Published = () => {
       );
     }
 
-    if (isDraftPublishCreated?.status === 'content approved') {
-      return (
-        <div className="bg-blue-100 border border-blue-400 text-blue-800 px-4 py-2 rounded-md mb-4 w-full text-center text-[15px] -mt-[14px] font-medium">
-          This draft has passed content approval and currently awaiting technical approval
-        </div>
-      );
-    }
-
     return null;
   };
 
   return (
     <TemplateContainer>
       <div
-        className={`fixed bg-gray-300 w-[calc(100%-280px)] left-[280px] top-[145px] flex items-center px-[30px] py-[30px] ${
+        className={`fixed bg-gray-300 w-full left-0 top-[145px] flex items-center px-[30px] py-[30px] ${
           viewMode === 'edit' ? 'justify-end' : 'justify-center flex-col'
         }`}
       >
-        <div className="titleAdmin z-500 flex items-center justify-between w-full h-[65px] px-6 border-b border-gray-200">
+        <div className="bg-white fixed top-[80px] left-0 z-500 flex items-center justify-between w-full h-[65px] px-[70px] border-y border-gray-200">
           <div className="flex gap-3">
             <div
               className="px-4 py-2 text-sm font-medium text-white bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 focus:outline-none cursor-pointer flex items-center gap-1"
@@ -407,7 +408,7 @@ const Published = () => {
           </div>
 
           {/* Device size controls */}
-          <div className="flex items-center gap-2 p-1.5 rounded-lg">
+          <div className="flex items-center gap-2 p-1.5 rounded-lg absolute left-1/2 transform -translate-x-1/2">
             <button
               className={`h-9 w-9 flex items-center justify-center rounded-md  hover:bg-white transition-all ${
                 deviceSize === 'desktop' ? 'bg-[#d8e9e370]' : ''
@@ -544,7 +545,7 @@ const Published = () => {
 
         {/* show editor canvas */}
         <div
-          className={`editor-canvas bg-white overflow-y-scroll h-[calc(100vh-185px)] ${
+          className={`editor-canvas bg-white overflow-y-scroll h-[calc(100vh-220px)] ${
             deviceSize === 'desktop'
               ? 'w-[100%]'
               : deviceSize === 'tablet'

@@ -1,11 +1,16 @@
-import { ArrowUpRightSquareSolid } from 'iconoir-react';
+import { ArrowUpRightSquareSolid, EditPencil } from 'iconoir-react';
 import { useEffect, useState } from 'react';
 import { notify } from '../../../../../../utils/toast';
 import { updateAdminData } from '../../../../api/admin/content';
 import { uploadDocument } from '../../../../api/uploader/uploadFIles';
 import Loader from '../../../../shared/loader/loader';
 import genericLogo from '../../../assets/lasg__logo.png';
-import '../../styles/pages.scss';
+
+const FIELD_LABEL_CLASS = 'text-gray-700 text-[14px]';
+const FIELD_DESCRIPTION_CLASS = 'text-gray-400 text-[14px]';
+const FIELD_GROUP_CLASS = 'flex flex-col gap-3 border-b border-gray-100 pb-6';
+const INPUT_CLASS =
+  'p-5 w-full text-[15px] leading-[23px] border-none outline-none bg-gray-50 rounded-lg';
 
 const Contact = ({ mda_data }) => {
   const [data, setData] = useState({});
@@ -136,165 +141,246 @@ const Contact = ({ mda_data }) => {
   };
 
   return (
-    <div className="contact__body">
+    <div className="flex flex-col relative mt-[0px] bg-white w-[700px] mx-auto rounded-lg p-8 gap-8">
       {isLoading ? <Loader customClass="" /> : null}
 
-      <div className="titleAdmin flex">
-        <div className="flex gap-[10px]">
-          <button
-            className="actionBtn button__primary2 flex items-center gap-1 ml-4"
-            onClick={updateData}
-          >
-            <ArrowUpRightSquareSolid fontSize={14} strokeWidth={2} />
-            {isLoading ? 'Saving...' : 'Save Changes'}
-          </button>
-        </div>
+      {/* title */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-gray-800 w-[350px] mb-5">
+          Manage your MDA’s contact details and social media links.
+        </h2>
       </div>
 
-      <form>
-        <div className="form__child">
-          <label htmlFor="name"> Phone Number </label>
-          <input
-            type="text"
-            name="phone"
-            placeholder="Enter Phone"
-            value={contact?.phone}
-            onChange={(e) => onChange(e)}
-          />
+      {/* logo */}
+      <div className="flex flex-col gap-3">
+        <div className={FIELD_LABEL_CLASS}>
+          <p className="font-bold">MDA Logo</p>
+          <span className={FIELD_DESCRIPTION_CLASS}>
+            Upload the logo displayed in your site’s header.
+          </span>
         </div>
 
-        <div className="form__child">
-          <label htmlFor="name"> Email Address </label>
+        <div className="flex gap-2 items-start">
           <input
-            type="email"
-            name="email"
-            placeholder="Enter Email"
-            value={contact?.email}
-            onChange={(e) => onChange(e)}
+            type="file"
+            name="logo"
+            accept="image/*"
+            onChange={handleLogoFileSelect}
+            disabled={isUploadingLogo}
+            className="flex-1"
+            hidden
           />
+          {/* <button
+            type="button"
+            onClick={() => document.querySelector('input[name="logo"]').click()}
+            disabled={isUploadingLogo}
+            className="flex-1 text-left px-4 py-3 text-[15px] bg-gray-50 rounded-lg"
+          >
+            {logoFile ? logoFile.name : 'Choose File'}
+          </button> */}
         </div>
-
-        <div className="form__child">
-          <label htmlFor="name"> Office Address </label>
-          <input
-            type="text"
-            name="address"
-            placeholder="Enter Address"
-            value={contact?.address}
-            onChange={(e) => onChange(e)}
-          />
-        </div>
-
-        <div className="form__child">
-          <label htmlFor="name"> X (Formerly Twitter) </label>
-          <input
-            type="text"
-            name="x"
-            placeholder="Enter X URL"
-            value={contact?.socials?.x}
-            onChange={(e) => onChangeSocials(e)}
-          />
-        </div>
-
-        <div className="form__child">
-          <label htmlFor="name"> Facebook </label>
-          <input
-            type="text"
-            name="facebook"
-            placeholder="Enter Facebook URL"
-            value={contact?.socials?.facebook}
-            onChange={(e) => onChangeSocials(e)}
-          />
-        </div>
-
-        <div className="form__child">
-          <label htmlFor="name"> Linkedin </label>
-          <input
-            type="text"
-            name="linkedin"
-            placeholder="Enter Linkedin URL"
-            value={contact?.socials?.linkedin}
-            onChange={(e) => onChangeSocials(e)}
-          />
-        </div>
-
-        <div className="form__child">
-          <label htmlFor="name"> Instagram </label>
-          <input
-            type="text"
-            name="instagram"
-            placeholder="Enter Instagram URL"
-            value={contact?.socials?.instagram}
-            onChange={(e) => onChangeSocials(e)}
-          />
-        </div>
-
-        <div className="form__child">
-          <label htmlFor="name"> Youtube </label>
-          <input
-            type="text"
-            name="youtube"
-            placeholder="Enter Youtube URL"
-            value={contact?.socials?.youtube}
-            onChange={(e) => onChangeSocials(e)}
-          />
-        </div>
-
-        <div className="form__child">
-          <label htmlFor="logo"> MDA Logo </label>
-          <div className="flex gap-2 items-start">
-            <input
-              type="file"
-              name="logo"
-              accept="image/*"
-              onChange={handleLogoFileSelect}
-              disabled={isUploadingLogo}
-              className="flex-1"
-              hidden
-            />
-            <div className="flex-1 border-[1px] border-[#d1d1d1] h-12 rounded-[5px]">
-              <button
-                type="button"
-                onClick={() => document.querySelector('input[name="logo"]').click()}
-                disabled={isUploadingLogo}
-                className="px-3 py-2 text-sm h-full w-full text-left"
-              >
-                {logoFile ? logoFile.name : 'Choose File'}
-              </button>
-            </div>
-            <button
-              type="button"
-              onClick={handleLogoUploadSubmit}
-              disabled={isUploadingLogo || !logoFile}
-              className="bg-gray-800 text-white font-semibold h-full rounded-[5px] px-8 text-sm"
+        {isUploadingLogo && <p className="text-sm text-gray-500">Uploading logo...</p>}
+        {logo && !isUploadingLogo && (
+          <div className="flex items-center gap-3 cursor-pointer">
+            <div
+              className="relative"
+              onClick={() => document.querySelector('input[name="logo"]').click()}
             >
-              {isUploadingLogo ? 'Uploading...' : 'Upload'}
-            </button>
-          </div>
-          {isUploadingLogo && <p className="text-sm text-gray-500 mt-1">Uploading logo...</p>}
-          {logo && !isUploadingLogo && (
-            <div className="mt-3 flex items-center gap-3">
               <img
                 src={logo}
                 alt="MDA Logo Preview"
                 className="w-24 h-24 object-contain border border-gray-300 rounded p-2 bg-white"
               />
-              <div>
-                <p className="text-sm font-medium text-gray-700">
-                  {logo.startsWith('blob:') ? 'Logo Preview' : 'Current Logo'}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {logo.startsWith('blob:')
-                    ? 'Click Upload to save this logo'
-                    : 'This logo will be displayed in the header'}
-                </p>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-7 h-7 bg-white/80 rounded-full flex items-center justify-center">
+                <EditPencil className="w-4 h-4" strokeWidth={2} />
               </div>
             </div>
-          )}
+
+            <div>
+              <p className="text-sm font-medium text-gray-700">
+                {logo.startsWith('blob:') ? 'Logo Preview' : 'Current Logo'}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                {logo.startsWith('blob:')
+                  ? 'Click Upload to save this logo'
+                  : 'This logo will be displayed in the header'}
+              </p>
+            </div>
+            {logoFile && (
+              <button
+                type="button"
+                onClick={handleLogoUploadSubmit}
+                disabled={isUploadingLogo || !logoFile}
+                className="bg-gray-800 text-white cursor-pointer font-semibold rounded-[5px] px-4 ml-auto py-2 text-sm w-max text-[12px]"
+              >
+                {isUploadingLogo ? 'Uploading...' : 'Upload'}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* phone */}
+      <div className={FIELD_GROUP_CLASS}>
+        <div className={FIELD_LABEL_CLASS}>
+          <p className="font-bold">Phone Number</p>
+          <span className={FIELD_DESCRIPTION_CLASS}>
+            The primary phone number the public can use to reach your MDA.
+          </span>
         </div>
 
-        {/* <div className="form__child submitAction"> Submit Agency </div> */}
-      </form>
+        <input
+          type="text"
+          name="phone"
+          placeholder="Enter phone number"
+          value={contact?.phone || ''}
+          onChange={(e) => onChange(e)}
+          className={INPUT_CLASS}
+        />
+      </div>
+
+      {/* email */}
+      <div className={FIELD_GROUP_CLASS}>
+        <div className={FIELD_LABEL_CLASS}>
+          <p className="font-bold">Email Address</p>
+          <span className={FIELD_DESCRIPTION_CLASS}>
+            The official email address for enquiries and correspondence.
+          </span>
+        </div>
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Enter email address"
+          value={contact?.email || ''}
+          onChange={(e) => onChange(e)}
+          className={INPUT_CLASS}
+        />
+      </div>
+
+      {/* address */}
+      <div className={FIELD_GROUP_CLASS}>
+        <div className={FIELD_LABEL_CLASS}>
+          <p className="font-bold">Office Address</p>
+          <span className={FIELD_DESCRIPTION_CLASS}>The physical office address of your MDA.</span>
+        </div>
+
+        <input
+          type="text"
+          name="address"
+          placeholder="Enter office address"
+          value={contact?.address || ''}
+          onChange={(e) => onChange(e)}
+          className={INPUT_CLASS}
+        />
+      </div>
+
+      {/* x / twitter */}
+      <div className={FIELD_GROUP_CLASS}>
+        <div className={FIELD_LABEL_CLASS}>
+          <p className="font-bold">X (Formerly Twitter)</p>
+          <span className={FIELD_DESCRIPTION_CLASS}>
+            Link to your MDA’s official X (Twitter) profile.
+          </span>
+        </div>
+
+        <input
+          type="text"
+          name="x"
+          placeholder="Enter X URL"
+          value={contact?.socials?.x || ''}
+          onChange={(e) => onChangeSocials(e)}
+          className={INPUT_CLASS}
+        />
+      </div>
+
+      {/* facebook */}
+      <div className={FIELD_GROUP_CLASS}>
+        <div className={FIELD_LABEL_CLASS}>
+          <p className="font-bold">Facebook</p>
+          <span className={FIELD_DESCRIPTION_CLASS}>
+            Link to your MDA’s official Facebook page.
+          </span>
+        </div>
+
+        <input
+          type="text"
+          name="facebook"
+          placeholder="Enter Facebook URL"
+          value={contact?.socials?.facebook || ''}
+          onChange={(e) => onChangeSocials(e)}
+          className={INPUT_CLASS}
+        />
+      </div>
+
+      {/* linkedin */}
+      <div className={FIELD_GROUP_CLASS}>
+        <div className={FIELD_LABEL_CLASS}>
+          <p className="font-bold">LinkedIn</p>
+          <span className={FIELD_DESCRIPTION_CLASS}>
+            Link to your MDA’s official LinkedIn page.
+          </span>
+        </div>
+
+        <input
+          type="text"
+          name="linkedin"
+          placeholder="Enter LinkedIn URL"
+          value={contact?.socials?.linkedin || ''}
+          onChange={(e) => onChangeSocials(e)}
+          className={INPUT_CLASS}
+        />
+      </div>
+
+      {/* instagram */}
+      <div className={FIELD_GROUP_CLASS}>
+        <div className={FIELD_LABEL_CLASS}>
+          <p className="font-bold">Instagram</p>
+          <span className={FIELD_DESCRIPTION_CLASS}>
+            Link to your MDA’s official Instagram profile.
+          </span>
+        </div>
+
+        <input
+          type="text"
+          name="instagram"
+          placeholder="Enter Instagram URL"
+          value={contact?.socials?.instagram || ''}
+          onChange={(e) => onChangeSocials(e)}
+          className={INPUT_CLASS}
+        />
+      </div>
+
+      {/* youtube */}
+      <div className={FIELD_GROUP_CLASS}>
+        <div className={FIELD_LABEL_CLASS}>
+          <p className="font-bold">YouTube</p>
+          <span className={FIELD_DESCRIPTION_CLASS}>
+            Link to your MDA’s official YouTube channel.
+          </span>
+        </div>
+
+        <input
+          type="text"
+          name="youtube"
+          placeholder="Enter YouTube URL"
+          value={contact?.socials?.youtube || ''}
+          onChange={(e) => onChangeSocials(e)}
+          className={INPUT_CLASS}
+        />
+      </div>
+
+      <div className="flex text-black">
+        <div className="flex gap-[10px]">
+          <button
+            className="py-[12px] pl-[15px] pr-5 text-white text-[13px] font-bold rounded-[5px] cursor-pointer bg-green-700 ml-auto flex items-center gap-1"
+            onClick={updateData}
+          >
+            <ArrowUpRightSquareSolid fontSize={12} strokeWidth={2} />
+            {isLoading ? 'Saving...' : 'Save Changes'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,37 +1,30 @@
 import { NavArrowDown } from 'iconoir-react';
 import { useEffect, useState } from 'react';
 import { useEditModeStore } from '../../../../../../../stores/editMode.store';
-import { useThemeStore } from '../../../../../../../stores/theme.store';
+
+// Every landing-page section component, shared across all themes.
+// Gallery and Events are standalone pages (not drag/drop landing sections),
+// so they're intentionally left out here.
+const SECTIONS = {
+  infoBar: 'Info Bar',
+  heroSection: 'Hero Section',
+  quickServices: 'Quick Services',
+  commissionerZone: 'Commissioner Zone',
+  youtubePlayer: 'Youtube Player',
+  services: 'Services',
+  resourceCategories: 'Resource Categories',
+  quickDocuments: 'Quick Documents',
+  statistics: 'Statistics',
+  supportLinks: 'Support Links',
+  coreInformation: 'Core Information',
+};
 
 const SectionTitle = () => {
   const { selectedComponent, setSelectedComponent } = useEditModeStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const landingPageData = useThemeStore((state) => state.mdaData)?.landingPage?.enabledSections;
 
-  // Only show sections that exist in landingPageData
-  const sections = landingPageData
-    ? {
-        heroSection: landingPageData.hasOwnProperty('heroSection') ? 'Hero Section' : null,
-        quickServices: landingPageData.hasOwnProperty('quickServices') ? 'Quick Services' : null,
-        commissionerZone: landingPageData.hasOwnProperty('commissionersZone')
-          ? 'Commissioner Zone'
-          : null,
-        youtubePlayer: landingPageData.hasOwnProperty('youtubePlayer') ? 'Youtube Player' : null,
-        services: landingPageData.hasOwnProperty('services') ? 'Services' : null,
-        resourceCategories: landingPageData.hasOwnProperty('resourceCategories')
-          ? 'Resource Categories'
-          : null,
-        quickDocuments: landingPageData.hasOwnProperty('quickDocuments') ? 'Quick Documents' : null,
-        statistics: landingPageData.hasOwnProperty('statistics') ? 'Statistics' : null,
-        supportLinks: landingPageData.hasOwnProperty('supportLinks') ? 'Support Links' : null,
-        coreInformation: landingPageData.hasOwnProperty('coreInformation')
-          ? 'Core Information'
-          : null,
-      }
-    : {};
-
-  // Filter out null values (sections that don't exist in landingPageData)
-  const activeSections = Object.entries(sections).filter(([key, value]) => value !== null);
+  const sections = SECTIONS;
+  const activeSections = Object.entries(sections);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -57,7 +50,7 @@ const SectionTitle = () => {
   };
 
   return (
-    <div className="text-[14px] flex items-center gap-1 mb-6 fixed top-[145px] left-[280px] w-[350px] bg-white z-10 px-[30px] py-[20px] border-b border-gray-200">
+    <div className="text-[14px] flex items-center gap-1 mb-6 fixed top-[145px] left-0 w-[350px] bg-white z-10 px-[30px] py-[20px] border-b border-gray-200">
       <div className="flex gap-1">
         <span className="text-gray-400">Landing Page / </span>
         <span className="font-medium"> {sections[selectedComponent] || 'Select Section'}</span>

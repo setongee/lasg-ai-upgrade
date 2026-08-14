@@ -56,13 +56,17 @@
 .titleAdmin {
   display: flex;
   //   justify-content: flex-end;
-  width: calc(100% - 280px);
+  width: 100%;
   color: #000;
   background-color: #fff;
-  padding: 15px 30px;
+  padding: 15px 70px;
   position: fixed;
   right: 0px;
   top: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba($color: #000000, $alpha: 0.05);
 
   p {
     font-weight: 600;

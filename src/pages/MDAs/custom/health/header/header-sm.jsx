@@ -55,6 +55,18 @@ const HeaderSm = ({ customClass, fullname, mdaData }) => {
             Newsroom
           </div>
           <div
+            className={page === 'events' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
+            onClick={() => navigate(`/${mda}/events`)}
+          >
+            Events
+          </div>
+          <div
+            className={page === 'gallery' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
+            onClick={() => navigate(`/${mda}/gallery`)}
+          >
+            Gallery
+          </div>
+          <div
             className={page === 'resources' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
             onClick={() => navigate(`/${mda}/resources`)}
           >
@@ -62,7 +74,7 @@ const HeaderSm = ({ customClass, fullname, mdaData }) => {
           </div>
           <div
             className={page === 'contact' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
-            href={`/${mda}/contact`}
+            onClick={() => navigate(`/${mda}/contact`)}
           >
             Contact
           </div>

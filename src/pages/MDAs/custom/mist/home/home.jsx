@@ -1,14 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
-import { ArrowUpRight, Check } from 'iconoir-react';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 import { getAllServicesCategory } from '../../../../../api/read/services.req';
 import { notify } from '../../../../../utils/toast';
 import { getSingleDraft } from '../../../api/admin/drafts';
 import { formattedName } from '../../../api/admin/logic';
-import Button from '../../../shared/button/Button';
 import Divider from '../../../shared/divider/Divider';
 import Newsletter from '../../../shared/emailLetter/Newsletter';
+import HeroSection from '../../../shared/hero/HeroSection';
+import {
+  CommissionerZone,
+  CoreInformation,
+  QuickDocuments,
+  Statistics,
+  SupportLinks,
+} from '../../custom-components';
+import GalleryPreview from '../../custom-components/GalleryPreview';
+import UpcomingEvents from '../../custom-components/UpcomingEvents';
+import ResourceCategories from '../../../shared/resources/resource-categories/ResourceCategories';
 import QuickServices from '../../../shared/quick_services/QuickServices';
 import ServicesComponent from '../../../shared/services/style1/ServicesComponent';
 import Wrapper from '../../../shared/Wrapper/Wrapper';
@@ -81,170 +90,39 @@ const Home = ({ isEdit }) => {
     <div
       data-mda="mist"
       className={`landingPage-version mx-auto my-0 ${
-        isEdit ? 'mt-0' : isMdaTypeService ? 'lg:mt-[120px] mt-[80px]' : 'lg:mt-[180px] mt-[115px]'
+        isEdit ? 'mt-0' : isMdaTypeService ? 'lg:mt-[120px] mt-[80px]' : 'lg:mt-[120px] mt-[5px]'
       }`}
       ref={componentRef}
     >
       {/* Home */}
       {landingPage?.enabledSections?.heroSection && (
-        <Wrapper customClass={``}>
-          <div
-            className={`home-version relative flex justify-between ${
-              isEdit && viewMode === 'edit'
-                ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
-                : ''
-            } ${selectedComponent === 'heroSection' ? '!border-green-500 active_component' : ''}`}
-            onClick={
-              isEdit && viewMode === 'edit' ? () => handleComponentClick('heroSection') : null
-            }
-          >
-            <div className="text-content flex flex-col">
-              <div className="main-text">{landingPage?.hero_text}</div>
-              <p>{landingPage?.hero_subtitle}</p>
-              <Button
-                customClass="bg-[#108a00] uppercase tracking-[2px] text-white rounded-[5px] flex gap-2 text-[11px]"
-                onClick={() => window.open(landingPage?.action_button_link, '_blank')}
-              >
-                {landingPage?.action_button_text} <ArrowUpRight />
-              </Button>
-            </div>
-            <div className="landing-photo w-[550px] h-[600px] my-10">
-              <img
-                src={landingPage?.main_photo}
-                alt="landing page"
-                className="w-full h-full object-contain"
-              />
-            </div>
-          </div>
-        </Wrapper>
-      )}
-
-      {/* Commissioner Zone */}
-      {landingPage?.enabledSections?.commissionersZone && (
-        <section
-          className={`bg-[#fff] flex commisioners-zone md:py-[120px] py-[50px] ${
-            isEdit && viewMode === 'edit'
-              ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
-              : ''
-          } ${selectedComponent === 'commissionerZone' ? '!border-green-500 active_component' : ''}`}
-          onClick={
-            isEdit && viewMode === 'edit' ? () => handleComponentClick('commissionerZone') : null
-          }
-          id="commissioner"
-        >
-          <Wrapper>
-            <div className="flex wrapped lg:gap-[100px] gap-[30px] items-center justify-center flex-wrap lg:flex-nowrap">
-              <div className="commissioner-container md:w-[600px] md:h-[580px] w-[500px] sm:h-[480px] h-[380px] relative">
-                <div className="backdrop-photo w-[100%] h-[100%] sm:h-[80%] bg-[#F9F9FB]"></div>
-                <div className="commissioner-image h-[calc(100%_-_20px)] w-[calc(100%_-_20px)] sm:w-[calc(100%_-_100px)] sm:h-[500px] md:w-[calc(100%_-_150px)] overflow-hidden absolute bottom-[10px] sm:bottom-0 left-[50%] transform-[translateX(-50%)]">
-                  <img
-                    src={landingPage?.commissionersZone?.commissionerImage}
-                    alt="commissioners photo"
-                    className="object-top w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-              <div className="content flex flex-col w-full sm:w-[550px]">
-                <div className="uppercase tracking-[2px] text-[10px] sm:text-[11px] font-semibold text-[#444]">
-                  About us - <span className="text-[#00B44E] font-bold">Who we are</span>{' '}
-                </div>
-                <div className="flex flex-col lg:gap-8 gap-4">
-                  <div className="text-[24px] sm:text-[24px] md:text-[32px] lg:text-[40px] font-semibold comms-title leading-[130%]">
-                    {landingPage?.commissionersZone?.welcomeTitle}
-                  </div>
-                  <p className="leading-[170%] whitespace-pre-line text-[14px] sm:text-[16px] md:text-[18px]">
-                    {landingPage?.commissionersZone?.welcomeMessage}
-                  </p>
-                </div>
-
-                {/* buttons */}
-                <div className="buttonGrp flex flex-col sm:flex-row gap-3 sm:gap-4 md:mt-4">
-                  <button
-                    className="bg-gradient-to-r from-[#1C3F3A] to-[#00B44E] text-white justify-center px-4 sm:px-6 py-3.5 sm:py-3 rounded-[4px] flex items-center gap-2 hover:opacity-90 transition-opacity uppercase text-[10px] sm:text-[11px] tracking-[2px]"
-                    onClick={() => window.open('/about#introduction', '_blank')}
-                  >
-                    About Us
-                    <ArrowUpRight className="w-4 h-4" />
-                  </button>
-                  <button
-                    className="bg-white border border-[#d3d3d3] text-[#131313] px-4 sm:px-6 py-3.5 sm:py-3 rounded-[4px] hover:bg-gray-50 transition-colors uppercase text-[10px] sm:text-[11px] tracking-[2px]"
-                    onClick={() => window.open('/about#mission', '_blank')}
-                  >
-                    Vision & Mission
-                  </button>
-                </div>
-
-                <div className="font-semibold mt-2 md:mt-5 block commissioner-name flex flex-col gap-1 sm:gap-2">
-                  <h1 className="text-[15px]! md:text-[16px]!">
-                    {landingPage?.commissionersZone?.commissionerName}
-                  </h1>
-                  <span className="!font-normal block text-[14px]! md:text-[15px]! leading-[140%] w-[90%] sm:w-[360px]">
-                    {landingPage?.commissionersZone?.commissionerTitle}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Wrapper>
-        </section>
-      )}
-
-      {/* Core Information Cards */}
-      {landingPage?.enabledSections?.coreInformation && (
-        <section
-          className={`bg-[#fff] lg:py-[30px] mb-[80px] py-[0px] coreInformationSection ${
-            isEdit && viewMode === 'edit'
-              ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
-              : ''
-          } ${selectedComponent === 'coreInformation' ? '!border-green-500 active_component' : ''}`}
-          onClick={
-            isEdit && viewMode === 'edit' ? () => handleComponentClick('coreInformation') : null
-          }
-        >
-          <Wrapper>
-            <div className="topic__hand text-[24px] sm:text-[28px] md:text-[35px] leading-[140%] font-semibold text-center mb-[50px] leading-[130%] w-full mx-auto sm:w-[70%] md:w-[600px]">
-              {landingPage?.coreInformation?.title ||
-                'You can type in your preferred title for the core information section'}
-            </div>
-            <div className="cards flex flex-col lg:flex-row gap-[30px] justify-center">
-              {landingPage?.coreInformation?.cards?.map((card, index) => (
-                <div
-                  key={index}
-                  className="card__blaze bg-[#F9F9FB] p-8 rounded-[4px] flex flex-col gap-5 w-full lg:w-1/3"
-                >
-                  <div className="text__container">
-                    <div className="card__title text-[20px] font-semibold mb-3 w-[240px] h-[110px] underline">
-                      {card.title}
-                    </div>
-                    <p className="text-[15px] leading-[170%] mb-5">{card.description}</p>
-                    <div className="checklist flex flex-col gap-3 my-12 ">
-                      {card.keyPoints?.map((point, pointIndex) => (
-                        <div
-                          key={pointIndex}
-                          className="itemInfo flex items-center gap-2 text-[14px]"
-                        >
-                          <Check className="w-4 h-4 text-[#00B44E]" /> {point}
-                        </div>
-                      ))}
-                    </div>
-                    <button
-                      className="bg-gradient-to-r from-[#1C3F3A] to-[#00B44E] text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-[4px] flex items-center justify-center gap-2 hover:opacity-90 transition-opacity uppercase text-[10px] sm:text-[11px] tracking-[2px] w-full"
-                      onClick={() => card.link && window.open(card.link, '_blank')}
-                    >
-                      Learn More
-                      <ArrowUpRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Wrapper>
-        </section>
+        <HeroSection
+          style={landingPage?.hero_style || 'splitPhoto'}
+          title={landingPage?.hero_text}
+          subtitle={landingPage?.hero_subtitle}
+          buttonText={landingPage?.action_button_text}
+          buttonLink={landingPage?.action_button_link}
+          images={landingPage?.hero_images}
+          legacyImage={landingPage?.main_photo}
+          slideshowEnabled={!!landingPage?.hero_slideshow}
+          bgType={landingPage?.hero_bg_type}
+          bgColor={landingPage?.hero_bg_color}
+          bgGradient={landingPage?.hero_bg_gradient}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          isSelected={selectedComponent === 'heroSection'}
+          onSelect={() => handleComponentClick('heroSection')}
+        />
       )}
 
       {/* Quick Services */}
       {landingPage?.enabledSections?.quickServices && landingPage?.servicesData?.length > 0 && (
         <section
-          className={`bg-[#e6edef] py-10 
+          style={{
+            backgroundColor:
+              landingPage?.quickServices?.backgroundColor || 'var(--theme-section-bg, #e6edef)',
+          }}
+          className={`py-10
         ${
           isEdit && viewMode === 'edit'
             ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
@@ -255,6 +133,71 @@ const Home = ({ isEdit }) => {
           }
         >
           <QuickServices data={landingPage?.servicesData} />
+        </section>
+      )}
+
+      {/* Commissioner Zone */}
+      {landingPage?.enabledSections?.commissionersZone && (
+        <CommissionerZone
+          data={landingPage?.commissionersZone}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )}
+
+      {/* Core Information Cards */}
+      {landingPage?.enabledSections?.coreInformation && (
+        <CoreInformation
+          data={landingPage?.coreInformation}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )}
+
+      {/* Statistics */}
+      {landingPage?.enabledSections?.statistics && (
+        <Statistics
+          data={landingPage?.statistics}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )}
+
+      {/* Quick Documents */}
+      {landingPage?.enabledSections?.quickDocuments && (
+        <QuickDocuments
+          data={landingPage?.quickDocuments}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )}
+
+      {/* Resource Categories */}
+      {landingPage?.enabledSections?.resourceCategories && (
+        <section
+          className={`mt-[80px] ${
+            isEdit && viewMode === 'edit'
+              ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
+              : ''
+          } ${selectedComponent === 'resourceCategories' ? '!border-green-500 active_component' : ''}`}
+          onClick={
+            isEdit && viewMode === 'edit' ? () => handleComponentClick('resourceCategories') : null
+          }
+        >
+          <ResourceCategories
+            data={landingPage?.resourceCategories}
+            isEdit={isEdit}
+            mda={mda}
+            type="component"
+          />
         </section>
       )}
 
@@ -282,6 +225,40 @@ const Home = ({ isEdit }) => {
             <YoutubeSocials id={landingPage?.youtubePlayer?.id} viewMode={viewMode} />
           </Wrapper>
         </section>
+      )}
+
+      {/* Gallery Preview */}
+      {/* {landingPage?.enabledSections?.galleryPreview !== false && (
+        <GalleryPreview
+          backgroundColor={landingPage?.galleryPreview?.backgroundColor}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )} */}
+
+      {/* Upcoming Events */}
+      {/* {landingPage?.enabledSections?.upcomingEvents !== false && (
+        <UpcomingEvents
+          backgroundColor={landingPage?.upcomingEvents?.backgroundColor}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )} */}
+
+      {/* Support Links */}
+      {landingPage?.enabledSections?.supportLinks && (
+        <SupportLinks
+          data={landingPage?.supportLinks}
+          backgroundColor={landingPage?.supportLinksSettings?.backgroundColor}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
       )}
 
       {/* Newsletter */}

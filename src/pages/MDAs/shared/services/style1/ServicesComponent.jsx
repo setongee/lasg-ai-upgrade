@@ -34,7 +34,7 @@ const ServicesComponent = ({ data, name }) => {
         {data?.length > 9 ? (
           !showAll ? (
             <Button
-              customClass="bg-[#108a00] uppercase tracking-[2px] text-white rounded-[5px] flex gap-2 text-[11px]"
+              customClass="bg-[var(--theme-accent,#108a00)] uppercase tracking-[2px] text-[var(--theme-accent-text,#ffffff)] rounded-[5px] flex gap-2 text-[11px]"
               action={() => setShowAll(true)}
             >
               Load More <ArrowDown />

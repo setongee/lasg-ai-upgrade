@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
 import ScrollSpy from 'react-ui-scrollspy';
 import Divider from '../../../shared/divider/Divider';
+import RichTextContent from '../../../shared/richText/RichTextContent';
 import Wrapper from '../../../shared/Wrapper/Wrapper';
 import { useThemeStore } from '../../../stores/theme.store';
 import './about.css';
@@ -9,15 +9,6 @@ import People from './People/People';
 
 const About = () => {
   const data = useThemeStore((state) => state.mdaData);
-
-  useEffect(() => {
-    addContent(data?.responsibilities);
-  }, [data]);
-
-  const addContent = (response) => {
-    const content = document.getElementById('responsibility-content');
-    content.innerHTML = response;
-  };
 
   return (
     <div className="about-mda">
@@ -105,7 +96,7 @@ const About = () => {
 
             <Divider customClass="my-20 divider-about" />
 
-            <div id="responsibility-content"></div>
+            <RichTextContent html={data?.responsibilities} />
           </Wrapper>
         </section>
 

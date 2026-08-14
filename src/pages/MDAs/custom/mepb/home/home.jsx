@@ -1,14 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
-import { ArrowUpRight } from 'iconoir-react';
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router';
 import { getAllServicesCategory } from '../../../../../api/read/services.req';
 import { notify } from '../../../../../utils/toast';
 import { getSingleDraft } from '../../../api/admin/drafts';
 import { formattedName } from '../../../api/admin/logic';
-import Button from '../../../shared/button/Button';
 import Divider from '../../../shared/divider/Divider';
 import Newsletter from '../../../shared/emailLetter/Newsletter';
+import HeroSection from '../../../shared/hero/HeroSection';
+import {
+  CommissionerZone,
+  CoreInformation,
+  QuickDocuments,
+  Statistics,
+  SupportLinks,
+} from '../../custom-components';
+import GalleryPreview from '../../custom-components/GalleryPreview';
+import UpcomingEvents from '../../custom-components/UpcomingEvents';
 import QuickServices from '../../../shared/quick_services/QuickServices';
 import ResourceCategories from '../../../shared/resources/resource-categories/ResourceCategories';
 import ServicesComponent from '../../../shared/services/style1/ServicesComponent';
@@ -17,12 +25,9 @@ import YoutubeSocials from '../../../shared/youtubePlayer/YoutubeSocials';
 import { useEditDataStore } from '../../../stores/editData.store';
 import { useEditModeStore } from '../../../stores/editMode.store';
 import { useThemeStore } from '../../../stores/theme.store';
-import QuickDocumentsDummy from './dummy/QuickDocuments';
-import StatisticsDummy from './dummy/Statistics';
 import './home.css';
 
 const Home = ({ isEdit }) => {
-  const navigate = useNavigate();
   const mdaEditData = useEditDataStore((state) => state.mdaEditData);
   const mdaData = useThemeStore((state) => state.mdaData);
 
@@ -87,119 +92,77 @@ const Home = ({ isEdit }) => {
     >
       {/* Home */}
       {landingPage?.enabledSections?.heroSection && (
-        <div customClass={``}>
-          <div
-            className={`home-version relative flex justify-between ${
-              isEdit && viewMode === 'edit'
-                ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
-                : ''
-            } ${selectedComponent === 'heroSection' ? '!border-green-500 active_component' : ''}`}
-            onClick={
-              isEdit && viewMode === 'edit' ? () => handleComponentClick('heroSection') : null
-            }
-          >
-            {/* Decorative lines from v1 design */}
-            <div className="lines line_a"></div>
-            <div className="lines line_b"></div>
-            <div className="lines line_c"></div>
-            <div className="lines line_d"></div>
-            <div className="lines line_e"></div>
-            <div className="lines line_f"></div>
-
-            <Wrapper customClass={''}>
-              <div className="text-content flex flex-col">
-                <div className="main-text">{landingPage?.hero_text}</div>
-                <p>{landingPage?.hero_subtitle}</p>
-                <Button
-                  customClass="bg-[#90ee90] uppercase tracking-[2px] text-[#131313] rounded-[5px] flex gap-2 text-[11px] hover:opacity-90 transition-opacity"
-                  action={() => (window.location.href = '#quickdocsContainder')}
-                >
-                  {landingPage?.action_button_text} <ArrowUpRight />
-                </Button>
-              </div>
-            </Wrapper>
-          </div>
-        </div>
+        <HeroSection
+          style={landingPage?.hero_style || 'splitPhoto'}
+          title={landingPage?.hero_text}
+          subtitle={landingPage?.hero_subtitle}
+          buttonText={landingPage?.action_button_text}
+          buttonLink={landingPage?.action_button_link || '#quickdocsContainder'}
+          images={landingPage?.hero_images}
+          legacyImage={landingPage?.main_photo}
+          slideshowEnabled={!!landingPage?.hero_slideshow}
+          bgType={landingPage?.hero_bg_type}
+          bgColor={landingPage?.hero_bg_color}
+          bgGradient={landingPage?.hero_bg_gradient}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          isSelected={selectedComponent === 'heroSection'}
+          onSelect={() => handleComponentClick('heroSection')}
+        />
       )}
 
-      {/* Budget Statistics */}
+      {/* Commissioner Zone */}
+      {landingPage?.enabledSections?.commissionersZone && (
+        <CommissionerZone
+          data={landingPage?.commissionersZone}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )}
+
+      {/* Core Information Cards */}
+      {landingPage?.enabledSections?.coreInformation && (
+        <CoreInformation
+          data={landingPage?.coreInformation}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )}
+
+      {/* Statistics */}
       {landingPage?.enabledSections?.statistics && (
-        <section
-          className={`budget-statistics bg-[#fff] py-4 ${
-            isEdit && viewMode === 'edit'
-              ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
-              : ''
-          } ${selectedComponent === 'statistics' ? '!border-green-500 active_component' : ''}`}
-          onClick={isEdit && viewMode === 'edit' ? () => handleComponentClick('statistics') : null}
-        >
-          <Wrapper>
-            <div className="budgetting flex">
-              {landingPage?.statistics?.items?.map((statistic, index) => (
-                <React.Fragment key={index}>
-                  <div className="budget__card">
-                    <div className="tiny">{statistic.label || 'Statistic Label'}</div>
-                    <p>{statistic.value || 'Value'}</p>
-                  </div>
-                  {index < landingPage.statistics.items.length - 1 && (
-                    <div className="divider"></div>
-                  )}
-                </React.Fragment>
-              )) || <StatisticsDummy />}
-            </div>
-          </Wrapper>
-        </section>
+        <Statistics
+          data={landingPage?.statistics}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
       )}
 
       {/* Quick Documents */}
       {landingPage?.enabledSections?.quickDocuments && (
-        <section
-          id="quickdocsContainder"
-          className={`quick-documents ${
-            isEdit && viewMode === 'edit'
-              ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
-              : ''
-          } ${selectedComponent === 'quickDocuments' ? '!border-green-500 active_component' : ''}`}
-          onClick={
-            isEdit && viewMode === 'edit' ? () => handleComponentClick('quickDocuments') : null
-          }
-        >
-          <Wrapper>
-            <div className="quickLinksPoint" id="quickdocs">
-              <div className="pointB">
-                <div className="topic leading-[132%]">
-                  {landingPage?.quickDocuments?.title ||
-                    'Access Lagos State Budgets, Statistics, and Development Plans.'}
-                  <div className="sub">
-                    {landingPage?.quickDocuments?.subtitle ||
-                      'Empowering informed decisions with accessible data, budget transparency, and strategic planning for Lagos.'}
-                  </div>
-                  <Button
-                    customClass="bg-[#1C3F3A] leading-[100%] items-center text-white uppercase tracking-[2px] text-[11px] rounded-[5px] flex gap-2 hover:opacity-90 transition-opacity"
-                    action={() => !isEdit && navigate(`/${mda}/resources/`)}
-                  >
-                    {landingPage?.quickDocuments?.discoverMoreText || 'Discover More'}{' '}
-                    <ArrowUpRight />
-                  </Button>
-                </div>
-                <div className="pointA">
-                  <div className="docs">
-                    {landingPage?.quickDocuments?.documents?.map((doc, index) => (
-                      <a key={index} href={doc.link} download>
-                        {doc.title}
-                      </a>
-                    )) || <QuickDocumentsDummy />}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Wrapper>
-        </section>
+        <QuickDocuments
+          data={landingPage?.quickDocuments}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
       )}
 
       {/* Quick Services */}
       {landingPage?.enabledSections?.quickServices && landingPage?.servicesData?.length > 0 && (
         <section
-          className={`bg-[#f9f9f9] mt-20 py-10 
+          style={{
+            backgroundColor:
+              landingPage?.quickServices?.backgroundColor || 'var(--theme-section-bg, #f9f9f9)',
+          }}
+          className={`mt-20 py-10
               ${
                 isEdit && viewMode === 'edit'
                   ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
@@ -258,6 +221,40 @@ const Home = ({ isEdit }) => {
             <YoutubeSocials id={landingPage?.youtubePlayer?.id} viewMode={viewMode} />
           </Wrapper>
         </section>
+      )}
+
+      {/* Gallery Preview */}
+      {/* {landingPage?.enabledSections?.galleryPreview !== false && (
+        <GalleryPreview
+          backgroundColor={landingPage?.galleryPreview?.backgroundColor}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )} */}
+
+      {/* Upcoming Events */}
+      {/* {landingPage?.enabledSections?.upcomingEvents !== false && (
+        <UpcomingEvents
+          backgroundColor={landingPage?.upcomingEvents?.backgroundColor}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )} */}
+
+      {/* Support Links */}
+      {landingPage?.enabledSections?.supportLinks && (
+        <SupportLinks
+          data={landingPage?.supportLinks}
+          backgroundColor={landingPage?.supportLinksSettings?.backgroundColor}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
       )}
 
       {/* Newsletter */}

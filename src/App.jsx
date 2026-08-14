@@ -8,6 +8,7 @@ import Chatbot from './components/chatbot/Chatbot';
 import Footer from './components/footer/footer';
 import Header from './components/header/header';
 import Cookie from './cookie';
+import { useVisitTracker } from './hooks/useVisitTracker';
 import RouterClass from './routes/router';
 import './styles/root.css';
 import './styles/toast.css';
@@ -20,6 +21,10 @@ function App() {
   const location = useLocation();
   const currentPage = location.pathname.replace('/', ''); // e.g. "health"
   const { isPublicRoute, isAdminRoute } = useRouteType();
+
+  // MDA microsite pages log their own visits (with the real siteName) from
+  // Page.jsx — this only covers the fixed routes on the main site.
+  useVisitTracker(isPublicRoute ? 'main' : null, currentPage || 'home');
 
   useEffect(() => {
     const cookieInfo = Cookies.get('lasgConsent');

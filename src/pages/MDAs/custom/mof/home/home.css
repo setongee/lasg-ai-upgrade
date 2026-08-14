@@ -4,74 +4,6 @@
   color: #fff;
 }
 
-/* Hero Section - adapted from v1 design */
-[data-mda='mof'] .home-hero-section {
-  height: 100vh;
-  position: relative;
-  display: flex;
-  align-items: center;
-
-  .hero-background {
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-    overflow: hidden;
-    position: absolute;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.3;
-      object-position: 0 -30px;
-    }
-  }
-
-  .hero-content {
-    color: #fff;
-    margin-top: -50px;
-    width: 800px;
-    position: relative;
-    z-index: 1;
-
-    .hero-title {
-      font-size: 45px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      text-decoration: underline;
-      line-height: 58px;
-      margin: 35px 0;
-      margin-top: 50px;
-    }
-
-    .hero-description {
-      width: 70%;
-      line-height: 27px;
-      font-size: 16px;
-      margin: 0;
-      color: #fff;
-    }
-
-    .hero-button {
-      width: max-content;
-      padding: 15px 25px;
-      margin-top: 50px;
-      background-color: #108a00;
-      font-weight: 600;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-
-      &:hover {
-        background-color: hsl(120, 100%, 30%);
-      }
-    }
-  }
-}
-
 /* Stories section - adapted from v1 design */
 [data-mda='mof'] .stories {
   background-color: #000;
@@ -91,85 +23,9 @@
   }
 }
 
-/* Responsive styles for hero section */
-@media (max-width: 768px) {
-  [data-mda='mof'] .home-hero-section {
-    .hero-content {
-      width: 90%;
-
-      .hero-title {
-        font-size: 35px;
-        line-height: 45px;
-      }
-
-      .hero-description {
-        width: 90%;
-      }
-    }
-  }
-}
-
-@media (max-width: 680px) {
-  [data-mda='mof'] .home-hero-section {
-    .hero-content {
-      width: 100%;
-
-      .hero-title {
-        font-size: 35px;
-        line-height: 45px;
-      }
-
-      .hero-description {
-        width: 100%;
-      }
-    }
-  }
-}
-
-@media (max-width: 500px) {
-  [data-mda='mof'] .home-hero-section {
-    .hero-background {
-      img {
-        object-position: -350px 0px !important;
-      }
-    }
-
-    .hero-content {
-      width: 100%;
-      margin: 0;
-
-      .hero-title {
-        font-size: 30px;
-        line-height: 40px;
-      }
-
-      .hero-description {
-        width: 100%;
-        font-size: 15px;
-        line-height: 23px;
-      }
-    }
-  }
-}
-
 /* container queries */
 
 @container builder (max-width: 1200px) {
-  [data-mda='mof'] .home-hero-section {
-    .hero-content {
-      width: 90%;
-
-      .hero-title {
-        font-size: 35px;
-        line-height: 45px;
-      }
-
-      .hero-description {
-        width: 90%;
-      }
-    }
-  }
-
   [data-mda='mof'] .topic__hand {
     font-size: 28px;
     width: 50%;
@@ -187,21 +43,6 @@
     }
   }
   @container builder (max-width: 950px) {
-    [data-mda='mof'] .home-hero-section {
-      .hero-content {
-        width: 100%;
-
-        .hero-title {
-          font-size: 35px;
-          line-height: 45px;
-        }
-
-        .hero-description {
-          width: 100%;
-        }
-      }
-    }
-
     [data-mda='mof'] .topic__hand {
       font-size: 20px;
       width: 70%;
@@ -233,68 +74,10 @@
   }
 
   @container builder (max-width: 768px) {
-    [data-mda='mof'] .home-hero-section {
-      .hero-content {
-        width: 90%;
-
-        .hero-title {
-          font-size: 35px;
-          line-height: 45px;
-        }
-
-        .hero-description {
-          width: 90%;
-        }
-      }
-    }
-
     [data-mda='mof'] .topic__hand {
       font-size: 24px;
       width: 100%;
       line-height: 140%;
-    }
-  }
-
-  @container builder (max-width: 680px) {
-    [data-mda='mof'] .home-hero-section {
-      .hero-content {
-        width: 100%;
-
-        .hero-title {
-          font-size: 35px;
-          line-height: 45px;
-        }
-
-        .hero-description {
-          width: 100%;
-        }
-      }
-    }
-  }
-
-  @container builder (max-width: 500px) {
-    [data-mda='mof'] .home-hero-section {
-      .hero-background {
-        img {
-          object-position: -350px 0px !important;
-        }
-      }
-
-      .hero-content {
-        width: 100%;
-        margin: 0;
-
-        .hero-title {
-          font-size: 30px;
-          line-height: 40px;
-        }
-
-        .hero-description {
-          width: 100%;
-          font-size: 15px;
-          line-height: 23px;
-        }
-      }
     }
   }
 }

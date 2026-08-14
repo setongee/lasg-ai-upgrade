@@ -18,16 +18,19 @@ const ActivitySection = ({ siteName }) => {
   }
 
   return (
-    <div className="activity-panel">
-      <h2 className="header-activity flex gap-2 items-center uppercase tracking-[2px] text-[11px] mt-5 font-semibold px-[20px]">
-        <StatsUpSquareSolid fontSize={14} /> Activity Log
-        <Search className="search-activity" />
+    <div className="hidden fixed top-20 right-0 z-[1] h-[calc(100vh-80px)] w-[400px] overflow-y-auto overflow-x-hidden bg-white py-5">
+      <h2 className="fixed top-[60px] z-[999999] mt-5 flex h-[60px] w-full items-center justify-center gap-2 border-b border-[#eee] bg-white px-5 text-[10px] font-semibold uppercase tracking-[2px]">
+        <StatsUpSquareSolid fontSize={12} /> Activity Log
+        <Search className="ml-auto text-[13px]" />
       </h2>
       {isLoading ? <Loader customClass="" /> : null}
-      <div className="logger-items">
-        {data?.data?.map(({ activity, createdAt }) => (
-          <div className="loggerItem">
-            <p className="flex items-center gap-2">
+      <div className="mt-[55px]">
+        {data?.data?.map(({ activity, createdAt }, index) => (
+          <div
+            key={createdAt}
+            className={`flex flex-col gap-1 p-5 pr-[50px] text-[15px] font-medium break-words leading-[1.5] ${index % 2 === 1 ? 'bg-[#f9fbfc]' : ''}`}
+          >
+            <p className="flex items-center gap-2 text-sm font-medium capitalize text-[#777]">
               {dayjs().to(dayjs(createdAt)) === 'a day ago'
                 ? 'Yesterday'
                 : dayjs().to(dayjs(createdAt))}{' '}

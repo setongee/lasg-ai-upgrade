@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft } from 'iconoir-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { getAllNews, getSingleNews } from '../../../../api/read/news.req';
+import { getAllNewsByMda, getSingleNews } from '../../../../api/read/news.req';
 import Loader from '../../../../components/loader/loader';
 import {
   convertToTitleCase,
@@ -11,36 +11,33 @@ import {
   sortArray,
   truncateText,
 } from '../../../../middleware/middleware';
+import RichTextContent from '../richText/RichTextContent';
+import { useThemeStore } from '../../stores/theme.store';
 import Wrapper from '../Wrapper/Wrapper';
 import './view_news.scss';
 
-export default function News_view({ topic }) {
+export default function News_view() {
   const navigate = useNavigate();
 
   const [sub_data, setSub_data] = useState([]);
 
   const { mda, id } = useParams();
+  const mdaId = useThemeStore((state) => state.mdaData)?._id;
 
   const { isLoading, error, data } = useQuery({
     queryKey: ['view_news', { id }],
     queryFn: () => getSingleNews(id),
   });
 
-  const newsData = useQuery(
-    mda === 'health'
-      ? {
-          queryKey: ['news', page, topic],
-          queryFn: () => getAllNews(Number(page - 1), topic),
-        }
-      : {
-          queryKey: ['news', mda],
-          queryFn: () => getAllNewsByMda(mda),
-        }
-  );
+  const newsData = useQuery({
+    queryKey: ['news', mdaId],
+    queryFn: () => getAllNewsByMda(mdaId),
+    enabled: !!mdaId,
+  });
 
   useEffect(() => {
     const pin = sortArray(newsData?.data?.data, 'date').then((sortedArr) => sortedArr);
-    const rex = pin.then((response) => {
+    pin.then((response) => {
       const po = response?.filter((e) => {
         return e._id !== id;
       });
@@ -48,13 +45,6 @@ export default function News_view({ topic }) {
       setSub_data(po);
     });
   }, [newsData?.data]);
-
-  useEffect(() => {
-    if (data) {
-      const tc = document.getElementById('text');
-      tc.innerHTML = data?.data.content;
-    }
-  }, [data]);
 
   const navigateBack = () => {
     navigate(`/${mda}/news`);
@@ -66,8 +56,6 @@ export default function News_view({ topic }) {
         <Loader />
       </div>
     );
-
-  sub_data;
 
   if (error) return 'An error has occurred: ' + error.message;
 
@@ -98,7 +86,7 @@ export default function News_view({ topic }) {
                 <img src={data?.data.photo} alt="" />
               </div>
 
-              <div className="current_news_body" id="text"></div>
+              <RichTextContent html={data?.data?.content} className="current_news_body" />
             </div>
           </div>
 

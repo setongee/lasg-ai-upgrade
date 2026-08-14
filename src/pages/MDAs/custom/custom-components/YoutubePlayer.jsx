@@ -2,6 +2,8 @@ import Divider from '../../shared/divider/Divider';
 import Wrapper from '../../shared/Wrapper/Wrapper';
 import YoutubeSocials from '../../shared/youtubePlayer/YoutubeSocials';
 
+const DEFAULT_BACKGROUND = 'var(--theme-section-bg, #ffffff)';
+
 const YoutubePlayer = ({
   data,
   isEdit = false,
@@ -11,8 +13,11 @@ const YoutubePlayer = ({
 }) => {
   if (!data) return null;
 
+  const backgroundColor = data?.backgroundColor || DEFAULT_BACKGROUND;
+
   return (
     <section
+      style={{ backgroundColor }}
       className={`${
         isEdit && viewMode === 'edit'
           ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'

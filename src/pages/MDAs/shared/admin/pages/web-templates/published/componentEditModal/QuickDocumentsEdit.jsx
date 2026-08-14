@@ -4,6 +4,7 @@ import { notify } from '../../../../../../../../utils/toast';
 import { uploadDocument } from '../../../../../../api/admin/content';
 import { useEditDataStore } from '../../../../../../stores/editData.store';
 import { useThemeStore } from '../../../../../../stores/theme.store';
+import BackgroundColorPicker from '../../../../../colorPicker/BackgroundColorPicker';
 import SectionTitle from './util/SectionTitle';
 
 const QuickDocumentsEdit = () => {
@@ -21,6 +22,18 @@ const QuickDocumentsEdit = () => {
       enabledSections: {
         ...mdaEditData.enabledSections,
         quickDocuments: !mdaEditData.enabledSections?.quickDocuments,
+      },
+    });
+  };
+
+  const backgroundColor = mdaEditData.quickDocuments?.backgroundColor;
+
+  const handleColorChange = (color) => {
+    setMdaEditData({
+      ...mdaEditData,
+      quickDocuments: {
+        ...mdaEditData.quickDocuments,
+        backgroundColor: color,
       },
     });
   };
@@ -57,8 +70,8 @@ const QuickDocumentsEdit = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > 25 * 1024 * 1024) {
-      notify.error('File size must be less than 25MB');
+    if (file.size > 50 * 1024 * 1024) {
+      notify.error('File size must be less than 50MB');
       return;
     }
 
@@ -176,7 +189,7 @@ const QuickDocumentsEdit = () => {
   };
 
   return (
-    <div className="fixed top-[145px] left-[280px] w-[350px] h-[calc(100vh-145px)] bg-white overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] z-90">
+    <div className="fixed top-[145px] left-0 w-[350px] h-[calc(100vh-145px)] bg-white overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] z-90">
       <SectionTitle />
 
       {/* Enable/Disable Toggle */}
@@ -197,6 +210,8 @@ const QuickDocumentsEdit = () => {
           </button>
         </div>
       </div>
+
+      <BackgroundColorPicker value={backgroundColor} onChange={handleColorChange} />
 
       <div className="p-[30px]" ref={containerRef}>
         <div className="flex flex-col gap-6">

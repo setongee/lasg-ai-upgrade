@@ -172,7 +172,11 @@ const Drafts = () => {
   return (
     <TemplateContainer>
       <div className="titleAdmin flex items-center justify-between">
-        <div className="searchField h-[100%] w-[450px]">
+        <h2 className="text-[15px] font-semibold text-gray-900">
+          Drafts -{' '}
+          <span className="text-[14px] font-normal text-gray-500">Click on a draft to load it</span>
+        </h2>
+        <div className=" h-10 w-[450px]">
           <SearchInput placeholder="Search drafts..." value={searchTerm} onChange={setSearchTerm} />
         </div>
       </div>

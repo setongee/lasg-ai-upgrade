@@ -39,7 +39,7 @@
 
         span {
           margin-left: 5px;
-          color: #009c3e;
+          color: var(--theme-accent, #009c3e);
         }
       }
 

@@ -1,9 +1,10 @@
 import { Attachment, Link, Mail, NavArrowDown, Phone } from 'iconoir-react';
 import { useRef, useState } from 'react';
 import { notify } from '../../../../../../../../utils/toast';
-import { uploadFile } from '../../../../../../api/admin/content';
+import { uploadFileDirect } from '../../../../../../api/admin/content';
 import { useEditDataStore } from '../../../../../../stores/editData.store';
 import { useThemeStore } from '../../../../../../stores/theme.store';
+import BackgroundColorPicker from '../../../../../colorPicker/BackgroundColorPicker';
 import SectionTitle from './util/SectionTitle';
 
 const QuickServicesEdit = () => {
@@ -22,6 +23,18 @@ const QuickServicesEdit = () => {
       enabledSections: {
         ...mdaEditData.enabledSections,
         quickServices: !mdaEditData.enabledSections?.quickServices,
+      },
+    });
+  };
+
+  const backgroundColor = mdaEditData.quickServices?.backgroundColor;
+
+  const handleColorChange = (color) => {
+    setMdaEditData({
+      ...mdaEditData,
+      quickServices: {
+        ...mdaEditData.quickServices,
+        backgroundColor: color,
       },
     });
   };
@@ -130,54 +143,44 @@ const QuickServicesEdit = () => {
       });
     }, 200);
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = async (event) => {
-      setMdaEditData({
-        ...mdaEditData,
-        servicesData: updatedQuickServices,
-      });
+    setMdaEditData({
+      ...mdaEditData,
+      servicesData: updatedQuickServices,
+    });
 
-      // Upload in background without awaiting - concurrent uploads
-      uploadFile({
-        photo: {
-          temp: `${fullname.replace(' ', '-')}-quick-services-image-${index}`,
-          data: event.target.result,
-        },
-      })
-        .then((e) => {
-          if (e.status === 'ok') {
-            // Clear interval and set to 100%
-            clearInterval(progressInterval);
-            setUploadProgress((prev) => ({ ...prev, [index]: 100 }));
-
-            // Get current state to avoid race conditions
-            const currentData = useEditDataStore.getState().mdaEditData;
-            setMdaEditData({
-              ...currentData,
-              servicesData: currentData.servicesData.map((service, idx) =>
-                idx === index ? { ...service, image: e.url } : service
-              ),
-            });
-
-            // Clean up after a short delay
-            setTimeout(() => {
-              setUploadingIndices((prev) => {
-                const newSet = new Set(prev);
-                newSet.delete(index);
-                return newSet;
-              });
-              setUploadProgress((prev) => {
-                const newProgress = { ...prev };
-                delete newProgress[index];
-                return newProgress;
-              });
-            }, 500);
-          }
-        })
-        .catch((err) => {
+    // Upload directly to Cloudinary (bypasses our server entirely for the file bytes)
+    uploadFileDirect(file, `${fullname.replace(' ', '-')}-quick-services-image-${index}`)
+      .then((response) => {
+        if (response.status === 'ok') {
+          // Clear interval and set to 100%
           clearInterval(progressInterval);
-          notify.error(err.message);
+          setUploadProgress((prev) => ({ ...prev, [index]: 100 }));
+
+          // Get current state to avoid race conditions
+          const currentData = useEditDataStore.getState().mdaEditData;
+          setMdaEditData({
+            ...currentData,
+            servicesData: currentData.servicesData.map((service, idx) =>
+              idx === index ? { ...service, image: response.url } : service
+            ),
+          });
+
+          // Clean up after a short delay
+          setTimeout(() => {
+            setUploadingIndices((prev) => {
+              const newSet = new Set(prev);
+              newSet.delete(index);
+              return newSet;
+            });
+            setUploadProgress((prev) => {
+              const newProgress = { ...prev };
+              delete newProgress[index];
+              return newProgress;
+            });
+          }, 500);
+        } else {
+          clearInterval(progressInterval);
+          notify.error(response.message || 'Failed to upload image. Please try again.');
           setUploadingIndices((prev) => {
             const newSet = new Set(prev);
             newSet.delete(index);
@@ -188,8 +191,22 @@ const QuickServicesEdit = () => {
             delete newProgress[index];
             return newProgress;
           });
+        }
+      })
+      .catch((err) => {
+        clearInterval(progressInterval);
+        notify.error(err.message);
+        setUploadingIndices((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(index);
+          return newSet;
         });
-    };
+        setUploadProgress((prev) => {
+          const newProgress = { ...prev };
+          delete newProgress[index];
+          return newProgress;
+        });
+      });
   };
 
   const addService = () => {
@@ -233,7 +250,7 @@ const QuickServicesEdit = () => {
   };
 
   return (
-    <div className="fixed top-[145px] left-[280px] w-[350px] h-[calc(100vh-145px)] bg-white overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] z-90">
+    <div className="fixed top-[145px] left-0 w-[350px] h-[calc(100vh-145px)] bg-white overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] z-90">
       <SectionTitle />
 
       {/* Enable/Disable Toggle */}
@@ -254,6 +271,8 @@ const QuickServicesEdit = () => {
           </button>
         </div>
       </div>
+
+      <BackgroundColorPicker value={backgroundColor} onChange={handleColorChange} />
 
       <div className="p-[30px]">
         <div className="flex flex-col gap-6">

@@ -38,7 +38,7 @@ const ResourceCategories = ({ data, isEdit = false, mda, type }) => {
                   <span>{truncateText(card.description || '', 100)}</span>
                   <div className="butt">
                     <Button
-                      customClass={`bg-[#1c3f3a] text-white px-4 py-2 rounded-md text-sm font-medium ${
+                      customClass={`bg-[var(--theme-accent,#1c3f3a)] text-[var(--theme-accent-text,#ffffff)] px-4 py-2 rounded-md text-sm font-medium ${
                         isEdit ? 'cursor-not-allowed' : 'hover:opacity-90'
                       }`}
                       action={() =>
@@ -71,7 +71,7 @@ const ResourceCategories = ({ data, isEdit = false, mda, type }) => {
                   </span>
                   <div className="butt">
                     <Button
-                      customClass={`bg-[#1c3f3a] text-white px-4 py-2 rounded-md text-sm font-medium ${
+                      customClass={`bg-[var(--theme-accent,#1c3f3a)] text-[var(--theme-accent-text,#ffffff)] px-4 py-2 rounded-md text-sm font-medium ${
                         isEdit ? 'cursor-not-allowed' : 'hover:opacity-90'
                       }`}
                       action={() => !isEdit && navigate(`/${mda}/resources/annual-budget-bill`)}
@@ -96,7 +96,7 @@ const ResourceCategories = ({ data, isEdit = false, mda, type }) => {
                   </span>
                   <div className="butt">
                     <Button
-                      customClass={`bg-[#1c3f3a] text-white px-4 py-2 rounded-md text-sm font-medium ${
+                      customClass={`bg-[var(--theme-accent,#1c3f3a)] text-[var(--theme-accent-text,#ffffff)] px-4 py-2 rounded-md text-sm font-medium ${
                         isEdit ? 'cursor-not-allowed' : 'hover:opacity-90'
                       }`}
                       action={() => !isEdit && navigate(`/${mda}/resources/annual-budget-law`)}
@@ -121,7 +121,7 @@ const ResourceCategories = ({ data, isEdit = false, mda, type }) => {
                   </span>
                   <div className="butt">
                     <Button
-                      customClass={`bg-[#1c3f3a] text-white px-4 py-2 rounded-md text-sm font-medium ${
+                      customClass={`bg-[var(--theme-accent,#1c3f3a)] text-[var(--theme-accent-text,#ffffff)] px-4 py-2 rounded-md text-sm font-medium ${
                         isEdit ? 'cursor-not-allowed' : 'hover:opacity-90'
                       }`}
                       action={() =>
@@ -149,7 +149,7 @@ const ResourceCategories = ({ data, isEdit = false, mda, type }) => {
                   </span>
                   <div className="butt">
                     <Button
-                      customClass={`bg-[#1c3f3a] text-white px-4 py-2 rounded-md text-sm font-medium ${
+                      customClass={`bg-[var(--theme-accent,#1c3f3a)] text-[var(--theme-accent-text,#ffffff)] px-4 py-2 rounded-md text-sm font-medium ${
                         isEdit ? 'cursor-not-allowed' : 'hover:opacity-90'
                       }`}
                       action={() => !isEdit && navigate(`/${mda}/resources/sftas`)}
@@ -175,7 +175,7 @@ const ResourceCategories = ({ data, isEdit = false, mda, type }) => {
                   </span>
                   <div className="butt">
                     <Button
-                      customClass={`bg-[#1c3f3a] text-white px-4 py-2 rounded-md text-sm font-medium ${
+                      customClass={`bg-[var(--theme-accent,#1c3f3a)] text-[var(--theme-accent-text,#ffffff)] px-4 py-2 rounded-md text-sm font-medium ${
                         isEdit ? 'cursor-not-allowed' : 'hover:opacity-90'
                       }`}
                       action={() => !isEdit && navigate(`/${mda}/resources/citizen-budget`)}
@@ -200,7 +200,7 @@ const ResourceCategories = ({ data, isEdit = false, mda, type }) => {
                   </span>
                   <div className="butt">
                     <Button
-                      customClass={`bg-[#1c3f3a] text-white px-4 py-2 rounded-md text-sm font-medium ${
+                      customClass={`bg-[var(--theme-accent,#1c3f3a)] text-[var(--theme-accent-text,#ffffff)] px-4 py-2 rounded-md text-sm font-medium ${
                         isEdit ? 'cursor-not-allowed' : 'hover:opacity-90'
                       }`}
                       action={() =>

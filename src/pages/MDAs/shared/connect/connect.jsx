@@ -22,11 +22,11 @@ export default function Connect() {
             <div className="connect__info">
               <p>
                 {' '}
-                <Mail color="green" /> {data?.contact?.email}{' '}
+                <Mail color="var(--theme-accent, green)" /> {data?.contact?.email}{' '}
               </p>
               <p>
                 {' '}
-                <Phone color="green" /> {data?.contact?.phone}{' '}
+                <Phone color="var(--theme-accent, green)" /> {data?.contact?.phone}{' '}
               </p>
 
               <div>

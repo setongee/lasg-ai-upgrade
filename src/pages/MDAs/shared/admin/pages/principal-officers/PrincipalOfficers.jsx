@@ -1,9 +1,163 @@
-import { Edit, Plus, Trash, Xmark } from 'iconoir-react';
+import {
+  closestCenter,
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import { arrayMove, rectSortingStrategy, SortableContext, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { Edit, MoreVertCircle, NavArrowDown, Plus, Trash, Xmark } from 'iconoir-react';
 import { useEffect, useState } from 'react';
 import { notify } from '../../../../../../utils/toast';
-import { updateAdminData, uploadFile } from '../../../../api/admin/content';
+import { updateAdminData, uploadFileDirect } from '../../../../api/admin/content';
 import Loader from '../../../../shared/loader/loader';
 import '../../styles/pages.scss';
+import SearchInput from '../../components/searchInput/SearchInput';
+
+// dnd-kit needs a stable, unique id per official — there's no id field on
+// the data, so name+role (unique within a single MDA's list) stands in.
+const getOfficialId = (official) => `${official.name}::${official.role}`;
+
+const DragHandle = (props) => (
+  <div
+    className="absolute top-0 left-0 z-10 m-3 p-1.5 rounded-[4px] bg-gray-100/90 hover:bg-gray-200 cursor-grab active:cursor-grabbing touch-none"
+    title="Drag to reorder"
+    {...props}
+  >
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-gray-500">
+      <circle cx="8" cy="6" r="1.5" />
+      <circle cx="16" cy="6" r="1.5" />
+      <circle cx="8" cy="12" r="1.5" />
+      <circle cx="16" cy="12" r="1.5" />
+      <circle cx="8" cy="18" r="1.5" />
+      <circle cx="16" cy="18" r="1.5" />
+    </svg>
+  </div>
+);
+
+const OfficialCard = ({
+  official,
+  index,
+  canDrag,
+  dragHandleProps,
+  isOverlay,
+  isDragging,
+  activeDropdownIndex,
+  setActiveDropdownIndex,
+  openEditModal,
+  deleteItem,
+}) => (
+  <div
+    className={`bg-white relative ${isDragging && !isOverlay ? 'opacity-40' : ''} ${
+      isOverlay ? 'shadow-xl' : ''
+    }`}
+  >
+    <div className="flex flex-col items-center justify-between w-full">
+      <div className="flex flex-col w-full gap-4">
+        <div className="bg-gray-100 relative h-[450px]">
+          {official.photo ? (
+            <img
+              src={official.photo}
+              alt={official.name}
+              className="w-full h-full object-cover object-top"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+          )}
+        </div>
+        {canDrag && <DragHandle {...dragHandleProps} />}
+        {!isOverlay && (
+          <div className="absolute top-0 right-0 flex">
+            <div className="relative more-actions-container flex justify-center pb-3">
+              <button
+                className="m-3 flex items-center gap-[2px] text-[10px] font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 px-2 py-1.5 rounded-[4px] cursor-pointer uppercase tracking-[1px] pl-2.5"
+                onClick={() => setActiveDropdownIndex(activeDropdownIndex === index ? null : index)}
+              >
+                Actions
+                <NavArrowDown fontSize={11} className="mt-0" />
+              </button>
+
+              {activeDropdownIndex === index && (
+                <div className="absolute top-[45px] right-3 mb-2 w-36 bg-white rounded-md z-50 border border-gray-100 py-1">
+                  <button
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 cursor-pointer"
+                    onClick={() => {
+                      openEditModal(index);
+                      setActiveDropdownIndex(null);
+                    }}
+                  >
+                    <Edit fontSize={10} strokeWidth={1.8} />
+                    Edit
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 cursor-pointer"
+                    onClick={() => {
+                      deleteItem(index);
+                      setActiveDropdownIndex(null);
+                    }}
+                  >
+                    <Trash fontSize={10} strokeWidth={1.8} />
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        <div className="absolute bottom-0 left-0 right-0 z-10">
+          <div className="flex flex-col mx-auto  p-5 gap-0.5 bg-white">
+            <div className="font-semibold text-[15px] leading-[140%] text-gray-800">
+              {official.name}
+            </div>
+            <div className="text-gray-500 text-[14px]">{official.role}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const SortableOfficialCard = ({ official, index, canDrag, ...rest }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: getOfficialId(official),
+    disabled: !canDrag,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 30 : undefined,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <OfficialCard
+        official={official}
+        index={index}
+        canDrag={canDrag}
+        dragHandleProps={{ ...attributes, ...listeners }}
+        isDragging={isDragging}
+        {...rest}
+      />
+    </div>
+  );
+};
 
 const People = ({ mda_data }) => {
   const [data, setData] = useState({});
@@ -16,6 +170,16 @@ const People = ({ mda_data }) => {
   const [photo, setPhoto] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [updateInfo, setUpdateInfo] = useState('');
+  const [activeDropdownIndex, setActiveDropdownIndex] = useState(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (event.target.closest('.more-actions-container')) return;
+      setActiveDropdownIndex(null);
+    };
+    window.addEventListener('click', handleClickOutside, true);
+    return () => window.removeEventListener('click', handleClickOutside, true);
+  }, []);
 
   // open edit modal
   const openEditModal = (e) => {
@@ -51,6 +215,16 @@ const People = ({ mda_data }) => {
   const handleFile = (e) => {
     if (e.target.files.length) {
       setFile(e.target.files);
+
+      // const names = e.target.files[0]?.name;
+      // const namesWithoutExtension = names.split('.')[0];
+      // const namesSplit = namesWithoutExtension.split('(');
+      // setNewOfficial((prev) => ({
+      //   ...prev,
+      //   name: namesSplit[0],
+      //   role: namesSplit[1] ? namesSplit[1].replace(')', '') : '-',
+      // }));
+
       const min = window.URL.createObjectURL(e.target.files[0]);
       setPhoto(min);
     }
@@ -71,25 +245,20 @@ const People = ({ mda_data }) => {
       let uniqueName = formatCategoryName(newOfficial.name);
       setIsLoading(true);
 
-      const reader = new FileReader();
-      reader.readAsDataURL(fileData);
-
-      reader.onloadend = () => {
-        try {
-          uploadFile({
-            photo: {
-              temp: uniqueName,
-              data: reader.result,
-            },
-          }).then((response) => {
+      uploadFileDirect(fileData, uniqueName)
+        .then((response) => {
+          if (response.status === 'ok') {
             newOfficial.photo = response.url;
             submitData();
-          });
-        } catch (error) {
-          error.message;
+          } else {
+            notify.error(response.message || 'Failed to upload photo. Please try again.');
+            setIsLoading(false);
+          }
+        })
+        .catch((err) => {
+          notify.error(err.message || 'Failed to upload photo. Please try again.');
           setIsLoading(false);
-        }
-      };
+        });
     }
   };
 
@@ -126,6 +295,28 @@ const People = ({ mda_data }) => {
     }
   }, [updateInfo]);
 
+  // reorder officials via drag-and-drop
+  const [activeDragId, setActiveDragId] = useState(null);
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  const handleDragStart = (event) => {
+    setActiveDragId(event.active.id);
+  };
+
+  const handleDragEnd = (event) => {
+    setActiveDragId(null);
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = filteredOfficials.findIndex((o) => getOfficialId(o) === active.id);
+    const newIndex = filteredOfficials.findIndex((o) => getOfficialId(o) === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    data.people = arrayMove(filteredOfficials, oldIndex, newIndex);
+    setData({ ...data });
+    setUpdateInfo('reordered principal officers');
+  };
+
   // delete an item
   const deleteItem = (index) => {
     const deleteItem = data.people[index];
@@ -155,27 +346,23 @@ const People = ({ mda_data }) => {
       let uniqueName = formatCategoryName(newOfficial.name);
       setIsLoading(true);
 
-      const reader = new FileReader();
-      reader.readAsDataURL(fileData);
-
-      reader.onloadend = () => {
-        try {
-          uploadFile({
-            photo: {
-              temp: uniqueName,
-              data: reader.result,
-            },
-          }).then((response) => {
+      uploadFileDirect(fileData, uniqueName)
+        .then((response) => {
+          if (response.status === 'ok') {
             newOfficial.photo = response.url;
             data.people[index] = newOfficial;
             setUpdateInfo(
               `updated photo for principal officer - ${newOfficial.name} (${newOfficial.role})`
             );
-          });
-        } catch (error) {
-          error.message;
-        }
-      };
+          } else {
+            notify.error(response.message || 'Failed to upload photo. Please try again.');
+            setIsLoading(false);
+          }
+        })
+        .catch((err) => {
+          notify.error(err.message || 'Failed to upload photo. Please try again.');
+          setIsLoading(false);
+        });
     }
   };
 
@@ -197,59 +384,24 @@ const People = ({ mda_data }) => {
   };
 
   return (
-    <div className="table__main__body">
+    <div className="">
       {isLoading && <Loader customClass="" />}
 
-      <div className="titleAdmin flex">
-        <div className="flex gap-[10px]">
-          <div className="searchField h-[100%] relative">
-            <input
-              type="text"
-              placeholder="Search officials by name or role..."
-              className="py-[15px] pl-[45px] pr-[20px] rounded-[5px] w-[450px] bg-[#f5f5f5] text-[14px] h-full focus:outline-none focus:ring-1 focus:ring-[#27ae60] focus:border-transparent transition-all duration-200"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <svg
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
-                aria-label="Clear search"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            )}
-          </div>
-          <div className="actionBtn button__primary2 flex gap-1" onClick={() => openModal()}>
-            <Plus /> Add Official
-          </div>
+      <div className="titleAdmin flex items-center justify-between z-99">
+        <h2 className="text-[15px] font-semibold text-gray-900">
+          Manage Principal Officers -{' '}
+          <span className="text-[14px] font-normal text-gray-500">Click on an item to load it</span>
+        </h2>
+        <div className=" h-10 w-[450px]">
+          <SearchInput placeholder="Search items..." value={searchTerm} onChange={setSearchTerm} />
         </div>
+        {/* add mda */}
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-green-800 text-[13px] cursor-pointer py-2 px-4 flex items-center gap-1 font-medium rounded-sm text-white"
+        >
+          <Plus /> Add Official
+        </button>
       </div>
 
       {isModalOpen ? (
@@ -362,69 +514,58 @@ const People = ({ mda_data }) => {
         </div>
       ) : null}
 
-      <div className="tableData">
-        {filteredOfficials.length > 0 ? (
-          filteredOfficials.map((official, index) => (
-            <div className="table__item flex flex-col" key={index}>
-              <div className="flex flex-col items-center justify-between w-full">
-                <div className="flex flex-col w-full gap-4">
-                  <div className="official__image overflow-hidden bg-gray-100">
-                    {official.photo ? (
-                      <img
-                        src={official.photo}
-                        alt={official.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-center flex items-center flex-col mx-auto mt-3 mb-6 gap-2">
-                    <div className="tr__item name--item font-medium text-[16px] leading-[140%] text-center">
-                      {official.name}
-                    </div>
-                    <div className="tr__item text-gray-500">{official.role}</div>
-                  </div>
-                </div>
-                <div className="tr__item flex act--item gap-2 mb-2">
-                  <button
-                    className="action flex items-center gap-1 text-sm text-[#e67e22] hover:bg-[#fdf2e9] px-3 py-1.5 rounded cursor-pointer"
-                    onClick={() => openEditModal(index)}
-                  >
-                    <Edit fontSize={11} strokeWidth={1.8} />
-                    Edit
-                  </button>
-                  <button
-                    className="action flex items-center gap-1 text-sm text-[#c0392b] hover:bg-[#fde8e8] px-3 py-1.5 rounded cursor-pointer"
-                    onClick={() => deleteItem(index)}
-                  >
-                    <Trash fontSize={11} strokeWidth={1.8} />
-                    Delete
-                  </button>
-                </div>
+      {!searchTerm && filteredOfficials.length > 1 && (
+        <div className="text-[13px] text-gray-500 mt-4">Drag a card to reorder officials.</div>
+      )}
+
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={() => setActiveDragId(null)}
+      >
+        <SortableContext
+          items={filteredOfficials.map(getOfficialId)}
+          strategy={rectSortingStrategy}
+        >
+          <div className="tableData grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 mt-10">
+            {filteredOfficials.length > 0 ? (
+              filteredOfficials.map((official, index) => (
+                <SortableOfficialCard
+                  key={getOfficialId(official)}
+                  official={official}
+                  index={index}
+                  canDrag={!searchTerm}
+                  activeDropdownIndex={activeDropdownIndex}
+                  setActiveDropdownIndex={setActiveDropdownIndex}
+                  openEditModal={openEditModal}
+                  deleteItem={deleteItem}
+                />
+              ))
+            ) : (
+              <div className="w-full text-[16px] text-gray-600">
+                {searchTerm ? 'No matching officials found.' : 'No officials available.'}
               </div>
-            </div>
-          ))
-        ) : (
-          <div className="w-full text-[16px] text-gray-600">
-            {searchTerm ? 'No matching officials found.' : 'No officials available.'}
+            )}
           </div>
-        )}
-      </div>
+        </SortableContext>
+
+        <DragOverlay>
+          {activeDragId
+            ? (() => {
+                const draggedOfficial = filteredOfficials.find(
+                  (o) => getOfficialId(o) === activeDragId
+                );
+                return draggedOfficial ? (
+                  <div className="w-[300px]">
+                    <OfficialCard official={draggedOfficial} canDrag isOverlay />
+                  </div>
+                ) : null;
+              })()
+            : null}
+        </DragOverlay>
+      </DndContext>
     </div>
   );
 };

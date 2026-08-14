@@ -58,3 +58,16 @@ export const verifyOtp = async (email, otp) => {
     return { status: 'bad', message: 'Something went wrong!' };
   }
 };
+
+export const changePassword = async (id, password, newPassword) => {
+  const response = await axios.post(`${base_url}/mda/user/auth/password/${id}`, {
+    password,
+    newPassword,
+  });
+
+  if (response.status === 200) {
+    return response.data;
+  } else {
+    return { status: 'bad', message: 'Something went wrong!' };
+  }
+};

@@ -54,6 +54,18 @@ const HeaderSm = ({ customClass, fullname, mdaData }) => {
           >
             Newsroom
           </div>
+          <div
+            className={page === 'events' ? '!text-[#fbbf24] font-bold' : '!text-white'}
+            onClick={() => navigate(`/${mda}/events`)}
+          >
+            Events
+          </div>
+          <div
+            className={page === 'gallery' ? '!text-[#fbbf24] font-bold' : '!text-white'}
+            onClick={() => navigate(`/${mda}/gallery`)}
+          >
+            Gallery
+          </div>
           {mdaData?.resources?.length > 0 && (
             <div
               className={page === 'resources' ? '!text-[#fbbf24] font-bold' : '!text-white'}

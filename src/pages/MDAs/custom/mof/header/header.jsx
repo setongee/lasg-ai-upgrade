@@ -1,4 +1,5 @@
 import useWindowWidth from '../../../../../hooks/useWindowWidth';
+import InfoBar from '../../custom-components/InfoBar';
 import '../../../shared/styles/style.scss';
 import Wrapper from '../../../shared/Wrapper/Wrapper';
 import { useEditModeStore } from '../../../stores/editMode.store';
@@ -9,8 +10,8 @@ import './header.css';
 
 const Header = ({ fullname, isEdit }) => {
   const width = useWindowWidth();
-  const info = '🚀 We just launched our new website, Enjoy the new v2.0 experience';
   const viewMode = useEditModeStore((s) => s.viewMode);
+  const selectedComponent = useEditModeStore((state) => state.selectedComponent);
   const setSelectedComponent = useEditModeStore((state) => state.setSelectedComponent);
   const mdaData = useThemeStore((state) => state.mdaData);
 
@@ -23,11 +24,14 @@ const Header = ({ fullname, isEdit }) => {
   return (
     <header className="fixed top-0 w-full z-50">
       {isLargeScreen && (
-        <div className="info-banner flex justify-center bg-[#1c3f3a]">
-          <Wrapper customClass="flex justify-center py-[8px] uppercase text-[10px] tracking-[2px] text-[#f0ead2]">
-            <p>{info}</p>
-          </Wrapper>
-        </div>
+        <InfoBar
+          data={mdaData?.landingPage?.infoBar}
+          fullname={mdaData?.fullname}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
       )}
       <div className="bg-green-700 text-white!">
         <Wrapper

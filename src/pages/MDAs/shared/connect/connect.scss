@@ -1,7 +1,8 @@
 .mda-connect {
   margin-top: 170px;
   margin-bottom: 80px;
-  background-color: #fff;
+  background-color: var(--theme-page-bg, #fff);
+  color: var(--theme-page-text, #131313);
 }
 
 .contact {
@@ -120,12 +121,13 @@
       font-weight: 600;
 
       span {
-        color: green;
+        color: var(--theme-accent, green);
       }
     }
 
     .span {
-      color: #444;
+      color: var(--theme-page-text, #444);
+      opacity: 0.75;
       font-weight: 500;
       margin-top: 50px;
     }
@@ -160,7 +162,7 @@
       text-align: center;
 
       a {
-        color: #131313;
+        color: var(--theme-page-text, #131313);
         line-height: 24px;
         font-weight: 500;
 

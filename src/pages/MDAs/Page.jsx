@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
+import { useVisitTracker } from '../../hooks/useVisitTracker';
 import { getMda } from './api/data';
 import Admin from './shared/admin/Admin';
 import Loader from './shared/loader/loader';
 import { useThemeStore } from './stores/theme.store';
 import ThemeSelector from './Themes/ThemeSelector';
+import SelfHosted from './custom/self-hosted';
 
 const Page = () => {
   let params = useParams();
@@ -38,9 +40,13 @@ const Page = () => {
     }
   }, [data, mda, setMda, setMdaData]);
 
-  // useVisitTracker(mda, page === undefined ? 'home' : page);
+  useVisitTracker(mda, page === undefined ? 'home' : page);
 
   if (isLoading) return <Loader />;
+
+  if (data && data[0]?.type === 'self-hosted') {
+    return <SelfHosted data={data[0]} />;
+  }
 
   switch (page) {
     case 'admin':

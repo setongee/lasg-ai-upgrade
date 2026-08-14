@@ -99,9 +99,7 @@ const Resources = ({ mda_data }) => {
 
           setUploadQueue((prev) =>
             prev.map((q) =>
-              q.id === item.id
-                ? { ...q, status: 'done', progress: 100, url: res.data.url }
-                : q
+              q.id === item.id ? { ...q, status: 'done', progress: 100, url: res.data.url } : q
             )
           );
         } catch (err) {
@@ -235,371 +233,348 @@ const Resources = ({ mda_data }) => {
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="table__main__body">
-
-      {/* ── Add modal (batch) ── */}
-      {isModalOpen && (
-        <div className="addModal">
-          <div className="addModal__card" style={{ maxWidth: '560px', width: '100%' }}>
-            <div className="topic">Add Documents</div>
-            <div className="closeModal" onClick={closeModal}>
-              <Xmark />
-            </div>
-
-            {/* Drop / select area */}
-            {!uploading && (
-              <div
-                style={{
-                  border: '2px dashed #d1d5db',
-                  borderRadius: '8px',
-                  padding: '24px',
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  marginBottom: '16px',
-                  background: '#fafafa',
-                }}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Plus
-                  style={{ margin: '0 auto 8px', color: '#9ca3af' }}
-                  width={28}
-                  height={28}
-                />
-                <p style={{ fontSize: '13px', color: '#6b7280', margin: 0 }}>
-                  Click to select PDFs &nbsp;·&nbsp; multiple files supported
-                </p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="application/pdf"
-                  multiple
-                  style={{ display: 'none' }}
-                  onChange={handleFilesSelected}
-                />
+    <div>
+      <div className="table__main__body">
+        {/* ── Add modal (batch) ── */}
+        {isModalOpen && (
+          <div className="addModal">
+            <div className="addModal__card" style={{ maxWidth: '560px', width: '100%' }}>
+              <div className="topic">Add Documents</div>
+              <div className="closeModal" onClick={closeModal}>
+                <Xmark />
               </div>
-            )}
 
-            {/* Queue list */}
-            {uploadQueue.length > 0 && (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '10px',
-                  maxHeight: '320px',
-                  overflowY: 'auto',
-                  marginBottom: '16px',
-                }}
-              >
-                {uploadQueue.map((item) => (
-                  <div
-                    key={item.id}
-                    style={{
-                      background: '#f9fafb',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      padding: '12px',
-                    }}
-                  >
+              {/* Drop / select area */}
+              {!uploading && (
+                <div
+                  style={{
+                    border: '2px dashed #d1d5db',
+                    borderRadius: '8px',
+                    padding: '24px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    marginBottom: '16px',
+                    background: '#fafafa',
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Plus style={{ margin: '0 auto 8px', color: '#9ca3af' }} width={28} height={28} />
+                  <p style={{ fontSize: '13px', color: '#6b7280', margin: 0 }}>
+                    Click to select PDFs &nbsp;·&nbsp; multiple files supported
+                  </p>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="application/pdf"
+                    multiple
+                    style={{ display: 'none' }}
+                    onChange={handleFilesSelected}
+                  />
+                </div>
+              )}
+
+              {/* Queue list */}
+              {uploadQueue.length > 0 && (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px',
+                    maxHeight: '320px',
+                    overflowY: 'auto',
+                    marginBottom: '16px',
+                  }}
+                >
+                  {uploadQueue.map((item) => (
                     <div
+                      key={item.id}
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        marginBottom: item.status === 'pending' ? '6px' : '8px',
+                        background: '#f9fafb',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        padding: '12px',
                       }}
                     >
-                      <img src={pdff} alt="" style={{ width: '28px', flexShrink: 0 }} />
-
-                      {/* Editable name */}
-                      {item.status === 'pending' ? (
-                        <input
-                          type="text"
-                          value={item.name}
-                          onChange={(e) => renameInQueue(item.id, e.target.value)}
-                          style={{
-                            flex: 1,
-                            border: '1px solid #d1d5db',
-                            borderRadius: '5px',
-                            padding: '6px 8px',
-                            fontSize: '13px',
-                            outline: 'none',
-                          }}
-                        />
-                      ) : (
-                        <span
-                          style={{
-                            flex: 1,
-                            fontSize: '13px',
-                            fontWeight: 500,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {item.name}
-                        </span>
-                      )}
-
-                      {/* Status badge / remove */}
-                      {item.status === 'pending' && (
-                        <button
-                          onClick={() => removeFromQueue(item.id)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            color: '#9ca3af',
-                            display: 'flex',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Xmark width={16} height={16} />
-                        </button>
-                      )}
-                      {item.status === 'done' && (
-                        <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600 }}>
-                          ✓ Done
-                        </span>
-                      )}
-                      {item.status === 'error' && (
-                        <span style={{ fontSize: '12px', color: '#dc2626', fontWeight: 600 }}>
-                          ✗ Failed
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Progress bar */}
-                    {(item.status === 'uploading' || item.status === 'done') && (
                       <div
                         style={{
-                          height: '6px',
-                          background: '#e5e7eb',
-                          borderRadius: '99px',
-                          overflow: 'hidden',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          marginBottom: item.status === 'pending' ? '6px' : '8px',
                         }}
                       >
+                        <img src={pdff} alt="" style={{ width: '28px', flexShrink: 0 }} />
+
+                        {/* Editable name */}
+                        {item.status === 'pending' ? (
+                          <input
+                            type="text"
+                            value={item.name}
+                            onChange={(e) => renameInQueue(item.id, e.target.value)}
+                            style={{
+                              flex: 1,
+                              border: '1px solid #d1d5db',
+                              borderRadius: '5px',
+                              padding: '6px 8px',
+                              fontSize: '13px',
+                              outline: 'none',
+                            }}
+                          />
+                        ) : (
+                          <span
+                            style={{
+                              flex: 1,
+                              fontSize: '13px',
+                              fontWeight: 500,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {item.name}
+                          </span>
+                        )}
+
+                        {/* Status badge / remove */}
+                        {item.status === 'pending' && (
+                          <button
+                            onClick={() => removeFromQueue(item.id)}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: '#9ca3af',
+                              display: 'flex',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Xmark width={16} height={16} />
+                          </button>
+                        )}
+                        {item.status === 'done' && (
+                          <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600 }}>
+                            ✓ Done
+                          </span>
+                        )}
+                        {item.status === 'error' && (
+                          <span style={{ fontSize: '12px', color: '#dc2626', fontWeight: 600 }}>
+                            ✗ Failed
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Progress bar */}
+                      {(item.status === 'uploading' || item.status === 'done') && (
                         <div
                           style={{
-                            height: '100%',
-                            width: `${item.progress}%`,
-                            background: item.status === 'done' ? '#16a34a' : '#2563eb',
+                            height: '6px',
+                            background: '#e5e7eb',
                             borderRadius: '99px',
-                            transition: 'width 0.2s ease',
+                            overflow: 'hidden',
                           }}
-                        />
-                      </div>
-                    )}
-                    {item.status === 'uploading' && (
-                      <p style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px' }}>
-                        {item.progress}%
-                      </p>
-                    )}
-                    {item.status === 'error' && (
-                      <p style={{ fontSize: '11px', color: '#dc2626', marginTop: '4px' }}>
-                        {item.error}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+                        >
+                          <div
+                            style={{
+                              height: '100%',
+                              width: `${item.progress}%`,
+                              background: item.status === 'done' ? '#16a34a' : '#2563eb',
+                              borderRadius: '99px',
+                              transition: 'width 0.2s ease',
+                            }}
+                          />
+                        </div>
+                      )}
+                      {item.status === 'uploading' && (
+                        <p style={{ fontSize: '11px', color: '#6b7280', marginTop: '4px' }}>
+                          {item.progress}%
+                        </p>
+                      )}
+                      {item.status === 'error' && (
+                        <p style={{ fontSize: '11px', color: '#dc2626', marginTop: '4px' }}>
+                          {item.error}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
 
-            {/* Footer actions */}
-            <div style={{ display: 'flex', gap: '10px' }}>
-              {!uploading && !allDone && hasPending && (
-                <>
-                  <button
-                    type="button"
-                    className="button__primary2 text-center justify-center flex items-center gap-1"
-                    style={{ flex: 1 }}
-                    onClick={handleBatchUpload}
-                    disabled={!hasPending}
-                  >
-                    Upload {uploadQueue.filter((q) => q.status === 'pending').length} file
-                    {uploadQueue.filter((q) => q.status === 'pending').length !== 1 ? 's' : ''}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
+              {/* Footer actions */}
+              <div style={{ display: 'flex', gap: '10px' }}>
+                {!uploading && !allDone && hasPending && (
+                  <>
+                    <button
+                      type="button"
+                      className="button__primary2 text-center justify-center flex items-center gap-1"
+                      style={{ flex: 1 }}
+                      onClick={handleBatchUpload}
+                      disabled={!hasPending}
+                    >
+                      Upload {uploadQueue.filter((q) => q.status === 'pending').length} file
+                      {uploadQueue.filter((q) => q.status === 'pending').length !== 1 ? 's' : ''}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{
+                        padding: '10px 16px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        background: '#fff',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Add more
+                    </button>
+                  </>
+                )}
+                {uploading && (
+                  <div
                     style={{
-                      padding: '10px 16px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      background: '#fff',
+                      flex: 1,
+                      textAlign: 'center',
+                      color: '#6b7280',
                       fontSize: '13px',
-                      cursor: 'pointer',
+                      padding: '10px 0',
                     }}
                   >
-                    Add more
-                  </button>
-                </>
-              )}
-              {uploading && (
-                <div style={{ flex: 1, textAlign: 'center', color: '#6b7280', fontSize: '13px', padding: '10px 0' }}>
-                  Uploading…
-                </div>
-              )}
-              {!uploading && uploadQueue.length === 0 && (
-                <p style={{ flex: 1, textAlign: 'center', color: '#9ca3af', fontSize: '13px', padding: '4px 0' }}>
-                  Select files above to begin
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Edit modal (single) ── */}
-      {isEditModalOpen && (
-        <div className="addModal">
-          <div className="addModal__card">
-            <div className="topic">Edit Resource</div>
-            <div className="closeModal" onClick={closeEditModal}>
-              <Xmark />
-            </div>
-
-            <form className="people__zone docForm" onSubmit={handleEditSubmit}>
-              <div className="form__child">
-                <label>Replace File (optional)</label>
-                <input
-                  type="file"
-                  accept="application/pdf"
-                  onChange={handleEditFileChange}
-                />
-              </div>
-
-              <div className="form__child">
-                <label>Document Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Enter Document Name"
-                  value={newResource.name}
-                  onChange={onChange}
-                />
-              </div>
-
-              <div className="form__child submitAction">
-                <button
-                  type="submit"
-                  className="button__primary2 text-center justify-center flex items-center gap-1"
-                >
-                  Update Resource
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {isLoading && <Loader customClass="" />}
-
-      {/* ── Page header ── */}
-      <div className="titleAdmin flex">
-        <div className="flex gap-[10px]">
-          <div className="searchField h-[100%] relative">
-            <input
-              type="text"
-              placeholder="Search resource documents..."
-              className="py-[15px] pl-[45px] pr-[20px] rounded-[5px] w-[450px] bg-[#f5f5f5] text-[14px] h-full focus:outline-none focus:ring-1 focus:ring-[#27ae60] focus:border-transparent transition-all duration-200"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <svg
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
-                aria-label="Clear search"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            )}
-          </div>
-          <div className="actionBtn button__primary2 flex gap-1" onClick={openModal}>
-            <Plus /> Add Document
-          </div>
-        </div>
-      </div>
-
-      {/* ── Resource list ── */}
-      <div className="tableData">
-        {filteredResources.length ? (
-          filteredResources.map((res, idx) => (
-            <div className="table__item flex" key={idx}>
-              <div className="flex flex-col justify-between w-full min-w-0">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 flex-shrink-0">
-                    <img src={pdff} alt="" className="w-full h-full object-contain" />
+                    Uploading…
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="font-semibold text-gray-900 truncate" title={res.name}>
-                      {res.name}
-                    </div>
-                    <div className="text-sm text-gray-500 truncate" title={res.date || 'PDF Document'}>
-                      {res.date || 'PDF Document'}
-                    </div>
-                  </div>
-                </div>
-                <div className="tr__item flex act--item mt-5 overflow-x-auto">
-                  <div
-                    className="action !bg-gray-800 !text-white"
-                    onClick={() => window.open(res.url, '_blank')}
+                )}
+                {!uploading && uploadQueue.length === 0 && (
+                  <p
+                    style={{
+                      flex: 1,
+                      textAlign: 'center',
+                      color: '#9ca3af',
+                      fontSize: '13px',
+                      padding: '4px 0',
+                    }}
                   >
-                    <div className="flex items-center justify-center">
-                      <ArrowUpRight fontSize={9} strokeWidth={1.8} />
-                    </div>
-                    View
-                  </div>
-                  <div className="action" onClick={() => openEditModal(idx)}>
-                    <div className="flex items-center justify-center">
-                      <Edit fontSize={11} strokeWidth={1.8} />
-                    </div>
-                    Edit
-                  </div>
-                  <div className="action" onClick={() => deleteItem(idx)}>
-                    <div className="flex items-center justify-center">
-                      <BinFull fontSize={11} strokeWidth={1.8} />
-                    </div>
-                    Delete
-                  </div>
-                </div>
+                    Select files above to begin
+                  </p>
+                )}
               </div>
             </div>
-          ))
-        ) : (
-          <div className="w-full text-[16px] text-gray-600">
-            {searchTerm
-              ? 'No matching resources found.'
-              : 'No resources available. Click "Add Document" to upload a new resource.'}
           </div>
         )}
+
+        {/* ── Edit modal (single) ── */}
+        {isEditModalOpen && (
+          <div className="addModal">
+            <div className="addModal__card">
+              <div className="topic">Edit Resource</div>
+              <div className="closeModal" onClick={closeEditModal}>
+                <Xmark />
+              </div>
+
+              <form className="people__zone docForm" onSubmit={handleEditSubmit}>
+                <div className="form__child">
+                  <label>Replace File (optional)</label>
+                  <input type="file" accept="application/pdf" onChange={handleEditFileChange} />
+                </div>
+
+                <div className="form__child">
+                  <label>Document Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Enter Document Name"
+                    value={newResource.name}
+                    onChange={onChange}
+                  />
+                </div>
+
+                <div className="form__child submitAction">
+                  <button
+                    type="submit"
+                    className="button__primary2 text-center justify-center flex items-center gap-1"
+                  >
+                    Update Resource
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {isLoading && <Loader customClass="" />}
+
+        {/* ── Page header ── */}
+        <div className="titleAdmin flex items-center justify-between z-90">
+          <h2 className="text-[15px] font-semibold text-gray-900">
+            Resources -{' '}
+            <span className="text-[14px] font-normal text-gray-500">
+              Update the resources of the MDA
+            </span>
+          </h2>
+
+          {/* add mda */}
+          <button
+            onClick={openModal}
+            className="bg-green-800 text-[13px] cursor-pointer py-2 px-4 flex items-center gap-1 font-medium rounded-sm text-white"
+          >
+            <Plus /> Add Document
+          </button>
+        </div>
+
+        {/* ── Resource list ── */}
+        <div className="tableData">
+          {filteredResources.length ? (
+            filteredResources.map((res, idx) => (
+              <div className="table__item flex" key={idx}>
+                <div className="flex flex-col justify-between w-full min-w-0">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 flex-shrink-0">
+                      <img src={pdff} alt="" className="w-full h-full object-contain" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-semibold text-gray-900 truncate" title={res.name}>
+                        {res.name}
+                      </div>
+                      <div
+                        className="text-sm text-gray-500 truncate"
+                        title={res.date || 'PDF Document'}
+                      >
+                        {res.date || 'PDF Document'}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="tr__item flex act--item mt-5 overflow-x-auto">
+                    <div
+                      className="action !bg-gray-800 !text-white"
+                      onClick={() => window.open(res.url, '_blank')}
+                    >
+                      <div className="flex items-center justify-center">
+                        <ArrowUpRight fontSize={9} strokeWidth={1.8} />
+                      </div>
+                      View
+                    </div>
+                    <div className="action" onClick={() => openEditModal(idx)}>
+                      <div className="flex items-center justify-center">
+                        <Edit fontSize={11} strokeWidth={1.8} />
+                      </div>
+                      Edit
+                    </div>
+                    <div className="action" onClick={() => deleteItem(idx)}>
+                      <div className="flex items-center justify-center">
+                        <BinFull fontSize={11} strokeWidth={1.8} />
+                      </div>
+                      Delete
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="w-full text-[16px] text-gray-600">
+              {searchTerm
+                ? 'No matching resources found.'
+                : 'No resources available. Click "Add Document" to upload a new resource.'}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ const SearchInput = ({
       <input
         type="text"
         placeholder={placeholder}
-        className={`py-[15px] pl-[45px] pr-[40px] rounded-[5px] w-full bg-[#f5f5f5] text-[14px] h-full focus:outline-none focus:ring-1 focus:ring-[#27ae60] focus:border-transparent transition-all duration-200 ${inputClassName}`}
+        className={`py-[15px] pl-[45px] pr-[40px] rounded-[8px] w-full bg-[#f5f5f5] text-[14px] h-full focus:outline-none focus:ring-1 focus:ring-[#27ae60] focus:border-transparent transition-all duration-200 ${inputClassName}`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setIsFocused(true)}

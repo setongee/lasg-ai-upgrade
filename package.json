@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@flaticon/flaticon-uicons": "^3.3.1",
     "@google/genai": "^1.23.0",
     "@google/generative-ai": "^0.24.1",
@@ -56,12 +59,14 @@
     "react-twitter-widgets": "^1.11.0",
     "react-ui-scrollspy": "^2.3.0",
     "react-youtube": "^10.1.0",
+    "recharts": "^3.10.1",
     "regenerator-runtime": "^0.14.1",
     "remark-gfm": "^4.0.1",
     "sass": "^1.81.0",
     "tailwindcss": "^4.1.12",
     "title-case": "^4.3.2",
     "typewriter-effect": "^2.21.0",
+    "ua-parser-js": "^2.0.10",
     "uuid": "^13.0.0",
     "web-vitals": "^2.1.4",
     "zustand": "^5.0.8"

@@ -119,12 +119,12 @@
     .doc__action {
       .form__button {
         align-items: center;
-        background-color: rgb(232, 241, 232);
+        background-color: var(--theme-pastel, rgb(232, 241, 232));
         width: max-content;
         gap: 10px;
         padding: 10px 20px;
         border-radius: 5px;
-        color: green;
+        color: var(--theme-accent, green);
         font-weight: 600;
         cursor: pointer;
       }

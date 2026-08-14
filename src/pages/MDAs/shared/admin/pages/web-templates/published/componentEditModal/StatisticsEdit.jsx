@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useEditDataStore } from '../../../../../../stores/editData.store';
 import { useThemeStore } from '../../../../../../stores/theme.store';
+import BackgroundColorPicker from '../../../../../colorPicker/BackgroundColorPicker';
 import SectionTitle from './util/SectionTitle';
 
 const StatisticsEdit = () => {
@@ -36,6 +37,18 @@ const StatisticsEdit = () => {
     });
   };
 
+  const backgroundColor = mdaEditData.statistics?.backgroundColor;
+
+  const handleColorChange = (color) => {
+    setMdaEditData({
+      ...mdaEditData,
+      statistics: {
+        ...mdaEditData.statistics,
+        backgroundColor: color,
+      },
+    });
+  };
+
   const addStatistic = () => {
     const newStatistic = {
       label: '',
@@ -65,7 +78,7 @@ const StatisticsEdit = () => {
   };
 
   return (
-    <div className="fixed top-[145px] left-[280px] w-[350px] h-[calc(100vh-145px)] bg-white overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] z-90">
+    <div className="fixed top-[145px] left-0 w-[350px] h-[calc(100vh-145px)] bg-white overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] z-90">
       <SectionTitle />
 
       {/* Enable/Disable Toggle */}
@@ -86,6 +99,8 @@ const StatisticsEdit = () => {
           </button>
         </div>
       </div>
+
+      <BackgroundColorPicker value={backgroundColor} onChange={handleColorChange} />
 
       <div className="p-[30px]" ref={containerRef}>
         <div className="flex flex-col gap-6">

@@ -1,6 +1,6 @@
 .mof-data {
   .active-scroll-spy {
-    color: green !important;
+    color: var(--theme-accent, green) !important;
   }
 
   .navigateMenu {
@@ -48,7 +48,6 @@
       display: flex;
       gap: 50px;
       flex-direction: column;
-      color: #fff;
     }
     h2 {
       font-size: 48px;
@@ -74,7 +73,7 @@
         overflow: hidden;
         border-radius: 10px;
         background-color: #f4f4f4;
-        background-color: #2e7d32;
+        background-color: var(--theme-accent, #2e7d32);
         overflow: hidden;
         position: relative;
 
@@ -93,77 +92,69 @@
             border-bottom: 1px solid #f1f1f149;
             padding-bottom: 20px;
             margin-bottom: 20px;
-            color: #fff;
+            color: var(--theme-accent-text, #fff);
           }
           p {
             font-size: 16px;
             width: 80%;
-            color: #fff;
+            color: var(--theme-accent-text, #fff);
           }
         }
       }
     }
   }
-}
 
-#responsibility {
-  background-color: #131313;
-  padding: 80px 0;
-  margin: 80px 0;
-}
-
-#people {
-  margin-top: 50px;
-}
-
-.about-heading {
-  align-items: center;
-  justify-content: space-between;
-  color: #fff;
-
-  h1 {
-    font-size: 40px;
-    line-height: 130%;
-    font-weight: 600;
-    width: 800px;
+  #responsibility {
+    background-color: #e6edef;
+    padding: 80px 0;
+    margin: 80px 0;
   }
 
-  span {
-    width: 300px;
-    line-height: 180%;
+  #people {
+    margin-top: 50px;
   }
 
-  &.full {
-    width: 900px;
-    margin: 0 auto;
-    margin-bottom: 50px;
+  .about-heading {
+    align-items: center;
+    justify-content: space-between;
+
     h1 {
-      width: 100%;
+      font-size: 40px;
+      line-height: 130%;
+      font-weight: 600;
+      width: 800px;
     }
+
     span {
-      width: 80%;
+      width: 300px;
+      line-height: 180%;
+    }
+
+    &.full {
+      width: 900px;
+      margin: 0 auto;
+      margin-bottom: 50px;
+      h1 {
+        width: 100%;
+      }
+      span {
+        width: 80%;
+      }
     }
   }
-}
 
-#responsibility-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  color: #fff !important;
+  #responsibility-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 
-  p:first-child {
-    margin-bottom: 10px;
-  }
+    p:first-child {
+      margin-bottom: 10px;
+    }
 
-  p {
-    line-height: 190%;
-  }
-
-  p,
-  span,
-  strong {
-    color: #fff !important;
+    p {
+      line-height: 190%;
+    }
   }
 }
 

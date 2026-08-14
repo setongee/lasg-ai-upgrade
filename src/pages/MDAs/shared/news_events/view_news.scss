@@ -61,7 +61,7 @@
             margin-bottom: 25px;
 
             .readtime{
-                color: green;
+                color: var(--theme-accent, green);
             }
 
             .firstPart{
@@ -190,7 +190,7 @@
 
                 .sub__title{
                     text-decoration: underline;
-                    color: #108a00;
+                    color: var(--theme-accent, #108a00);
                 }
             }
 

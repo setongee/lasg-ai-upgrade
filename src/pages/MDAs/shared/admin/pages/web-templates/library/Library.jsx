@@ -71,9 +71,15 @@ const Library = () => {
   return (
     <TemplateContainer>
       <div className="titleAdmin flex items-center justify-between">
-        <div className="searchField h-[100%] w-[450px]">
+        <h2 className="text-[15px] font-semibold text-gray-900">
+          Available Templates -{' '}
+          <span className="text-[14px] font-normal text-gray-500">
+            Click on a template to use it
+          </span>
+        </h2>
+        <div className=" h-10 w-[450px]">
           <SearchInput
-            placeholder="Search available templates..."
+            placeholder="Search templates..."
             value={searchTerm}
             onChange={setSearchTerm}
           />
@@ -81,9 +87,11 @@ const Library = () => {
 
         {/* request custom templates */}
         <div className="flex items-center gap-5">
-          <p className="text-[14px] text-gray-500">Don't find what you're looking for? </p>
+          <p className="text-[13px] font-normal! text-gray-600">
+            Don't find what you're looking for?{' '}
+          </p>
           <button
-            className="actionBtn button__primary2 text-white px-4 py-2 rounded h-[100%] flex items-center gap-2"
+            className=" text-white bg-green-900 text-[13px] font-medium px-4 py-2 rounded-md flex items-center gap-2"
             onClick={openModal}
           >
             Request Custom Template <ArrowUpRight className="w-4 h-4" />
@@ -91,13 +99,13 @@ const Library = () => {
         </div>
       </div>
 
-      <div className="templates-grid flex flex-wrap gap-10">
+      <div className="grid grid-cols-3 mx-auto w-full max-w-[1300px] gap-5 justify-center mt-10">
         {filteredTemplates.length > 0 ? (
           filteredTemplates.map((template) => (
             // templates ui card
             <div
               key={template.name}
-              className="w-[380px] bg-white rounded-md overflow-hidden shadow-md shadow-gray-50"
+              className=" bg-white rounded-md overflow-hidden shadow-md shadow-gray-50"
             >
               <div className="h-[202.4px] overflow-hidden bg-gray-300">
                 <img src={template.thumbnail} alt={template.name} />

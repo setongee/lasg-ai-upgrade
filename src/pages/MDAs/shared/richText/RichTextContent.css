@@ -1,0 +1,14 @@
+/* Quill's core CSS styles `.ql-editor` for an editable surface (padding,
+   fixed height, text cursor). Override those bits for read-only display —
+   everything else (lists, headings, blockquotes, alignment, indents) is
+   left untouched so it renders exactly as authored. */
+.lasg-rich-text.ql-editor {
+  padding: 0;
+  height: auto;
+  overflow-y: visible;
+  cursor: auto;
+}
+
+.lasg-rich-text.ql-editor > *:last-child {
+  margin-bottom: 0;
+}
