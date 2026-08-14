@@ -1,10 +1,7 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ArrowUp, StarSolid, Xmark, XmarkCircleSolid } from 'iconoir-react';
 import { useState } from 'react';
+import { openRouterComplete } from '../../../../../../utils/openrouter';
 import './AdminChatbot.css';
-
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 // Context configurations with field specifications and generation instructions
 const CONTEXT_CONFIGS = {
@@ -119,8 +116,6 @@ const AdminChatbot = ({
   };
 
   const generateContent = async (prompt) => {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
-
     // Get context config or default to general
     const config = CONTEXT_CONFIGS[context] || {
       fields: {},
@@ -191,9 +186,7 @@ const AdminChatbot = ({
     `;
 
     try {
-      const result = await model.generateContent(systemPrompt);
-      const response = await result.response;
-      const text = response.text();
+      const text = await openRouterComplete([{ role: 'user', content: systemPrompt }]);
 
       // Extract JSON from the response
       const jsonMatch = text.match(/\{[\s\S]*\}/);

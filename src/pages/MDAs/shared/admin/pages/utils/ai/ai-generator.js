@@ -1,9 +1,5 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { openRouterComplete } from '../../../../../../../utils/openrouter.js';
 import { getKeywordGenerationPrompt } from './prompts/keyword-generator.js';
-
-// Initialize Gemini AI
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
 /**
  * Generates keywords using Gemini AI based on service information
@@ -16,9 +12,7 @@ export const generateKeywordsWithAI = async (serviceName, serviceDescription, md
   try {
     const prompt = getKeywordGenerationPrompt(serviceName, serviceDescription, mdaName);
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const text = await openRouterComplete([{ role: 'user', content: prompt }]);
 
     // Parse JSON response - handle potential markdown formatting
     let cleanedText = text;

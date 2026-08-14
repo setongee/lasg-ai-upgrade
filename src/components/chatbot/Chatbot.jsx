@@ -18,6 +18,7 @@ import {
   getLgaPrompt,
   needsLocationContext,
 } from '../../utils/locationUtils';
+import { openRouterComplete, openRouterStream } from '../../utils/openrouter';
 import LanguageModal from '../language/LanguageModal';
 import './chatbot.css';
 import think_img from './comment.png';
@@ -44,7 +45,7 @@ const MINISTRY_CONTEXT_MAP = {
   '': { name: 'Lagos State Official Website', url: 'https://lagosstate.gov.ng' },
 };
 
-// ---- SINGLE Gemini Instance ----
+// ---- Gemini instance — kept only for embeddings (RAG retrieval); chat completions now go through OpenRouter ----
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 // ---- Supabase ----
@@ -180,8 +181,6 @@ const Chatbot = ({ pageContext }) => {
     }
   }, [isGeneralPage, fetchExecutiveCouncil, fetchAllServices, fetchAllMdas]);
 
-  // ---- Single chat session per lifecycle ----
-  const chatSessionRef = useRef(null);
   const location = useLocation();
 
   // ── Build general LASG context string from live data ─────────────────────────
@@ -436,13 +435,6 @@ ${history}
   ]);
 
   useEffect(() => {
-    if (chatSessionRef.current) {
-      chatSessionRef.current = null;
-      initializeChatSession();
-    }
-  }, [languagePreference]);
-
-  useEffect(() => {
     const handleClickOutside = (event) => {
       if (showLanguageMenu && !event.target.closest('.language-preference')) {
         setShowLanguageMenu(false);
@@ -451,20 +443,6 @@ ${history}
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showLanguageMenu]);
-
-  // ---- Initialize chat session ONCE ----
-  const initializeChatSession = useCallback(async () => {
-    if (!chatSessionRef.current) {
-      const model = genAI.getGenerativeModel({
-        model: 'gemini-3.1-flash-lite-preview',
-        systemInstruction: ministryContext,
-      });
-      chatSessionRef.current = model.startChat({
-        history: [],
-        generationConfig: { maxOutputTokens: 1024, temperature: 0.7 },
-      });
-    }
-  }, [ministryContext]);
 
   // ---- Scroll behavior ----
   const scrollToBottom = useCallback(() => {
@@ -643,7 +621,6 @@ ${history}
     if (checkIsChatOpen) {
       scrollToBottom();
       document.body.style.overflow = 'hidden';
-      initializeChatSession();
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
@@ -660,7 +637,6 @@ ${history}
   useEffect(() => {
     setIsChatOpen(false);
     setCheckIsChatOpen(false);
-    chatSessionRef.current = null;
     suggestionCache.clear();
     document.body.style.overflow = 'auto';
   }, [location]);
@@ -711,10 +687,8 @@ ${history}
       const contextName = ministryInfo?.name || pageContext || 'Lagos State Government';
       const prompt = `Generate 7 engaging, conversational questions about Lagos State services. Minimum 3 words, maximum 4 words each. Must make sense and be natural. Use this style: "pay utility bills", "health services near me", "file my taxes", "emergency safety numbers", "education in Lagos", "government benefits info", "fun recreational spots", "parks and gardens", "ministry building location", "ministry contact info". Focus on everyday needs like transportation, utilities, healthcare, education, business, emergency, recreation, and government services. Make them natural requests people would actually ask. Format: question1||question2||question3||question4||question5||question6||question7`;
       try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
-        const result = await model.generateContent(prompt);
-        const suggestions = result.response
-          .text()
+        const text = await openRouterComplete([{ role: 'user', content: prompt }]);
+        const suggestions = text
           .split('||')
           .map((q) => q.trim())
           .filter(Boolean)
@@ -816,7 +790,6 @@ ${history}
     async (lastReply, sender) => {
       if (sender !== 'assistant') return [];
       try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
         let contextStr = '';
         let entityName = '';
 
@@ -854,9 +827,8 @@ Context: ${contextStr}
 Rules: Questions must be actionable and about ${entityName} services only.
 Format: q1||q2||q3||q4||q5`;
 
-        const result = await model.generateContent(prompt);
-        return result.response
-          .text()
+        const text = await openRouterComplete([{ role: 'user', content: prompt }]);
+        return text
           .split('||')
           .map((q) => q.trim())
           .filter(Boolean)
@@ -925,19 +897,18 @@ Format: q1||q2||q3||q4||q5`;
 
       const fetchFallback = async (query) => {
         try {
-          const m = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
-          const r = await m.generateContent(
-            `Provide verified Lagos State info (official sites only) for: "${query}" in under 100 words.`
-          );
-          return r.response.text();
+          return await openRouterComplete([
+            {
+              role: 'user',
+              content: `Provide verified Lagos State info (official sites only) for: "${query}" in under 100 words.`,
+            },
+          ]);
         } catch (_) {
           return '';
         }
       };
 
       try {
-        await initializeChatSession();
-
         const { context: lagosContext, downloadSources } =
           await getRelevantLagosContext(finalInput);
 
@@ -950,26 +921,33 @@ Format: q1||q2||q3||q4||q5`;
 
         setMessages((prev) => [...prev, { role: 'assistant', content: '', downloadSources: [] }]);
 
-        const result = await chatSessionRef.current.sendMessageStream(contextualPrompt);
+        await openRouterStream(
+          [
+            { role: 'system', content: ministryContext },
+            { role: 'user', content: contextualPrompt },
+          ],
+          {
+            maxTokens: 1024,
+            temperature: 0.7,
+            onToken: async (textPart) => {
+              assistantText += textPart;
 
-        for await (const chunk of result.stream) {
-          const textPart = chunk.text();
-          if (!textPart) continue;
-          assistantText += textPart;
+              if (!fallbackTriggered && assessConfidence(textPart) < 0.6) {
+                fallbackTriggered = true;
+                const snippet = await fetchFallback(input);
+                if (snippet)
+                  assistantText += `\n\n🔎 Latest info from Lagos State sites:\n${snippet}`;
+              }
 
-          if (!fallbackTriggered && assessConfidence(textPart) < 0.6) {
-            fallbackTriggered = true;
-            const snippet = await fetchFallback(input);
-            if (snippet) assistantText += `\n\n🔎 Latest info from Lagos State sites:\n${snippet}`;
+              setMessages((prev) => {
+                const updated = [...prev];
+                const last = updated[updated.length - 1];
+                if (last.role === 'assistant') last.content = assistantText;
+                return updated;
+              });
+            },
           }
-
-          setMessages((prev) => {
-            const updated = [...prev];
-            const last = updated[updated.length - 1];
-            if (last.role === 'assistant') last.content = assistantText;
-            return updated;
-          });
-        }
+        );
 
         // Attach download sources after streaming completes
         setMessages((prev) => {
@@ -988,7 +966,6 @@ Format: q1||q2||q3||q4||q5`;
           ...prev,
           { role: 'assistant', content: 'Something went wrong. Please try again.' },
         ]);
-        chatSessionRef.current = null;
       }
 
       setChatInput('');
@@ -999,7 +976,7 @@ Format: q1||q2||q3||q4||q5`;
       loading,
       isLocationPrompt,
       messages.length,
-      initializeChatSession,
+      ministryContext,
       getRelevantLagosContext,
       detectNeedsLocation,
       scrollToBottom,
@@ -1047,6 +1024,12 @@ Format: q1||q2||q3||q4||q5`;
     }),
     [mdaServices]
   );
+
+  // Reasoning models (e.g. Nemotron) stream a "thinking" phase with no visible content first —
+  // keep the thinking indicator up only until the assistant's actual answer text starts arriving.
+  const lastMessage = messages[messages.length - 1];
+  const isAwaitingResponse =
+    loading && (!lastMessage || lastMessage.role !== 'assistant' || lastMessage.content.trim() === '');
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
@@ -1112,7 +1095,7 @@ Format: q1||q2||q3||q4||q5`;
                 );
               })}
 
-              {loading && (
+              {isAwaitingResponse && (
                 <div className="thinking">
                   <p>
                     <div className="think_img">

@@ -1,14 +1,11 @@
 import { GoogleGenAI } from '@google/genai';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Xmark } from 'iconoir-react';
 import { useState } from 'react';
 import { uploadDocument } from '../../../../api/uploader/uploadFIles';
+import { openRouterComplete } from '../../../../../../utils/openrouter';
 import './ContentGeneratorChatbot.css';
 
-// Old SDK — used for text generation (gemini-2.5-flash-lite)
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-
-// New SDK — required for image generation models (gemini-2.5-flash-image)
+// Required for image generation models (gemini-2.5-flash-image) — OpenRouter doesn't serve image output
 const genAINew = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 const LAGOSIAN_NAMES = [
@@ -197,8 +194,6 @@ const ContentGeneratorChatbot = ({
   };
 
   const generateContent = async () => {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
-
     const randomName = LAGOSIAN_NAMES[Math.floor(Math.random() * LAGOSIAN_NAMES.length)];
     const randomTitle = COMMISSIONER_TITLES[Math.floor(Math.random() * COMMISSIONER_TITLES.length)];
 
@@ -234,9 +229,7 @@ const ContentGeneratorChatbot = ({
     `;
 
     try {
-      const result = await model.generateContent(systemPrompt);
-      const response = await result.response;
-      const text = response.text();
+      const text = await openRouterComplete([{ role: 'user', content: systemPrompt }]);
 
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error('No valid JSON found in response');

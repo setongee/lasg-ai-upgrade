@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { openRouterComplete } from './openrouter';
 
 // Content field structure for the admin panel
 export const CONTENT_FIELDS = [
@@ -12,9 +12,6 @@ export const CONTENT_FIELDS = [
   { id: 'ctaButton', label: 'Button Text', type: 'text' },
 ];
 
-// Initialize Gemini AI
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-
 /**
  * Generate content for the specified fields using AI
  * @param {Array} fields - Array of field objects to generate content for
@@ -24,17 +21,16 @@ const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
  */
 export const generateContent = async (fields, context = '', onProgress = () => {}) => {
   const generatedContent = {};
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
-  
+
   for (let i = 0; i < fields.length; i++) {
     const field = fields[i];
-    const prompt = `Generate a ${field.label.toLowerCase()} for a Lagos State government website. 
+    const prompt = `Generate a ${field.label.toLowerCase()} for a Lagos State government website.
       It should be ${field.type === 'text' ? 'concise (5-10 words)' : 'descriptive (2-3 sentences)'}.
       Focus on the theme of: ${context || 'general government services'}.`;
-    
+
     try {
-      const result = await model.generateContent(prompt);
-      generatedContent[field.id] = result.response.text().trim();
+      const text = await openRouterComplete([{ role: 'user', content: prompt }]);
+      generatedContent[field.id] = text.trim();
     } catch (error) {
       console.error(`Error generating content for ${field.id}:`, error);
       generatedContent[field.id] = ''; // Fallback to empty string on error
