@@ -4,7 +4,8 @@ import Index from '../custom/health';
 import MepbTheme from '../custom/mepb/mepb-theme';
 import MistTheme from '../custom/mist/mist-theme';
 import FinanceTheme from '../custom/mof/finance-theme';
-import Transportation from '../custom/mot/Transportation';
+import MotTheme from '../custom/mot/mot-theme';
+import StoTheme from '../custom/sto/sto-theme';
 import Offline from '../shared/offline/Offline';
 
 const ThemeSelector = ({ slug, theme, isEdit, data }) => {
@@ -22,8 +23,12 @@ const ThemeSelector = ({ slug, theme, isEdit, data }) => {
     case 'mist':
       return <MistTheme isEdit={isEdit || false} />;
 
+    case 'mot':
     case 'transport':
-      return <Transportation isEdit={isEdit || false} />;
+      return <MotTheme isEdit={isEdit || false} />;
+
+    case 'sto':
+      return <StoTheme isEdit={isEdit || false} />;
 
     case 'mof':
       return <FinanceTheme isEdit={isEdit || false} />;

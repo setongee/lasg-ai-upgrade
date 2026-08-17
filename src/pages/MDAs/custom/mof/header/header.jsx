@@ -1,5 +1,6 @@
 import useWindowWidth from '../../../../../hooks/useWindowWidth';
 import InfoBar from '../../custom-components/InfoBar';
+import TabStripHeader from '../../../shared/header/TabStripHeader/TabStripHeader';
 import '../../../shared/styles/style.scss';
 import Wrapper from '../../../shared/Wrapper/Wrapper';
 import { useEditModeStore } from '../../../stores/editMode.store';
@@ -14,12 +15,17 @@ const Header = ({ fullname, isEdit }) => {
   const selectedComponent = useEditModeStore((state) => state.selectedComponent);
   const setSelectedComponent = useEditModeStore((state) => state.setSelectedComponent);
   const mdaData = useThemeStore((state) => state.mdaData);
+  const navbarStyle = mdaData?.landingPage?.navbarStyle || 'classic';
 
   const handleComponentClick = (component) => {
     setSelectedComponent(component);
   };
 
   const isLargeScreen = width >= 1000;
+
+  if (navbarStyle === 'tabStrip') {
+    return <TabStripHeader fullname={fullname} />;
+  }
 
   return (
     <header className="fixed top-0 w-full z-50">

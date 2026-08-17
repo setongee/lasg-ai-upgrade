@@ -104,10 +104,10 @@ const About = () => {
         >
           <Wrapper>
             <div className="flex items-center justify-between max-[1000px]:!w-4/5 max-[1000px]:flex-col max-[1000px]:items-center max-[1000px]:justify-center max-[1000px]:mx-auto max-[700px]:!w-full">
-              <h1 className="text-[40px] leading-[130%] font-semibold w-[800px] max-[1000px]:text-[32px] max-[1000px]:w-full max-[1000px]:text-center max-[1000px]:mb-5 max-[700px]:text-[26px] max-[700px]:w-full">
+              <h1 className="!text-[#131313] text-[40px] leading-[130%] font-semibold w-[800px] max-[1000px]:text-[32px] max-[1000px]:w-full max-[1000px]:text-center max-[1000px]:mb-5 max-[700px]:text-[26px] max-[700px]:w-full">
                 Roles and Responsibilities: Understanding Core Functions, Duties, and Key Roles
               </h1>
-              <span className="w-[300px] leading-[180%] max-[1000px]:w-4/5 max-[1000px]:text-center max-[700px]:w-full">
+              <span className="!text-[#555555] w-[300px] leading-[180%] max-[1000px]:w-4/5 max-[1000px]:text-center max-[700px]:w-full">
                 A clear guide to the core functions, duties, and key roles that drive effective
                 operations and accountability.
               </span>

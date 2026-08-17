@@ -1,0 +1,142 @@
+/* Transportation MDA specific styles */
+[data-mda='mot'] {
+  .content {
+    gap: 40px;
+    padding: 0;
+
+    .commissioner-name {
+      h1 {
+        font-size: 18px;
+      }
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .landingPage-version {
+      margin-top: 110px;
+    }
+  }
+
+  @media (max-width: 950px) {
+    .landingPage-version {
+      margin-top: 80px;
+    }
+
+    .commisioners-zone {
+      padding-block: 80px;
+    }
+
+    .wrapped {
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .commissioner-container {
+      width: 520px;
+      height: 500px;
+    }
+
+    .commissioner-image {
+      width: calc(100% - 100px);
+      height: 460px;
+      bottom: 0;
+    }
+
+    .comms-title {
+      font-size: 32px;
+    }
+  }
+
+  @media (max-width: 820px) {
+    .landingPage-version {
+      margin-top: 100px;
+    }
+  }
+
+  @media (max-width: 660px) {
+    .landingPage-version {
+      margin-top: 130px;
+    }
+  }
+
+  /* container queries */
+
+  @container builder (max-width: 1200px) {
+    .landingPage-version {
+      margin-top: 0px;
+    }
+  }
+
+  @container builder (max-width: 950px) {
+    .landingPage-version {
+      margin-top: 50px;
+    }
+
+    .commisioners-zone {
+      padding-block: 80px;
+    }
+
+    .wrapped {
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .commissioner-container {
+      width: 520px;
+      height: 500px;
+    }
+
+    .commissioner-image {
+      width: calc(100% - 100px);
+      height: 460px;
+      bottom: 0;
+    }
+
+    .comms-title {
+      font-size: 32px;
+    }
+  }
+
+  @container builder (max-width: 820px) {
+    .landingPage-version {
+      margin-top: 50px;
+    }
+  }
+
+  @container builder (max-width: 660px) {
+    .landingPage-version {
+      margin-top: 40px;
+    }
+
+    .commisioners-zone {
+      padding-block: 50px;
+    }
+
+    .commissioner-container {
+      width: 100%;
+      max-width: 380px;
+      height: 380px;
+    }
+
+    .backdrop-photo {
+      height: 80%;
+    }
+
+    .commissioner-image {
+      width: calc(100% - 40px);
+      height: 320px;
+    }
+
+    .content {
+      width: 100%;
+    }
+
+    .comms-title {
+      font-size: 24px;
+    }
+
+    .commissioner-name {
+      margin-top: 16px;
+    }
+  }
+}

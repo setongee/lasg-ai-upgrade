@@ -43,8 +43,8 @@ const EventDetail = ({ event, mda }) => (
 
 const EventsList = ({ events, mda }) => (
   <Wrapper>
-    <div className="py-16 mt-20 min-h-[40vh]">
-      <h1 className="text-[32px] sm:text-[40px] font-bold mb-0">Events</h1>
+    <div className=" pt-16 pb-0 sm:py-16 sm:mt-20 mt-12 min-h-[40vh]">
+      <h1 className="text-[18px] sm:text-[24px] font-bold mb-0">Events</h1>
 
       {events?.length ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -71,7 +71,9 @@ const EventsList = ({ events, mda }) => (
           ))}
         </div>
       ) : (
-        <div className="text-gray-500 text-[15px]">No events have been posted yet.</div>
+        <div className="text-gray-800 text-[15px] text-center bg-gray-100/90 sm:min-h-[40vh] min-h-[20vh] mt-6 flex items-center justify-center">
+          No events have been posted yet.
+        </div>
       )}
     </div>
   </Wrapper>

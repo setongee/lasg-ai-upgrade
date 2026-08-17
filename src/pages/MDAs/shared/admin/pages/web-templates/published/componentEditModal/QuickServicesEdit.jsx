@@ -28,6 +28,8 @@ const QuickServicesEdit = () => {
   };
 
   const backgroundColor = mdaEditData.quickServices?.backgroundColor;
+  const style = mdaEditData.quickServices?.style || 'default';
+  const ctaTitle = mdaEditData.quickServices?.ctaTitle;
 
   const handleColorChange = (color) => {
     setMdaEditData({
@@ -35,6 +37,26 @@ const QuickServicesEdit = () => {
       quickServices: {
         ...mdaEditData.quickServices,
         backgroundColor: color,
+      },
+    });
+  };
+
+  const setStyle = (value) => {
+    setMdaEditData({
+      ...mdaEditData,
+      quickServices: {
+        ...mdaEditData.quickServices,
+        style: value,
+      },
+    });
+  };
+
+  const setCtaTitle = (value) => {
+    setMdaEditData({
+      ...mdaEditData,
+      quickServices: {
+        ...mdaEditData.quickServices,
+        ctaTitle: value,
       },
     });
   };
@@ -276,6 +298,51 @@ const QuickServicesEdit = () => {
 
       <div className="p-[30px]">
         <div className="flex flex-col gap-6">
+          <div>
+            <p className="font-semibold text-[14px] mb-3">Layout Style</p>
+            <div className="flex bg-gray-100 rounded-lg p-1">
+              <button
+                type="button"
+                className={`flex-1 py-2 px-3 rounded-md text-[12px] font-medium transition-all ${
+                  style === 'default'
+                    ? 'bg-white text-green-700 shadow-sm font-semibold'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+                onClick={() => setStyle('default')}
+              >
+                Photo Row
+              </button>
+              <button
+                type="button"
+                className={`flex-1 py-2 px-3 rounded-md text-[12px] font-medium transition-all ${
+                  style === 'imageCards'
+                    ? 'bg-white text-green-700 shadow-sm font-semibold'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+                onClick={() => setStyle('imageCards')}
+              >
+                Image Cards
+              </button>
+            </div>
+          </div>
+
+          {style === 'imageCards' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                CTA Card Title
+              </label>
+              <textarea
+                value={ctaTitle || ''}
+                onChange={(e) => setCtaTitle(e.target.value)}
+                className="focus:border-green-600 border-[1px] border-transparent w-full min-h-[70px] bg-gray-100 py-3 px-4 rounded-[6px] text-[14px] outline-none resize-none"
+                placeholder="Check out our citizens services"
+              />
+              <p className="text-[12px] text-gray-500 mt-1">
+                Shown on the green card that links to the full services page
+              </p>
+            </div>
+          )}
+
           <div className="flex justify-between items-center pb-6 w-full">
             <button
               onClick={addService}
@@ -320,6 +387,21 @@ const QuickServicesEdit = () => {
                         placeholder="Service title"
                       />
                     </div>
+
+                    {style === 'imageCards' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Description
+                        </label>
+                        <textarea
+                          name="description"
+                          value={service.description || ''}
+                          onChange={(e) => handleChange(e, index)}
+                          className="focus:border-green-600 border-[1px] border-transparent w-full min-h-[60px] bg-gray-100 py-3 px-4 rounded-[6px] text-[14px] outline-none resize-none"
+                          placeholder="Short description shown on the card"
+                        />
+                      </div>
+                    )}
 
                     <div>
                       <div className="flex justify-between items-center mb-1">

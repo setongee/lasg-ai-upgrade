@@ -14,6 +14,7 @@ import {
   CommissionerZone,
   CoreInformation,
   CoreServices,
+  DocumentShowcase,
   GalleryPreview,
   NewsletterSection,
   QuickDocuments,
@@ -40,12 +41,15 @@ const Home = ({ isEdit }) => {
     isFetchingDraft.current = true;
 
     await getSingleDraft(id)
-      .then((response) => setLandingPage(response?.data))
-      .catch(() => {
-        notify.error('Draft could not be retrieved or has been deleted!');
-        setTimeout(() => {
-          window.location.href = `/${mda}`;
-        }, 2000);
+      .then((response) => {
+        if (response?.data) {
+          setLandingPage(response.data);
+        } else {
+          notify.error('Draft could not be retrieved or has been deleted!');
+          setTimeout(() => {
+            window.location.href = `/${mda}`;
+          }, 2000);
+        }
       })
       .finally(() => {
         isFetchingDraft.current = false;
@@ -109,6 +113,7 @@ const Home = ({ isEdit }) => {
           buttonLink={landingPage?.action_button_link}
           images={landingPage?.hero_images}
           legacyImage={landingPage?.main_photo}
+          secondaryImage={landingPage?.secondary_photo}
           slideshowEnabled={!!landingPage?.hero_slideshow}
           bgType={landingPage?.hero_bg_type}
           bgColor={landingPage?.hero_bg_color}
@@ -124,6 +129,7 @@ const Home = ({ isEdit }) => {
       {landingPage?.enabledSections?.statistics && (
         <Statistics
           data={landingPage?.statistics}
+          style={landingPage?.statistics_style}
           isEdit={isEdit}
           viewMode={viewMode}
           selectedComponent={selectedComponent}
@@ -147,6 +153,8 @@ const Home = ({ isEdit }) => {
         <QuickServicesSection
           data={landingPage?.servicesData}
           backgroundColor={landingPage?.quickServices?.backgroundColor}
+          style={landingPage?.quickServices?.style}
+          ctaTitle={landingPage?.quickServices?.ctaTitle}
           isEdit={isEdit}
           viewMode={viewMode}
           selectedComponent={selectedComponent}
@@ -159,6 +167,7 @@ const Home = ({ isEdit }) => {
         <CoreServices
           data={services?.data}
           mdaName={mdaData?.fullname}
+          style={landingPage?.services_style}
           isEdit={isEdit}
           viewMode={viewMode}
           selectedComponent={selectedComponent}
@@ -207,6 +216,17 @@ const Home = ({ isEdit }) => {
             type="component"
           />
         </section>
+      )}
+
+      {/* Document Showcase */}
+      {landingPage?.enabledSections?.documentShowcase && (
+        <DocumentShowcase
+          data={landingPage?.documentShowcase}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
       )}
 
       {/* Youtube Component */}

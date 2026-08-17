@@ -149,18 +149,20 @@ export default function Footer({ data }) {
             </div>
           </div>
 
-          {/* lashma link */}
-          <div className="flex  md:items-center justify-center gap-5 p-6 md:p-4 rounded-[0px] bg-[var(--theme-accent,#1f2937)] my-11 text-[var(--theme-accent-text,#ffffff)] flex-col md:flex-row">
-            <p className="text-[19px] font-semibold text-[var(--theme-accent-text,#ffffff)]">
-              Access affordable healthcare at your fingertips!
-            </p>
-            <button
-              onClick={() => window.open('https://ileraeko.com/')}
-              className="py-2.5 px-5 bg-[var(--theme-pastel,#90ee90)] text-gray-900 rounded-[4px] font-semibold text-[15px] flex items-center gap-2 cursor-pointer w-max"
-            >
-              Start with LASHMA <ArrowUpRight className="text-[11px]" strokeWidth={2} />
-            </button>
-          </div>
+          {/* lashma link (health only) */}
+          {data?.theme === 'health' && (
+            <div className="flex  md:items-center justify-center gap-5 p-6 md:p-4 rounded-[0px] bg-[var(--theme-accent,#1f2937)] my-11 text-[var(--theme-accent-text,#ffffff)] flex-col md:flex-row">
+              <p className="text-[19px] font-semibold text-[var(--theme-accent-text,#ffffff)]">
+                Access affordable healthcare at your fingertips!
+              </p>
+              <button
+                onClick={() => window.open('https://ileraeko.com/')}
+                className="py-2.5 px-5 bg-[var(--theme-pastel,#90ee90)] text-gray-900 rounded-[4px] font-semibold text-[15px] flex items-center gap-2 cursor-pointer w-max"
+              >
+                Start with LASHMA <ArrowUpRight className="text-[11px]" strokeWidth={2} />
+              </button>
+            </div>
+          )}
 
           <div className="footest_footer uppercase">
             <div className="copyright flex justify-between">

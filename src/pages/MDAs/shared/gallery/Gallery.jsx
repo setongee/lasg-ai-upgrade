@@ -119,7 +119,7 @@ const AlbumDetail = ({ album, mda }) => {
 const AlbumGrid = ({ albums, mda }) => (
   <Wrapper>
     <div className="py-16 mt-20 min-h-[40vh]">
-      <h1 className="text-[32px] sm:text-[40px] font-bold mb-0">Gallery</h1>
+      <h1 className="text-[18px] sm:text-[24px] font-bold mb-0">Gallery</h1>
 
       {albums?.length ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -146,7 +146,9 @@ const AlbumGrid = ({ albums, mda }) => (
           ))}
         </div>
       ) : (
-        <div className="text-gray-500 text-[15px]">No photos have been added yet.</div>
+        <div className="text-gray-800 text-[15px] text-center bg-gray-100/90 sm:min-h-[40vh] min-h-[20vh] mt-6 flex items-center justify-center">
+          No photos have been added yet.
+        </div>
       )}
     </div>
   </Wrapper>

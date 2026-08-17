@@ -11,6 +11,7 @@ import HeroSection from '../../../shared/hero/HeroSection';
 import {
   CommissionerZone,
   CoreInformation,
+  DocumentShowcase,
   QuickDocuments,
   Statistics,
   SupportLinks,
@@ -19,7 +20,7 @@ import GalleryPreview from '../../custom-components/GalleryPreview';
 import UpcomingEvents from '../../custom-components/UpcomingEvents';
 import QuickServices from '../../../shared/quick_services/QuickServices';
 import ResourceCategories from '../../../shared/resources/resource-categories/ResourceCategories';
-import ServicesComponent from '../../../shared/services/style1/ServicesComponent';
+import ServicesSection from '../../../shared/services/ServicesSection';
 import Wrapper from '../../../shared/Wrapper/Wrapper';
 import YoutubeSocials from '../../../shared/youtubePlayer/YoutubeSocials';
 import { useEditDataStore } from '../../../stores/editData.store';
@@ -41,12 +42,15 @@ const Home = ({ isEdit }) => {
     isFetchingDraft.current = true;
 
     await getSingleDraft(id)
-      .then((response) => setLandingPage(response?.data))
-      .catch(() => {
-        notify.error('Draft could not be retrieved or has been deleted!');
-        setTimeout(() => {
-          window.location.href = `/${mda}`;
-        }, 2000);
+      .then((response) => {
+        if (response?.data) {
+          setLandingPage(response.data);
+        } else {
+          notify.error('Draft could not be retrieved or has been deleted!');
+          setTimeout(() => {
+            window.location.href = `/${mda}`;
+          }, 2000);
+        }
       })
       .finally(() => {
         isFetchingDraft.current = false;
@@ -100,6 +104,7 @@ const Home = ({ isEdit }) => {
           buttonLink={landingPage?.action_button_link || '#quickdocsContainder'}
           images={landingPage?.hero_images}
           legacyImage={landingPage?.main_photo}
+          secondaryImage={landingPage?.secondary_photo}
           slideshowEnabled={!!landingPage?.hero_slideshow}
           bgType={landingPage?.hero_bg_type}
           bgColor={landingPage?.hero_bg_color}
@@ -137,6 +142,7 @@ const Home = ({ isEdit }) => {
       {landingPage?.enabledSections?.statistics && (
         <Statistics
           data={landingPage?.statistics}
+          style={landingPage?.statistics_style}
           isEdit={isEdit}
           viewMode={viewMode}
           selectedComponent={selectedComponent}
@@ -148,6 +154,17 @@ const Home = ({ isEdit }) => {
       {landingPage?.enabledSections?.quickDocuments && (
         <QuickDocuments
           data={landingPage?.quickDocuments}
+          isEdit={isEdit}
+          viewMode={viewMode}
+          selectedComponent={selectedComponent}
+          onComponentClick={handleComponentClick}
+        />
+      )}
+
+      {/* Document Showcase */}
+      {landingPage?.enabledSections?.documentShowcase && (
+        <DocumentShowcase
+          data={landingPage?.documentShowcase}
           isEdit={isEdit}
           viewMode={viewMode}
           selectedComponent={selectedComponent}
@@ -172,7 +189,11 @@ const Home = ({ isEdit }) => {
             isEdit && viewMode === 'edit' ? () => handleComponentClick('quickServices') : null
           }
         >
-          <QuickServices data={landingPage?.servicesData} />
+          <QuickServices
+            data={landingPage?.servicesData}
+            style={landingPage?.quickServices?.style}
+            ctaTitle={landingPage?.quickServices?.ctaTitle}
+          />
         </section>
       )}
 
@@ -200,7 +221,11 @@ const Home = ({ isEdit }) => {
       {/* Services */}
       {landingPage?.enabledSections?.services && (
         <section className="bg-[#e6edef] md:py-20 py-5 pb-10">
-          <ServicesComponent data={services?.data} name={mdaData?.fullname} />
+          <ServicesSection
+            style={landingPage?.services_style}
+            data={services?.data}
+            name={mdaData?.fullname}
+          />
         </section>
       )}
 

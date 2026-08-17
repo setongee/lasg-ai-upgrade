@@ -41,9 +41,7 @@ const Newsletter = () => {
   };
 
   return (
-    <div
-      className="newsletter-section flex justify-center items-center bg-[var(--theme-accent,#2e7d32)] rounded-[10px] p-[30px] md:p-[50px] lg:p-[80px] my-[70px] md:my-[100px] mb-[50px] overflow-hidden relative"
-    >
+    <div className="newsletter-section flex justify-center items-center bg-[var(--theme-accent,#2e7d32)] rounded-[10px] p-[30px] md:p-[50px] lg:p-[80px] mb-13 overflow-hidden relative">
       <div className="newsletter-inner flex flex-col lg:flex-row items-center justify-between w-full text-[var(--theme-accent-text,#ffffff)] gap-[30px]">
         {/* Left section - Title */}
         <div className="newsletter-title text-[22px] sm:text-[24px] lg:text-[28px] font-semibold leading-[125%] md:w-[300px] lg:w-[550px] text-center lg:text-left relative z-[1]">

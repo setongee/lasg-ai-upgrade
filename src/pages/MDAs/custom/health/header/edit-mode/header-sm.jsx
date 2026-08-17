@@ -18,7 +18,7 @@ const HeaderSm = ({ customClass, fullname }) => {
           <div className="logo overflow-hidden w-12 h-12">
             <img src={lasg__logo} alt={`Lagos State ${fullname}`} />
           </div>
-          <p className="text-[11px] uppercase tracking-[2px]">{fullname}</p>
+          <p className="text-[11px] uppercase tracking-[2px] !text-[#131313]">{fullname}</p>
         </div>
 
         <button onClick={() => setIsMenuOpen(!isMenuOpen)}>

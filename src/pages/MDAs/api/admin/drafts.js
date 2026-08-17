@@ -113,11 +113,10 @@ export const getSingleDraft = async (id) => {
       return response.data.data;
     } else {
       notify.error(response.data.message);
-      return response;
+      return null;
     }
   } catch (error) {
-    // notify.error('Failed to fetch draft');
-    return response;
+    return null;
   }
 };
 
@@ -151,8 +150,12 @@ export const updateDraft = async (id, data) => {
       return null;
     }
   } catch (error) {
-    console.error('Failed to update draft');
-    return null;
+    console.error('Failed to update draft:', error);
+    return {
+      status: 'error',
+      message: error.response?.data?.message || 'Failed to update draft',
+      httpStatus: error.response?.status ?? null,
+    };
   }
 };
 

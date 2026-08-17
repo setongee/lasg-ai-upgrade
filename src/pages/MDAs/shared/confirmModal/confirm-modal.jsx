@@ -1,9 +1,20 @@
 import './confirm-modal.css';
 
-const ConfirmModal = ({ children, open, onClose, onConfirm, customClass }) => {
+const ConfirmModal = ({
+  children,
+  open,
+  onClose,
+  onConfirm,
+  customClass,
+  buttonGroupClasses,
+  loading,
+  keepOpenOnConfirm,
+}) => {
   if (!open) return null;
   const handleConfirm = () => {
-    onClose();
+    if (!keepOpenOnConfirm) {
+      onClose();
+    }
     onConfirm();
   };
 
@@ -14,12 +25,19 @@ const ConfirmModal = ({ children, open, onClose, onConfirm, customClass }) => {
 
         {children}
 
-        <div className="btn-grp flex">
-          <button className="bg-gray-300 text-gray-700" onClick={onClose}>
+        <div className={`btn-grp flex ${buttonGroupClasses || ''}`}>
+          <button className="bg-gray-300 text-gray-700" onClick={onClose} disabled={loading}>
             Cancel
           </button>
-          <button className="bg-green-700 text-white" onClick={handleConfirm}>
-            Confirm
+          <button
+            className="bg-green-700 text-white flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+            onClick={handleConfirm}
+            disabled={loading}
+          >
+            {loading && (
+              <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+            )}
+            {loading ? 'Confirming...' : 'Confirm'}
           </button>
         </div>
       </div>

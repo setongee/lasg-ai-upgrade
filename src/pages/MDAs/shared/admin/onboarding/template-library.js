@@ -42,23 +42,25 @@ export const templates = [
     theme: 'mof',
   },
   {
-    name: 'Ledger',
-    description: 'Elegant corporate finance and business consulting template',
-    category: ['finance', 'business'],
+    name: 'Transit',
+    description: 'Bold, service-forward theme for transport and mobility agencies',
+    category: ['transport', 'general'],
     createdAt: formatDate3(new Date().toISOString()),
+    // TODO: swap for a real screenshot of the mot theme once available
     thumbnail:
       'https://res.cloudinary.com/dirmxkznt/image/upload/v1773668069/templates/ledger_gq9ze2.jpg',
-    preview_link: 'theme4',
-    theme: 'coming',
+    preview_link: 'sto',
+    theme: 'sto',
   },
   {
-    name: 'Nexus v1',
-    description: 'Versatile multi-purpose template for various website needs',
-    category: ['general'],
+    name: 'Treasury',
+    description: 'Structured, document-forward theme for treasury and revenue offices',
+    category: ['finance'],
     createdAt: formatDate3(new Date().toISOString()),
+    // TODO: swap for a real screenshot of the sto theme once available
     thumbnail:
       'https://res.cloudinary.com/dirmxkznt/image/upload/v1773668069/templates/nexus_dkkfrw.jpg',
-    preview_link: 'theme6',
-    theme: 'coming',
+    preview_link: 'mot',
+    theme: 'mot',
   },
 ];

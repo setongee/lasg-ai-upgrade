@@ -126,11 +126,13 @@
       line-height: 130%;
       font-weight: 600;
       width: 800px;
+      color: #131313;
     }
 
     span {
       width: 300px;
       line-height: 180%;
+      color: #555;
     }
 
     &.full {

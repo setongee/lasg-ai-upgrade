@@ -60,7 +60,10 @@ const InfoBarEdit = () => {
       if (messageRefs.current[lastIndex]) {
         messageRefs.current[lastIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       } else if (containerRef.current) {
-        containerRef.current.scrollTo({ top: containerRef.current.scrollHeight, behavior: 'smooth' });
+        containerRef.current.scrollTo({
+          top: containerRef.current.scrollHeight,
+          behavior: 'smooth',
+        });
       }
     }, 50);
   };

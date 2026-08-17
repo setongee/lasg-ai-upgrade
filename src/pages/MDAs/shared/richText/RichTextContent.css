@@ -7,6 +7,10 @@
   height: auto;
   overflow-y: visible;
   cursor: auto;
+  /* Sane default so admin-authored copy stays legible on sections with a
+     hardcoded light background; callers that need something else (e.g. text
+     on a dark/accent background) override via the `className` prop. */
+  color: #131313;
 }
 
 .lasg-rich-text.ql-editor > *:last-child {

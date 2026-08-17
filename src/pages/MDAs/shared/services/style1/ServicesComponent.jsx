@@ -1,13 +1,13 @@
-import { ArrowDown, ArrowUp } from 'iconoir-react';
+import { ArrowDown, ArrowUp, NavArrowRight } from 'iconoir-react';
 import { useRef, useState } from 'react';
 import Button from '../../button/Button';
 import Wrapper from '../../Wrapper/Wrapper';
 import ServiceCard from './card';
 import icon from './service.svg';
 
-const ServicesComponent = ({ data, name }) => {
+const ServicesComponent = ({ data, name, viewAllLink, totalCount, disableCap = false }) => {
   const [showAll, setShowAll] = useState(false);
-  const visibleServices = showAll ? data : data?.slice(0, 9);
+  const visibleServices = disableCap || showAll ? data : data?.slice(0, 9);
   const sectionRef = useRef(null);
 
   return (
@@ -31,7 +31,14 @@ const ServicesComponent = ({ data, name }) => {
             ))}
         </div>
 
-        {data?.length > 9 ? (
+        {viewAllLink ? (
+          <a
+            href={viewAllLink}
+            className="bg-[var(--theme-accent,#108a00)] uppercase tracking-[2px] text-[var(--theme-accent-text,#ffffff)] rounded-[5px] flex items-center gap-2 text-[11px] px-6 py-3"
+          >
+            View All Services ({totalCount}) <NavArrowRight width={16} />
+          </a>
+        ) : !disableCap && data?.length > 9 ? (
           !showAll ? (
             <Button
               customClass="bg-[var(--theme-accent,#108a00)] uppercase tracking-[2px] text-[var(--theme-accent-text,#ffffff)] rounded-[5px] flex gap-2 text-[11px]"

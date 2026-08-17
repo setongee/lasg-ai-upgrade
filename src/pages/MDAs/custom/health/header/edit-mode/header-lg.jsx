@@ -11,7 +11,7 @@ const HeaderLg = ({ customClass, fullname }) => {
         <div className="logo overflow-hidden w-12 h-12">
           <img src={lasg__logo} alt="Lagos State Ministry of Health" />
         </div>
-        <p className="text-[11px] uppercase tracking-[2px]">{fullname}</p>
+        <p className="text-[11px] uppercase tracking-[2px] !text-[#131313]">{fullname}</p>
       </div>
 
       <div className="flex items-center gap-7 text-[11px] tracking-[2px] uppercase">

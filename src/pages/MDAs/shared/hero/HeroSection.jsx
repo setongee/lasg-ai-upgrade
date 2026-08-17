@@ -13,6 +13,8 @@ const HERO_STYLES = [
   'centeredTextImageBelow',
   'fullBleedCentered',
   'colorBackground',
+  'groundedSplit',
+  'splitCircleFloating',
 ];
 
 const BUTTON_CLASS =
@@ -91,6 +93,7 @@ const HeroSection = ({
   buttonLink,
   images,
   legacyImage,
+  secondaryImage,
   slideshowEnabled,
   bgType,
   bgColor,
@@ -279,6 +282,66 @@ const HeroSection = ({
           </div>
         </Wrapper>
       </div>
+    );
+  }
+
+  // bottom-aligned split, underlined heading, image keeps its own footing (sto-inspired)
+  if (resolvedStyle === 'groundedSplit') {
+    return (
+      <Wrapper>
+        <div
+          className={`flex justify-between items-center gap-10 py-[0px] min-h-[400px] md:h-max lg:min-h-[550px] 2xl:min-h-[650px] max-[900px]:flex-col max-[900px]:items-center max-[900px]:text-center max-[900px]:py-10 max-[900px]:gap-6 max-[900px]:min-h-0 ${editableClass} ${activeClass}`}
+          onClick={handleClick}
+        >
+          <div className="flex flex-col flex-1 min-w-0 max-w-[700px] gap-6 max-[900px]:max-w-full max-[900px]:items-center">
+            <h1 className="font-[650] tracking-[-0.5px] md:leading-[1.45] leading-[1.45] text-[54px] underline decoration-2 underline-offset-[10px] max-[900px]:text-[38px] max-[500px]:text-[30px]">
+              {title}
+            </h1>
+            <p className="leading-[1.6] text-[clamp(15px,1.3vw,17px)] max-w-[80%] mt-8 max-[900px]:max-w-full max-[900px]:mt-0 text-[#666]">
+              {subtitle}
+            </p>
+            {cta && <div className="max-[900px]:mx-auto">{cta}</div>}
+          </div>
+          <div className=" lg:w-120 max-[1250px]:hidden  2xl:w-150 absolute right-0 rounded-none h-full overflow-hidden">
+            <HeroImage images={imageList} slideshowEnabled={slideshowEnabled} />
+          </div>
+        </div>
+      </Wrapper>
+    );
+  }
+
+  // text left, two arched/overlapping photos right (mot-inspired)
+  if (resolvedStyle === 'splitCircleFloating') {
+    return (
+      <Wrapper>
+        <div
+          className={`flex justify-between items-center gap-10 max-[1200px]:min-h-[100%] max-[1200px]:py-16 max-[500px]:py-14 max-[500px]:pb-8 min-h-[800px] max-[900px]:flex-col max-[900px]:text-center max-[900px]:gap-8 ${editableClass} ${activeClass}`}
+          onClick={handleClick}
+        >
+          <div className="flex flex-col flex-1 min-w-0 max-w-[640px] gap-6 justify-center max-[900px]:max-w-full max-[900px]:items-center">
+            <h1 className="font-[650] tracking-[-0.5px] leading-[1.15] text-[52px] max-[900px]:text-[38px] max-[500px]:text-[30px]">
+              {title}
+            </h1>
+            <p className="leading-[1.6] text-[clamp(15px,1.3vw,17px)] max-w-[75%] max-[900px]:max-w-full text-[#666]">
+              {subtitle}
+            </p>
+            {cta && <div className="max-[900px]:mx-auto">{cta}</div>}
+          </div>
+          <div className="relative overflow-hidden max-[600px]:mt-4">
+            <div className="max-[600px]:w-[calc(100%-100px)] max-[600px]:mx-auto overflow-hidden">
+              <div className="max-[1200px]:hidden max-[600px]:block max-[600px]:w-[250px] max-[600px]:h-[270px] 2xl:w-[400px] lg:w-[350px] mr-[175px] h-[420px] bg-gray-100 rounded-tr-[45%] overflow-hidden z-[1]">
+                <HeroImage images={imageList} slideshowEnabled={slideshowEnabled} />
+              </div>
+              <div className="max-[1200px]:hidden max-[600px]:block max-[600px]:w-[250px] relative max-[600px]:h-[270px] 2xl:w-[400px] lg:w-[350px] bg-gray-100 max-[600px]:mr-[0px] -mt-50 h-[420px] rounded-tl-[45%] max-[600px]:border-[10px] border-[15px] border-white overflow-hidden z-[2] float-right">
+                <HeroImage
+                  images={secondaryImage ? [secondaryImage] : []}
+                  slideshowEnabled={false}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Wrapper>
     );
   }
 

@@ -27,11 +27,11 @@ export default function Agencies({ res }) {
     <div className="flex justify-center w-full">
       <Wrapper>
         <div className="about-heading full-heading flex flex-col text-center gap-[20px] full">
-          <h1 className="full">
+          <h1 className="full !text-[#131313]">
             Agencies, Directorates, and Units: Exploring Structure, Roles, and Responsibilities
           </h1>
 
-          <span className="full-span">
+          <span className="full-span !text-[#555555]">
             Understanding Organizational Divisions and Their Roles in Effective Operations and
             Governance
           </span>

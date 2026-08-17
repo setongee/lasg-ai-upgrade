@@ -107,7 +107,10 @@ export default function NewsComp({ data, topic }) {
                       </a>
                     ))
                   ) : (
-                    <div className="uppercase" style={{ letterSpacing: '2px', fontSize: '11px' }}>
+                    <div
+                      className="uppercase !text-[#131313]"
+                      style={{ letterSpacing: '2px', fontSize: '11px' }}
+                    >
                       {' '}
                       No other additional news found!{' '}
                     </div>
@@ -118,7 +121,7 @@ export default function NewsComp({ data, topic }) {
           </div>
         </div>
       ) : (
-        <div className="loaderPage uppercase-t"> Oops! No news found! </div>
+        <div className="loaderPage uppercase-t !text-[#131313]"> Oops! No news found! </div>
       )}
     </div>
   );

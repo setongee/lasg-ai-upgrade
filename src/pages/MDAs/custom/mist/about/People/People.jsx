@@ -14,11 +14,11 @@ export default function People({ res }) {
     <div className="about__sections">
       <Wrapper>
         <div className="about-heading full-heading flex flex-col text-center gap-[20px] full">
-          <h1 className="full">
+          <h1 className="full !text-[#131313]">
             Meet the Team: Passionate People Driving Success and Innovation Forward
           </h1>
 
-          <span className="full-span">
+          <span className="full-span !text-[#555555]">
             Bringing Innovation, Dedication, and Excellence Together for Lasting Impact and Success
           </span>
         </div>

@@ -25,6 +25,8 @@ const HERO_STYLE_OPTIONS = [
   { value: 'centeredTextImageBelow', label: 'Centered, Image Below' },
   { value: 'fullBleedCentered', label: 'Full-width Image (Centered)' },
   { value: 'colorBackground', label: 'Full-screen Color' },
+  { value: 'groundedSplit', label: 'Grounded Split, Underlined' },
+  { value: 'splitCircleFloating', label: 'Twin Arched Photos' },
 ];
 
 const HeroStylePreview = ({ style }) => {
@@ -104,6 +106,35 @@ const HeroStylePreview = ({ style }) => {
       >
         <div className="w-10 h-1.5 bg-white/90 rounded-full" />
         <div className="w-7 h-1.5 bg-white/70 rounded-full" />
+      </div>
+    );
+  }
+
+  if (style === 'groundedSplit') {
+    return (
+      <div className="w-full h-full flex items-end gap-1.5 px-1 pb-1">
+        <div className="flex-1 flex flex-col justify-end gap-1">
+          <div className="w-full h-1.5 bg-gray-500 rounded-full underline decoration-2" />
+          <div className="w-3/4 h-1 bg-gray-400 rounded-full mt-1" />
+          <div className="w-6 h-1.5 bg-green-600 rounded-sm mt-0.5" />
+        </div>
+        <div className="flex-1 h-[85%] bg-gray-400 rounded" />
+      </div>
+    );
+  }
+
+  if (style === 'splitCircleFloating') {
+    return (
+      <div className="w-full h-full flex items-center gap-1.5 px-1">
+        <div className="flex-1 flex flex-col justify-center gap-1">
+          <div className="w-full h-1.5 bg-gray-500 rounded-full" />
+          <div className="w-3/4 h-1 bg-gray-400 rounded-full" />
+          <div className="w-6 h-1.5 bg-green-600 rounded-sm mt-0.5" />
+        </div>
+        <div className="relative w-[60%] h-[85%] shrink-0">
+          <div className="absolute top-0 left-0 w-[65%] h-[62%] bg-gray-400 rounded-tl-sm rounded-bl-sm rounded-br-sm rounded-tr-[50%]" />
+          <div className="absolute bottom-0 right-0 w-[65%] h-[62%] bg-gray-400 rounded-br-sm rounded-tr-sm rounded-bl-sm rounded-tl-[50%]" />
+        </div>
       </div>
     );
   }
@@ -243,9 +274,9 @@ const HeroSectionEdit = () => {
     });
   };
 
-  const handleUpload = async (e, name) => {
+  const handleUpload = async (e, name, fieldKey = 'main_photo', inputId = 'main_photo') => {
     e.preventDefault();
-    const choosePhoto = document.getElementById('main_photo');
+    const choosePhoto = document.getElementById(inputId);
     choosePhoto.click();
 
     choosePhoto.addEventListener('change', async (e) => {
@@ -259,7 +290,7 @@ const HeroSectionEdit = () => {
 
       const blobUrl = URL.createObjectURL(file);
       // Immediately update the image with blob for instant preview
-      setMdaEditData({ ...mdaEditData, main_photo: blobUrl });
+      setMdaEditData({ ...mdaEditData, [fieldKey]: blobUrl });
 
       setIsUploading(true);
       setUploadProgress(0);
@@ -282,7 +313,7 @@ const HeroSectionEdit = () => {
             clearInterval(progressInterval);
             setUploadProgress(100);
 
-            setMdaEditData({ ...mdaEditData, main_photo: response.url });
+            setMdaEditData({ ...mdaEditData, [fieldKey]: response.url });
 
             // Clean up after a short delay
             setTimeout(() => {
@@ -737,6 +768,55 @@ const HeroSectionEdit = () => {
                     </div>
                   )}
                 </div>
+
+                {heroStyle === 'splitCircleFloating' && (
+                  <div className="flex gap-4 flex-col border-t border-gray-200 pt-6 mt-2">
+                    <label htmlFor="" className="font-semibold text-[14px] flex gap-[1px] flex-col">
+                      <p className="flex gap-2 items-center">
+                        <Attachment /> Second Photo{' '}
+                      </p>
+                      <span className="text-[13px] font-normal text-gray-500">
+                        Shown alongside the main photo in this hero style
+                      </span>
+                    </label>
+
+                    <input
+                      type="file"
+                      id="secondary_photo"
+                      onChange={(e) =>
+                        handleUpload(
+                          e,
+                          `${fullname.replace(' ', '-')}-landing-page-secondary-image`,
+                          'secondary_photo',
+                          'secondary_photo'
+                        )
+                      }
+                      hidden
+                    />
+                    <button
+                      type="button"
+                      className="text-[13px] font-medium bg-green-600 text-white px-4 py-2 rounded-[6px] cursor-pointer w-full"
+                      onClick={(e) =>
+                        handleUpload(
+                          e,
+                          `${fullname.replace(' ', '-')}-landing-page-secondary-image`,
+                          'secondary_photo',
+                          'secondary_photo'
+                        )
+                      }
+                    >
+                      Choose File to Upload
+                    </button>
+
+                    <div className="h-[220px] w-full bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center relative">
+                      <img
+                        src={mdaEditData.secondary_photo}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </>

@@ -4,11 +4,42 @@ import { useEditDataStore } from '../../../../../../stores/editData.store';
 import { useThemeStore } from '../../../../../../stores/theme.store';
 import SectionTitle from './util/SectionTitle';
 
+const SERVICES_STYLE_OPTIONS = [
+  { value: 'style1', label: 'Card Grid' },
+  { value: 'style2', label: 'Scroll Cards' },
+];
+
+const ServicesStylePreview = ({ style }) => {
+  if (style === 'style2') {
+    return (
+      <div className="w-full h-full flex gap-1 p-1">
+        <div className="flex-1 rounded bg-green-600" />
+        <div className="flex-1 rounded bg-gray-300" />
+        <div className="flex-1 rounded bg-gray-300" />
+      </div>
+    );
+  }
+
+  // style1
+  return (
+    <div className="w-full h-full grid grid-cols-3 gap-1 p-1">
+      <div className="rounded bg-gray-300" />
+      <div className="rounded bg-gray-300" />
+      <div className="rounded bg-gray-300" />
+    </div>
+  );
+};
+
 const ServicesEdit = () => {
   const setMdaEditData = useEditDataStore((state) => state.setMdaEditData);
   const mdaEditData = useEditDataStore((state) => state.mdaEditData);
   const { slug } = useThemeStore((state) => state.mdaData);
   let navigate = useNavigate();
+
+  const servicesStyle = mdaEditData?.services_style || 'style1';
+  const setServicesStyle = (value) => {
+    setMdaEditData({ ...mdaEditData, services_style: value });
+  };
 
   const toggleSection = () => {
     setMdaEditData({
@@ -48,6 +79,32 @@ const ServicesEdit = () => {
               }`}
             />
           </button>
+        </div>
+      </div>
+
+      {/* Services Style Picker */}
+      <div className="px-[30px] pt-[20px]">
+        <p className="font-semibold text-[14px] mb-3">Services Style</p>
+        <div className="grid grid-cols-2 gap-2">
+          {SERVICES_STYLE_OPTIONS.map((option) => (
+            <button
+              type="button"
+              key={option.value}
+              onClick={() => setServicesStyle(option.value)}
+              className={`flex flex-col gap-2 p-2 rounded-lg border-2 transition-colors text-left ${
+                servicesStyle === option.value
+                  ? 'border-green-600 bg-green-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <div className="w-full h-[50px]">
+                <ServicesStylePreview style={option.value} />
+              </div>
+              <span className="text-[11px] font-medium text-gray-700 leading-tight">
+                {option.label}
+              </span>
+            </button>
+          ))}
         </div>
       </div>
 

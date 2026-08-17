@@ -21,7 +21,9 @@ import AdminChatbot from '../../../components/chatbot/AdminChatbot';
 import TemplateContainer from '../templates-container/TemplateContainer';
 import CommissionerZoneEdit from './componentEditModal/CommissionerZoneEdit';
 import CoreInformationEdit from './componentEditModal/CoreInformationEdit';
+import DocumentShowcaseEdit from './componentEditModal/DocumentShowcaseEdit';
 import GalleryPreviewEdit from './componentEditModal/GalleryPreviewEdit';
+import HeaderStyleEdit from './componentEditModal/HeaderStyleEdit';
 import HeroSectionEdit from './componentEditModal/HeroSectionEdit';
 import InfoBarEdit from './componentEditModal/InfoBarEdit';
 import QuickDocumentsEdit from './componentEditModal/QuickDocumentsEdit';
@@ -50,6 +52,10 @@ const Published = () => {
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState(null);
   const autoSaveIntervalRef = useRef(null);
+  // Tracks a draft id created client-side during this mount (initial creation, or auto-recovery),
+  // so the initializeDraft effect's re-run (triggered by setActiveDraftId) doesn't immediately
+  // re-verify — and potentially "recover" — a draft we just created ourselves.
+  const selfCreatedDraftIdRef = useRef(null);
 
   // edit mode
   const setEditViewMode = useEditModeStore((state) => state.setEditViewMode);
@@ -88,20 +94,22 @@ const Published = () => {
     }
   }, [mda_data?.slug, currentMda, clearEditData, setCurrentMda]);
 
-  useEffect(() => {
-    if (activeDraftId) {
-      // check if draft is published
-      // if published, set isDraftPublishCreated to true
-      // if not published, set isDraftPublishCreated to false
-      getPublishBucketsByDraftId(activeDraftId).then((response) => {
-        if (response?.data) {
-          setIsDraftPublishCreated(response.data);
-          setPublishId(response.data._id);
-        } else {
-          setIsDraftPublishCreated(null);
-        }
-      });
+  const refreshPublishStatus = async (draftId) => {
+    if (!draftId) return;
+    // check if draft is published
+    // if published, set isDraftPublishCreated to true
+    // if not published, set isDraftPublishCreated to false
+    const response = await getPublishBucketsByDraftId(draftId);
+    if (response?.data) {
+      setIsDraftPublishCreated(response.data);
+      setPublishId(response.data._id);
+    } else {
+      setIsDraftPublishCreated(null);
     }
+  };
+
+  useEffect(() => {
+    refreshPublishStatus(activeDraftId);
   }, [activeDraftId]);
 
   const createNewDraft = async (title) => {
@@ -111,6 +119,7 @@ const Published = () => {
       mda: mda_data.slug,
     });
     if (response.data) {
+      selfCreatedDraftIdRef.current = response.data._id;
       // Set the active draft ID
       setActiveDraftId(response.data._id);
       // Set the edit data to the draft data
@@ -136,9 +145,16 @@ const Published = () => {
       );
 
       // Check if updateDraft failed specifically with a 404 (document not found/deleted)
-      if (response === null || response?.status === 404 || response?.response?.status === 404) {
+      if (response?.httpStatus === 404) {
         console.warn('Draft not found, likely deleted. Creating a new one...');
         await createNewDraft('Auto-recovered Draft');
+        return;
+      }
+
+      if (!response || response?.status === 'error') {
+        // Some other failure (network hiccup, validation, auth) — leave the draft as-is
+        // so the next auto-save tick retries against the same draft instead of spawning a new one.
+        console.error('Auto-save failed:', response?.message);
         return;
       }
 
@@ -146,7 +162,6 @@ const Published = () => {
       setOriginalData(data ? data : mdaEditData);
     } catch (error) {
       console.error('Auto-save failed:', error);
-      // Fallback check for 404 in the error object itself if updateDraft throws
       if (error?.response?.status === 404) {
         await createNewDraft('Auto-recovered Draft');
       }
@@ -180,6 +195,8 @@ const Published = () => {
     const initializeDraft = async () => {
       // Prevent double initialization if already in progress or if mda_data isn't ready
       if (isInitializingRef.current || !mda_data?.slug) return;
+      // We just created this draft in this same mount — the state is already fresh, skip re-fetching it.
+      if (activeDraftId && activeDraftId === selfCreatedDraftIdRef.current) return;
 
       isInitializingRef.current = true;
 
@@ -194,6 +211,7 @@ const Published = () => {
           });
 
           if (response.data) {
+            selfCreatedDraftIdRef.current = response.data._id;
             // Set the active draft ID
             setActiveDraftId(response.data._id);
             // Set the edit data to the draft data
@@ -215,6 +233,7 @@ const Published = () => {
             });
 
             if (response.data) {
+              selfCreatedDraftIdRef.current = response.data._id;
               // Set the active draft ID
               setActiveDraftId(response.data._id);
               // Set the edit data to the draft data
@@ -274,24 +293,33 @@ const Published = () => {
     setShowPublishConfirm(true);
   };
 
+  const [isConfirmingPublish, setIsConfirmingPublish] = useState(false);
+
   const handleConfirmPublish = async () => {
-    setShowPublishConfirm(false);
+    setIsConfirmingPublish(true);
 
-    if (isDraftPublishCreated && publishId !== '') {
-      await updatePublishDraftRequest(publishId, {
-        draftId: activeDraftId,
-        mda: mda_data?.slug,
-        notes: publishNotes,
-      });
-    } else {
-      await publishPage({
-        draftId: activeDraftId,
-        mda: mda_data?.slug,
-        notes: publishNotes,
-      });
+    try {
+      if (isDraftPublishCreated && publishId !== '') {
+        await updatePublishDraftRequest(publishId, {
+          draftId: activeDraftId,
+          mda: mda_data?.slug,
+          notes: publishNotes,
+        });
+      } else {
+        await publishPage({
+          draftId: activeDraftId,
+          mda: mda_data?.slug,
+          notes: publishNotes,
+        });
+      }
+
+      setPublishNotes('');
+
+      await refreshPublishStatus(activeDraftId);
+    } finally {
+      setIsConfirmingPublish(false);
+      setShowPublishConfirm(false);
     }
-
-    setPublishNotes('');
   };
 
   const [isOriginalChanged, setIsOriginalChanged] = useState(false);
@@ -331,6 +359,10 @@ const Published = () => {
         return <GalleryPreviewEdit />;
       case 'upcomingEvents':
         return <UpcomingEventsEdit />;
+      case 'documentShowcase':
+        return <DocumentShowcaseEdit />;
+      case 'header':
+        return <HeaderStyleEdit />;
       default:
         return null;
     }
@@ -563,21 +595,13 @@ const Published = () => {
             setPublishNotes('');
           }}
           onConfirm={handleConfirmPublish}
+          loading={isConfirmingPublish}
+          keepOpenOnConfirm
+          buttonGroupClasses=""
         >
           <p className="text-gray-700 mb-6">
             Are you sure you want to publish these changes? This will update your live site.
           </p>
-
-          <div className="">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Notes (optional)</label>
-            <textarea
-              value={publishNotes}
-              onChange={(e) => setPublishNotes(e.target.value)}
-              placeholder="Add any notes or comments about this publish..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-600 focus:border-transparent resize-none text-[15px]"
-              rows={3}
-            />
-          </div>
         </ConfirmModal>
 
         {/* Rejection Reason Modal */}

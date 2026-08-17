@@ -1,8 +1,9 @@
-import ServicesComponent from '../../shared/services/style1/ServicesComponent';
+import ServicesSection from '../../shared/services/ServicesSection';
 
 const CoreServices = ({
   data,
   mdaName,
+  style,
   isEdit = false,
   viewMode = 'view',
   selectedComponent = '',
@@ -19,7 +20,7 @@ const CoreServices = ({
       } ${selectedComponent === 'services' ? '!border-green-500 active_component' : ''}`}
       onClick={isEdit && viewMode === 'edit' ? () => onComponentClick('services') : null}
     >
-      <ServicesComponent data={data} name={mdaName} />
+      <ServicesSection style={style} data={data} name={mdaName} />
     </section>
   );
 };

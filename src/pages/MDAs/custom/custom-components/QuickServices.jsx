@@ -4,6 +4,8 @@ const DEFAULT_BACKGROUND = 'var(--theme-section-bg, #e6edef)';
 
 const QuickServicesSection = ({
   data,
+  style,
+  ctaTitle,
   backgroundColor,
   isEdit = false,
   viewMode = 'view',
@@ -24,7 +26,7 @@ const QuickServicesSection = ({
       } ${selectedComponent === 'quickServices' ? '!border-green-500 active_component' : ''}`}
       onClick={isEdit && viewMode === 'edit' ? () => onComponentClick('quickServices') : null}
     >
-      <QuickServices data={data} />
+      <QuickServices data={data} style={style} ctaTitle={ctaTitle} />
     </section>
   );
 };

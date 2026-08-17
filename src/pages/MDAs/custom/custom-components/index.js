@@ -1,6 +1,7 @@
 export { default as CommissionerZone } from './CommissionerZone';
 export { default as CoreInformation } from './CoreInformation';
 export { default as CoreServices } from './CoreServices';
+export { default as DocumentShowcase } from './DocumentShowcase';
 export { default as GalleryPreview } from './GalleryPreview';
 export { default as InfoBar } from './InfoBar';
 export { default as NewsletterSection } from './Newsletter';

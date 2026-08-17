@@ -6,6 +6,7 @@ import { useEditModeStore } from '../../../../../../../stores/editMode.store';
 // Gallery and Events are standalone pages (not drag/drop landing sections),
 // so they're intentionally left out here.
 const SECTIONS = {
+  header: 'Navbar Style',
   infoBar: 'Info Bar',
   heroSection: 'Hero Section',
   quickServices: 'Quick Services',
@@ -14,6 +15,7 @@ const SECTIONS = {
   services: 'Services',
   resourceCategories: 'Resource Categories',
   quickDocuments: 'Quick Documents',
+  documentShowcase: 'Document Showcase',
   statistics: 'Statistics',
   supportLinks: 'Support Links',
   coreInformation: 'Core Information',
