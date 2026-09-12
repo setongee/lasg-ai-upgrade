@@ -2,7 +2,7 @@ import { openRouterComplete } from '../../../../../../../utils/openrouter.js';
 import { getKeywordGenerationPrompt } from './prompts/keyword-generator.js';
 
 /**
- * Generates keywords using Gemini AI based on service information
+ * Generates SEO keywords for a service using the AI proxy.
  * @param {string} serviceName - Name of the service
  * @param {string} serviceDescription - Description of the service
  * @param {string} mdaName - Name of the providing agency
@@ -12,24 +12,19 @@ export const generateKeywordsWithAI = async (serviceName, serviceDescription, md
   try {
     const prompt = getKeywordGenerationPrompt(serviceName, serviceDescription, mdaName);
 
-    const text = await openRouterComplete([{ role: 'user', content: prompt }]);
+    const text = await openRouterComplete([{ role: 'user', content: prompt }], {
+      responseFormat: { type: 'json_object' },
+      reasoningEffort: 'minimal',
+    });
 
-    // Parse JSON response - handle potential markdown formatting
-    let cleanedText = text;
-    // Remove markdown code blocks if present
-    if (text.includes('```json')) {
-      cleanedText = text.replace(/```json\n?|```/g, '').trim();
+    const { keywords } = JSON.parse(text);
+
+    if (Array.isArray(keywords) && keywords.every((item) => item.key)) {
+      return keywords;
     }
 
-    const keywordsData = JSON.parse(cleanedText);
-
-    // Ensure the response is an array of objects with 'key' property
-    if (Array.isArray(keywordsData) && keywordsData.every((item) => item.key)) {
-      return keywordsData;
-    } else {
-      console.error('Invalid AI response format:', keywordsData);
-      return [];
-    }
+    console.error('Invalid AI response format:', keywords);
+    return [];
   } catch (error) {
     console.error('Error generating keywords with AI:', error);
     return [];

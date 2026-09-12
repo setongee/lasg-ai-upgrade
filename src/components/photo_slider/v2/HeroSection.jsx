@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './photo_slider.scss';
 import './searchBorderAnimation.scss';
 
@@ -6,7 +6,16 @@ import Container from '../../container/container';
 import SearchQuery from '../../search/searchQuery';
 
 // filters Background
-import { ArrowDown, ArrowUp, ArrowUpRight, Language, NavArrowDown } from 'iconoir-react';
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpRight,
+  Language,
+  NavArrowDown,
+  NavArrowLeft,
+  NavArrowRight,
+  SendDiagonalSolid,
+} from 'iconoir-react';
 import grain from '../../../assets/background/filters/ grain.png';
 import { useApp } from '../../../stores/app.store';
 import LasgIllustrations from '../lasg_landingpage_illustrations';
@@ -99,6 +108,40 @@ export default function HeroSection() {
 
   const suggestions = useApp((state) => state.initialSuggestions);
 
+  // ── Suggestions scroll fade + arrows ─────────────────────────────────────
+  // Fade whichever edge still has scrollable content, and only show an arrow
+  // on that side — both driven by actual scroll position, recomputed on
+  // scroll, on resize, and whenever the suggestion list itself changes.
+  const suggestionsScrollRef = useRef(null);
+  const [canScrollSuggestionsLeft, setCanScrollSuggestionsLeft] = useState(false);
+  const [canScrollSuggestionsRight, setCanScrollSuggestionsRight] = useState(false);
+
+  const updateSuggestionsScrollState = () => {
+    const el = suggestionsScrollRef.current;
+    if (!el) return;
+    setCanScrollSuggestionsLeft(el.scrollLeft > 4);
+    setCanScrollSuggestionsRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  };
+
+  useEffect(() => {
+    updateSuggestionsScrollState();
+    const el = suggestionsScrollRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', updateSuggestionsScrollState);
+    window.addEventListener('resize', updateSuggestionsScrollState);
+    return () => {
+      el.removeEventListener('scroll', updateSuggestionsScrollState);
+      window.removeEventListener('resize', updateSuggestionsScrollState);
+    };
+  }, [suggestions]);
+
+  const scrollSuggestionsBy = (direction) => {
+    suggestionsScrollRef.current?.scrollBy({
+      left: direction === 'right' ? 200 : -200,
+      behavior: 'smooth',
+    });
+  };
+
   const handleSendMessage = () => {
     if (chatInput === '') return;
     addMessage(chatInput);
@@ -145,10 +188,7 @@ export default function HeroSection() {
       <Container customStyle="">
         <div className="photo_container">
           <div className="home__content">
-            <div className="text__area">
-              Smarter Access to Lagos Services for{' '}
-              <span style={{ color: '#108a00' }}>Everyone</span>
-            </div>
+            <div className="text__area">A Smarter, Simpler Way to Access Lagos State Services</div>
             {/* <p>Empowering citizens with easier access to state services and opportunities.</p> */}
           </div>
           <div className={`lasg-ai-chatbot`}>
@@ -169,7 +209,7 @@ export default function HeroSection() {
                 }}
               ></textarea>
               <button className="send-chat" onClick={() => handleSendMessage()}>
-                <ArrowUp strokeWidth={2} />
+                <SendDiagonalSolid strokeWidth={2} />
               </button>
 
               <div
@@ -200,20 +240,44 @@ export default function HeroSection() {
               ) : null}
             </div>
 
-            <div className="suggestions">
-              {suggestions?.length > 0 &&
-                suggestions?.map((item, index) => (
-                  <div
-                    className="suggestion"
-                    key={index}
-                    onClick={() => handleClickSuggestion(item)}
-                  >
-                    <p className="flex items-center gap-2">
-                      {item} <ArrowUpRight fontSize={10} />
-                    </p>
+            {suggestions?.length > 0 && (
+              <div className="suggestions-wrapper">
+                <div
+                  className={`arrow__nav abs1 ${!canScrollSuggestionsLeft ? 'is-disabled' : ''}`}
+                  onClick={() => canScrollSuggestionsLeft && scrollSuggestionsBy('left')}
+                  aria-label="Scroll suggestions left"
+                >
+                  <div className="abs">
+                    <NavArrowLeft />
                   </div>
-                ))}
-            </div>
+                </div>
+
+                <div className="suggestions" ref={suggestionsScrollRef}>
+                  {suggestions.map((item, index) => (
+                    <div
+                      className="suggestion"
+                      key={index}
+                      onClick={() => handleClickSuggestion(item)}
+                    >
+                      <p className="flex items-center gap-2">
+                        {item}{' '}
+                        <ArrowUpRight fontSize={8} className="text-amber-300" strokeWidth={2} />
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div
+                  className={`arrow__nav abs2 ${!canScrollSuggestionsRight ? 'is-disabled' : ''}`}
+                  onClick={() => canScrollSuggestionsRight && scrollSuggestionsBy('right')}
+                  aria-label="Scroll suggestions right"
+                >
+                  <div className="abs">
+                    <NavArrowRight />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

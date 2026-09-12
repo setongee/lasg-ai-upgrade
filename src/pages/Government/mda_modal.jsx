@@ -3,7 +3,7 @@ import React, {useEffect} from 'react'
 import LogoMinistry from '../../assets/MDA/ministry.svg';
 import LogoDepartment from '../../assets/MDA/department.svg';
 import LogoAgency from '../../assets/MDA/agency.svg';
-import { Globe, Internet, Phone, Message, Xmark, MailOut, MailOpen, Pin } from 'iconoir-react';
+import { Globe, Internet, Phone, Message, Xmark, MailOut, MailOpen, Pin, User } from 'iconoir-react';
 import { convertToTitleCase } from '../../middleware/middleware';
 
 export default function Mda_modal( { data, closeModal } ) {
@@ -27,6 +27,14 @@ export default function Mda_modal( { data, closeModal } ) {
                 <div className="address_icon"> <Globe/> Office Address </div>
 
                 <div className="address"> {data.address} </div>
+
+                {data.agent_name && (
+                  <>
+                    <div className="address_icon"> <User/> ICT Officer </div>
+
+                    <div className="address"> {data.agent_name} </div>
+                  </>
+                )}
 
                 <div className="contactArea">
 

@@ -1,7 +1,4 @@
 .slider {
-  // background-color: #fafffc;
-  // // background-color: #fcfff5;
-  // background-color: #fff;
   position: relative;
   overflow: hidden;
 
@@ -437,10 +434,11 @@
 
     .home__content {
       width: 70%;
-      width: 700px;
+      width: 800px;
       padding-top: 0px;
       display: flex;
       flex-direction: column;
+      align-items: center;
       flex-shrink: 0;
       z-index: 99;
       text-align: center;
@@ -475,7 +473,6 @@
         letter-spacing: -1px;
         color: #000;
         width: 100%;
-        max-width: 700px;
         transition: all 0.4s ease-in-out;
         text-align: center;
 
@@ -521,7 +518,7 @@
     font-weight: 600;
     letter-spacing: 2px;
     margin: 0 auto;
-    margin-top: 40px;
+    margin-top: 0px;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -607,48 +604,85 @@
     }
   }
 
+  .suggestions-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 0;
+    border-radius: 12px;
+
+    // Same arrow__nav/.abs idiom used by .quickSearches elsewhere on the
+    // page — kept visually consistent with that pattern, just with an
+    // added disabled state: always visible, dimmed (not hidden) when
+    // there's nothing left to scroll to in that direction.
+    .arrow__nav {
+      height: 35px;
+      width: 40px;
+      position: relative;
+      cursor: pointer;
+      flex-shrink: 0;
+      opacity: 1;
+      transition: opacity 0.2s ease;
+
+      .abs {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: all 0.2s ease-in-out;
+      }
+
+      &.abs1:hover {
+        .abs {
+          margin-left: -2px;
+        }
+      }
+
+      &.abs2:hover {
+        .abs {
+          margin-left: 2px;
+        }
+      }
+
+      &.is-disabled {
+        opacity: 0.35;
+        cursor: default;
+        pointer-events: none;
+      }
+    }
+  }
+
   .suggestions {
     display: flex;
     gap: 10px;
-    // overflow-x: auto;
+    overflow-x: auto;
     scroll-behavior: smooth;
     scrollbar-width: none;
-    margin-top: 10px;
     width: 100%;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: flex-start;
+    margin: 0 10px;
 
     &::-webkit-scrollbar {
       display: none !important;
     }
 
-    &:hover {
-      mask-image: none;
-    }
-
     .suggestion {
-      background-color: #eee;
       width: max-content;
-      // width: max-content;
-      padding: 12px 20px;
-      // text-transform: uppercase;
-      // letter-spacing: 2px;
-      border-radius: 8px;
+      padding: 11px 15px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 15px;
+      font-size: 10px;
       line-height: 130%;
-      font-weight: 600;
       flex-shrink: 0;
       display: flex;
       align-items: center;
-      background-color: #f6f6f6;
-      background-color: #f8f7f7;
-      // background-color: #fff;
       position: relative;
-      background-color: #f9f9f9;
-      border: 1px solid #e3e3e36f;
-      background-color: #fff;
+      background-color: #144532;
+      color: #fff;
 
       &:hover {
         background-color: #131313;
@@ -669,18 +703,18 @@
     textarea {
       width: 100%;
       resize: none;
-      height: 180px;
+      height: 150px;
       border: none;
       outline: none;
-      padding: 25px;
-      font-size: 16px;
+      padding: 20px;
+      font-size: 14px;
       font-weight: 400;
       color: #000;
-      border-radius: 30px;
-      background: #fff;
+      border-radius: 14px;
       // border: 1px solid #eee;
       position: relative;
       text-align: left;
+      background-color: #fff;
       box-shadow: 0px 0px 30px rgba($color: #000000, $alpha: 0.03);
     }
 
@@ -717,13 +751,12 @@
       margin: 20px;
       background-color: #108a00;
       color: #fff;
-      border-radius: 21px;
       cursor: pointer;
       font-size: 14px;
       line-height: 130%;
       font-weight: 500;
       height: 40px;
-      font-size: 14px;
+      font-size: 12px;
       background-color: #131313;
       width: 40px;
       border-radius: 50%;
@@ -1326,8 +1359,10 @@
 @media (max-width: 550px) {
   .lasg-ai-chatbot {
     margin-bottom: 20px;
-    .suggestions {
+    .suggestions-wrapper {
       margin-top: 5px;
+    }
+    .suggestions {
       justify-content: center;
 
       .suggestion {

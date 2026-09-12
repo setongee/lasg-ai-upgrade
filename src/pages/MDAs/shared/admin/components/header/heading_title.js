@@ -4,7 +4,7 @@ export const HeadingTitle = {
   drafts: 'Manage Saved Drafts',
   themes: 'Themes',
   library: 'Template Library',
-  vision: 'Vision & Mission',
+  vision: 'About, Vision & Mission',
   agencies: 'Agencies & Departments',
   people: 'Principal Officers',
   responsibility: 'Responsibilities',

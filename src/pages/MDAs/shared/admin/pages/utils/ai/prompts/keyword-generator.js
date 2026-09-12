@@ -18,30 +18,34 @@ REQUIREMENTS:
 7. Include terms that citizens would actually search for
 
 OUTPUT FORMAT:
-Return ONLY a JSON array of objects with this exact structure:
-[
-  {"key": "keyword1"},
-  {"key": "keyword2"},
-  {"key": "keyword3"},
-  ...
-]
+Return ONLY a JSON object with this exact structure:
+{
+  "keywords": [
+    {"key": "keyword1"},
+    {"key": "keyword2"},
+    {"key": "keyword3"},
+    ...
+  ]
+}
 
 EXAMPLE:
 If service is "Driver's License Renewal", output:
-[
-  {"key": "drivers license"},
-  {"key": "license renewal"},
-  {"key": "vehicle registration"},
-  {"key": "road safety"},
-  {"key": "transportation"},
-  {"key": "documentation"},
-  {"key": "government services"},
-  {"key": "LASDRI"},
-  {"key": "vehicle permit"},
-  {"key": "traffic management"},
-  {"key": "public service"},
-  {"key": "official documents"}
-]
+{
+  "keywords": [
+    {"key": "drivers license"},
+    {"key": "license renewal"},
+    {"key": "vehicle registration"},
+    {"key": "road safety"},
+    {"key": "transportation"},
+    {"key": "documentation"},
+    {"key": "government services"},
+    {"key": "LASDRI"},
+    {"key": "vehicle permit"},
+    {"key": "traffic management"},
+    {"key": "public service"},
+    {"key": "official documents"}
+  ]
+}
 
 Generate keywords based on the provided service information.`;
 };

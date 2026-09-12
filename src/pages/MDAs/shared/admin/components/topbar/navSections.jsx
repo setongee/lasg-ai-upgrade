@@ -118,7 +118,7 @@ export const getAdminNavSections = (baseurl, mdaType) => {
     ],
     content: [
       {
-        name: 'Vision & Mission',
+        name: 'About, Vision & Mission',
         href: `${baseurl}/vision`,
         icon: <CompassSolid />,
         id: 'vision-admin',

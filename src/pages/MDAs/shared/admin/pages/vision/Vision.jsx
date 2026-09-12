@@ -62,6 +62,28 @@ const Vision = ({ mda_data }) => {
         </h2>
       </div>
 
+      {/* about subtitle */}
+      <div className=" flex flex-col gap-3 border-b border-gray-100 pb-6">
+        <div className=" text-gray-700 text-[14px]">
+          <p className="font-bold">About Section Subtitle</p>
+          <span className="text-gray-400 text-[14px]">
+            Shown as the intro text on your MDA’s About page. Leave blank to use the default
+            below.
+          </span>
+        </div>
+
+        <textarea
+          name="aboutSubtitle"
+          placeholder="Comprehensive Insight into the Ministry’s Vision, Administrative Structure, Principal Officers, and Operational Responsibilities"
+          value={data.aboutSubtitle || ''}
+          onChange={(e) => {
+            setData({ ...data, aboutSubtitle: e.target.value });
+            setUpdateInfo({ ...updateInfo, aboutSubtitle: e.target.value });
+          }}
+          className="p-5 w-full resize-none text-[15px] leading-[23px] min-h-[120px] border-none outline-none bg-gray-50 rounded-lg [field-sizing:content]"
+        ></textarea>
+      </div>
+
       {/* vision */}
       <div className=" flex flex-col gap-3 border-b border-gray-100 pb-6">
         <div className=" text-gray-700 text-[14px]">

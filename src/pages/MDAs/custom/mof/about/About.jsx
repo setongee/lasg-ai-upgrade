@@ -45,8 +45,8 @@ const About = () => {
             <Wrapper customClass="flex items-center justify-center">
               <div className="contentArea">
                 <h2>
-                  Comprehensive Insight into the Ministry’s Vision, Administrative Structure,
-                  Principal Officers, and Operational Responsibilities
+                  {data?.aboutSubtitle ||
+                    'Comprehensive Insight into the Ministry’s Vision, Administrative Structure, Principal Officers, and Operational Responsibilities'}
                 </h2>
               </div>
             </Wrapper>

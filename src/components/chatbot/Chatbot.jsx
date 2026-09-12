@@ -1,5 +1,3 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { createClient } from '@supabase/supabase-js';
 import { ArrowDown, ArrowUp, Language, NavArrowDown, Xmark } from 'iconoir-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -13,12 +11,8 @@ import pdf from '../../pages/MDAs/shared/assets/sectionsIcons/pdf.png';
 import { useThemeStore } from '../../pages/MDAs/stores/theme.store';
 import { useApp } from '../../stores/app.store';
 import { useChatStore } from '../../stores/chat.store';
-import {
-  extractLgaFromMessage,
-  getLgaPrompt,
-  needsLocationContext,
-} from '../../utils/locationUtils';
-import { openRouterComplete, openRouterStream } from '../../utils/openrouter';
+import { loadInitialSuggestions } from '../../utils/generateInitialSuggestions';
+import { agentChatStream } from '../../utils/openrouter';
 import LanguageModal from '../language/LanguageModal';
 import './chatbot.css';
 import think_img from './comment.png';
@@ -45,37 +39,6 @@ const MINISTRY_CONTEXT_MAP = {
   '': { name: 'Lagos State Official Website', url: 'https://lagosstate.gov.ng' },
 };
 
-// ---- Gemini instance — kept only for embeddings (RAG retrieval); chat completions now go through OpenRouter ----
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-
-// ---- Supabase ----
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_KEY);
-
-// ---- Simple in-memory cache ----
-const suggestionCache = new Map();
-const CACHE_DURATION = 10 * 60 * 1000; // 10 min
-
-// ---- Personnel keywords — used to skip stale PDF chunks for people questions ----
-const PERSONNEL_KEYWORDS = [
-  'commissioner',
-  'governor',
-  'chief of staff',
-  'deputy governor',
-  'ssg',
-  'secretary to the state',
-  'head of service',
-  'special adviser',
-  'special advisor',
-  'leadership',
-  'cabinet',
-  'executive council',
-  'who leads',
-  'who is the',
-  'who are the',
-  'ministers',
-  'political',
-];
-
 const Chatbot = ({ pageContext }) => {
   // ---- Chat store ----
   const checkIsChatOpen = useChatStore((state) => state.checkIsChatOpen);
@@ -100,16 +63,10 @@ const Chatbot = ({ pageContext }) => {
   ]);
   const [mdaServices, setMdaServices] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showScrollButton, setShowScrollButton] = useState(false);
-  const [followUps, setFollowUps] = useState([]);
-  const [isStreaming, setIsStreaming] = useState(false);
   const [initialSuggestions, setInitialSuggestions] = useState([]);
   const [welcomeSuggestions, setWelcomeSuggestions] = useState([]);
   const chatWindowRef = useRef(null);
   const inputRef = useRef(null);
-  const isUserScrolling = useRef(false);
-  const [isLocationPrompt, setIsLocationPrompt] = useState(null);
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const setSuggestions = useApp((state) => state.setSuggestions);
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const setLanguagePreference = useChatStore((state) => state.setLanguagePreference);
@@ -307,21 +264,12 @@ ${
 }
 
 ══════════════════════════════════════════════════════════
-⚙️ AVAILABLE SERVICES (${allServices.length} total):
-${
-  allServices.length > 0
-    ? allServices
-        .map(
-          (s) =>
-            `• ${s.name}${s.short ? ` — ${s.short}` : ''}${s.categories?.length > 0 ? ` [${s.categories.join(', ')}]` : ''}${s.url ? ` → ${s.url}` : ''}`
-        )
-        .join('\n')
-    : '- Loading...'
-}
+⚙️ SERVICES: Use the search_lagos_services tool to find services relevant to
+what the user is asking — do not guess or list services from memory.
 
 Official Portal: https://lagosstate.gov.ng
 `;
-  }, [isGeneralPage, executiveCouncil, allMdas, allServices]);
+  }, [isGeneralPage, executiveCouncil, allMdas]);
 
   // ── Memoized system prompt ────────────────────────────────────────────────────
   const ministryContext = useMemo(() => {
@@ -411,8 +359,12 @@ You are assisting a user on the "${safePage || 'Lagos State Government'}" sectio
 ${contextBlock}
 
 🧭 BEHAVIOURAL RULES:
-- CRITICAL: For questions about current leadership, commissioners, governor, deputy governor, chief of staff, SSG, head of service, or any government personnel — ALWAYS use the live data provided above in this system context. NEVER source personnel names or roles from uploaded documents, as those are historical and may be outdated.
-- Uploaded knowledge base documents are ONLY authoritative for policies, budgets, financial reports, procedures, and non-personnel content.
+- You have tools available: search_lagos_services, search_knowledge_base, and web search. Call a tool only when you actually need information you don't already have — never for greetings, thanks, or anything already answered by the live data above.
+- Use search_lagos_services when the user is asking how to access, apply for, or use a specific citizen service.
+- CRITICAL: For questions about current leadership, commissioners, governor, deputy governor, chief of staff, SSG, head of service, or any government personnel — ALWAYS use the live data provided above in this system context. NEVER call search_knowledge_base for personnel/leadership questions, since uploaded documents may be outdated.
+- Uploaded knowledge base documents (via search_knowledge_base) are ONLY authoritative for policies, budgets, financial reports, procedures, and non-personnel content.
+- If neither the live data above nor your tools give you a confident answer, use web search — prefer official Lagos State / government sources, and clearly say when information comes from the web.
+- If the user asks something that depends on their location (e.g. "nearest office", "services near me") and you don't already know their Local Government Area (LGA) from the conversation, ask them which LGA they're in before answering instead of guessing.
 - When citing a document, note its title and year if available, and remind the user that personnel/leadership information in that document may no longer be current.
 - Answer questions with verified Lagos-specific details.
 - When answering from knowledge base documents, mention the document name.
@@ -635,24 +587,9 @@ ${history}
   }, [ChatStoreMessage, checkIsChatOpen]);
 
   useEffect(() => {
-    setIsChatOpen(false);
     setCheckIsChatOpen(false);
-    suggestionCache.clear();
     document.body.style.overflow = 'auto';
   }, [location]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!chatWindowRef.current) return;
-      const { scrollTop, scrollHeight, clientHeight } = chatWindowRef.current;
-      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
-      setShowScrollButton(!isAtBottom);
-      isUserScrolling.current = !isAtBottom;
-    };
-    const chatEl = chatWindowRef.current;
-    if (chatEl) chatEl.addEventListener('scroll', handleScroll);
-    return () => chatEl && chatEl.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     setSuggestions(initialSuggestions);
@@ -675,291 +612,78 @@ ${history}
   }, [messages]);
 
   // ---- Generate initial suggestions ----
+  // Shares a persistent (localStorage, 60-min) cache with App.jsx's first-paint
+  // gate — for the page the user landed on, this resolves instantly from that
+  // same cache entry instead of firing a second AI call.
   useEffect(() => {
     async function generateInitialSuggestions() {
       if (messages.length !== 1) return;
-      const cacheKey = `initial_${safePage}`;
-      const cached = suggestionCache.get(cacheKey);
-      if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-        setInitialSuggestions(cached.data);
-        return;
-      }
-      const contextName = ministryInfo?.name || pageContext || 'Lagos State Government';
-      const prompt = `Generate 7 engaging, conversational questions about Lagos State services. Minimum 3 words, maximum 4 words each. Must make sense and be natural. Use this style: "pay utility bills", "health services near me", "file my taxes", "emergency safety numbers", "education in Lagos", "government benefits info", "fun recreational spots", "parks and gardens", "ministry building location", "ministry contact info". Focus on everyday needs like transportation, utilities, healthcare, education, business, emergency, recreation, and government services. Make them natural requests people would actually ask. Format: question1||question2||question3||question4||question5||question6||question7`;
-      try {
-        const text = await openRouterComplete([{ role: 'user', content: prompt }]);
-        const suggestions = text
-          .split('||')
-          .map((q) => q.trim())
-          .filter(Boolean)
-          .slice(0, 7);
-        suggestionCache.set(cacheKey, { data: suggestions, timestamp: Date.now() });
-        setInitialSuggestions(suggestions);
-      } catch (err) {
-        console.error('Error generating suggestions:', err);
-      }
+      const suggestions = await loadInitialSuggestions(safePage || 'general');
+      setInitialSuggestions(suggestions);
     }
     generateInitialSuggestions();
-  }, [pageContext, ministryInfo, safePage, messages.length, isGeneralPage]);
-
-  // ── Retrieve context from BOTH services table + document chunks ───────────────
-  const getRelevantLagosContext = useCallback(
-    async (query) => {
-      try {
-        const model = genAI.getGenerativeModel({ model: 'gemini-embedding-001' });
-        const embeddingResp = await model.embedContent({
-          content: { role: 'user', parts: [{ text: `${pageContext} ${query}` }] },
-          taskType: 'RETRIEVAL_QUERY',
-          outputDimensionality: 768,
-        });
-        const embedding = embeddingResp.embedding.values;
-
-        // Detect if question is about people/leadership — skip PDF chunks if so
-        const queryIsAboutPeople = PERSONNEL_KEYWORDS.some((kw) =>
-          query.toLowerCase().includes(kw)
-        );
-
-        const [servicesResult, docsResult] = await Promise.all([
-          supabase.rpc('match_lagos_services', {
-            query_embedding: embedding,
-            match_threshold: 0.5,
-            match_count: 4,
-          }),
-          // Skip doc chunks entirely for personnel questions to avoid stale data
-          queryIsAboutPeople
-            ? Promise.resolve({ data: [], error: null })
-            : supabase.rpc('match_chunks', {
-                query_embedding: embedding,
-                match_threshold: 0.6,
-                match_count: 6,
-              }),
-        ]);
-
-        const contextParts = [];
-        const downloadSources = [];
-
-        if (!servicesResult.error && servicesResult.data?.length > 0) {
-          const servicesContext = servicesResult.data
-            .map((d) => `🏛️ **${d.name}**: ${d.short || ''} [Visit](${d.url || '#'})`)
-            .join('\n');
-          contextParts.push(`## Lagos State Services\n${servicesContext}`);
-        }
-
-        if (!docsResult.error && docsResult.data?.length > 0) {
-          // Dedupe by document name, keep highest similarity
-          const docMap = {};
-          for (const chunk of docsResult.data) {
-            if (
-              !docMap[chunk.document_name] ||
-              chunk.similarity > docMap[chunk.document_name].similarity
-            ) {
-              docMap[chunk.document_name] = chunk;
-            }
-          }
-
-          const docsContext = docsResult.data
-            .map(
-              (chunk) =>
-                `📄 **${chunk.document_name}** (${Math.round(chunk.similarity * 100)}% match):\n${chunk.content}`
-            )
-            .join('\n\n');
-          contextParts.push(`## Knowledge Base Documents\n${docsContext}`);
-
-          // Generate public download URLs for each unique matched doc
-          for (const doc of Object.values(docMap)) {
-            if (doc.file_path) {
-              const { data: urlData } = supabase.storage.from('pdfs').getPublicUrl(doc.file_path);
-              if (urlData?.publicUrl) {
-                downloadSources.push({ name: doc.document_name, url: urlData.publicUrl });
-              }
-            }
-          }
-        }
-
-        return { context: contextParts.join('\n\n'), downloadSources };
-      } catch (err) {
-        console.error('Error retrieving context:', err);
-        return { context: '', downloadSources: [] };
-      }
-    },
-    [pageContext]
-  );
-
-  // ---- Generate follow-ups ----
-  const generateFollowUps = useCallback(
-    async (lastReply, sender) => {
-      if (sender !== 'assistant') return [];
-      try {
-        let contextStr = '';
-        let entityName = '';
-
-        if (mdaData && Object.keys(mdaData).length > 0) {
-          entityName = mdaData.fullname || mdaData.name || currentMda;
-          let services = [];
-          try {
-            const sd = await getAllServicesCategory(formattedName(mdaData.fullname));
-            services =
-              sd?.data
-                ?.map((s) => s.name)
-                .filter(Boolean)
-                .slice(0, 5) || [];
-          } catch (_) {}
-          contextStr = `MDA: ${entityName}\nServices: ${services.join(', ') || 'various'}\nContact: ${mdaData.contact?.email || 'available'}`;
-        } else if (isGeneralPage) {
-          entityName = 'Lagos State Government';
-          const serviceNames = allServices
-            .slice(0, 8)
-            .map((s) => s.name)
-            .filter(Boolean);
-          const mdaNames = allMdas
-            .slice(0, 6)
-            .map((m) => m.name)
-            .filter(Boolean);
-          const leaders = executiveCouncil.slice(0, 3).map((m) => `${m.name} (${m.position})`);
-          contextStr = `Entity: Lagos State Government\nServices: ${serviceNames.join(', ') || 'healthcare, business, transport, education'}\nLeadership: ${leaders.join(', ') || 'Governor, Deputy Governor, Commissioners'}\nAgencies: ${mdaNames.join(', ') || 'various MDAs'}`;
-        } else {
-          return [];
-        }
-
-        const prompt = `Generate 5 service-focused follow-up questions (under 10 words each) for ${entityName} based on:
-Response: "${lastReply.slice(0, 200)}"
-Context: ${contextStr}
-Rules: Questions must be actionable and about ${entityName} services only.
-Format: q1||q2||q3||q4||q5`;
-
-        const text = await openRouterComplete([{ role: 'user', content: prompt }]);
-        return text
-          .split('||')
-          .map((q) => q.trim())
-          .filter(Boolean)
-          .slice(0, 5);
-      } catch (err) {
-        console.error('Follow-up generation error:', err);
-        return [];
-      }
-    },
-    [mdaData, currentMda, isGeneralPage, executiveCouncil, allServices, allMdas]
-  );
-
-  // ---- Location detection ----
-  const detectNeedsLocation = useCallback((message) => {
-    return ['near', 'closest', 'nearby', 'around', 'in my area', 'location'].some((kw) =>
-      message.toLowerCase().includes(kw)
-    );
-  }, []);
+  }, [safePage, messages.length]);
 
   // ── Main handleSubmit ─────────────────────────────────────────────────────────
+  // Retrieval (services/knowledge-base search), web search, and the
+  // "do I need their LGA?" decision all used to be client-side heuristics
+  // (keyword lists, a confidence-score hack, a location state machine) run
+  // before every model call. They're gone — the backend agent endpoint gives
+  // the model real tools and lets it decide when it actually needs them.
+  //
+  // This is real token-by-token streaming again, just layered under the tool
+  // loop: the backend streams every round, but tool-resolution rounds carry no
+  // visible content (the model emits tool_calls, not text, on those turns), so
+  // only the final round's tokens ever reach `onToken` — the "thinking" bubble
+  // (via isAwaitingResponse below) naturally covers the tool-resolution time
+  // and disappears the instant real answer tokens start arriving.
   const handleSubmit = useCallback(
     async (customInput) => {
       const input = customInput || chatInput;
       if (input.trim() === '' || loading) return;
 
       setLoading(true);
-      setFollowUps([]);
-      setIsStreaming(true);
 
       setMessages((prev) => [...prev, { role: 'user', content: input }]);
       scrollToBottom();
 
-      const lga = extractLgaFromMessage(input);
-      const needsLoc = needsLocationContext(input);
-      const needsLocation = detectNeedsLocation(input);
-      let activePrompt = isLocationPrompt;
-
-      if (needsLoc && !lga && needsLocation) {
-        activePrompt = input;
-        setIsLocationPrompt(input);
-        setLoading(false);
-        setMessages((prev) => [...prev, { role: 'assistant', content: getLgaPrompt() }]);
-        setChatInput('');
-        return;
-      }
-
-      const finalInput =
-        (needsLocation && activePrompt) || isLocationPrompt
-          ? `${activePrompt || isLocationPrompt} in ${input}`
-          : input;
-
-      if (activePrompt || isLocationPrompt) setIsLocationPrompt(null);
-
-      const assessConfidence = (text) => {
-        const uncertain = [
-          'not sure',
-          "i don't have",
-          'i need to check',
-          'cannot verify',
-          'unknown',
-          'i am unsure',
-        ];
-        const count = uncertain.filter((kw) => text.toLowerCase().includes(kw)).length;
-        return 1 - count / uncertain.length;
-      };
-
-      const fetchFallback = async (query) => {
-        try {
-          return await openRouterComplete([
-            {
-              role: 'user',
-              content: `Provide verified Lagos State info (official sites only) for: "${query}" in under 100 words.`,
-            },
-          ]);
-        } catch (_) {
-          return '';
-        }
-      };
-
       try {
-        const { context: lagosContext, downloadSources } =
-          await getRelevantLagosContext(finalInput);
-
-        const contextualPrompt = lagosContext
-          ? `## Relevant Lagos State Context:\n${lagosContext}\n\n## Instructions\n- Prioritize Knowledge Base Documents and Services above.\n- Mention document names when referencing them.\n- For leadership/personnel questions, rely ONLY on the live data in your system context, not on documents.\n- Keep answers focused on Lagos State.\n\n## User Question\n${finalInput}`
-          : finalInput;
-
-        let assistantText = '';
-        let fallbackTriggered = false;
-
         setMessages((prev) => [...prev, { role: 'assistant', content: '', downloadSources: [] }]);
 
-        await openRouterStream(
+        const { content, downloadSources, truncated } = await agentChatStream(
           [
             { role: 'system', content: ministryContext },
-            { role: 'user', content: contextualPrompt },
+            { role: 'user', content: input },
           ],
           {
-            maxTokens: 1024,
+            webSearch: true,
+            maxTokens: 4096,
             temperature: 0.7,
-            onToken: async (textPart) => {
-              assistantText += textPart;
-
-              if (!fallbackTriggered && assessConfidence(textPart) < 0.6) {
-                fallbackTriggered = true;
-                const snippet = await fetchFallback(input);
-                if (snippet)
-                  assistantText += `\n\n🔎 Latest info from Lagos State sites:\n${snippet}`;
-              }
-
+            onToken: (_delta, fullSoFar) => {
               setMessages((prev) => {
                 const updated = [...prev];
                 const last = updated[updated.length - 1];
-                if (last.role === 'assistant') last.content = assistantText;
+                if (last.role === 'assistant') last.content = fullSoFar;
                 return updated;
               });
             },
           }
         );
 
-        // Attach download sources after streaming completes
+        const truncationNotice = truncated
+          ? '\n\n*(That answer got cut short — ask me to continue if you need the rest.)*'
+          : '';
+        const fullText = (content || '') + truncationNotice;
+
         setMessages((prev) => {
           const updated = [...prev];
           const last = updated[updated.length - 1];
-          if (last.role === 'assistant') last.downloadSources = downloadSources;
+          if (last.role === 'assistant') {
+            last.content = fullText;
+            last.downloadSources = downloadSources || [];
+          }
           return updated;
         });
-
-        setIsStreaming(false);
-        const followUpQs = await generateFollowUps(assistantText, 'assistant');
-        setFollowUps(followUpQs);
       } catch (err) {
         console.error('Chat error:', err);
         setMessages((prev) => [
@@ -971,17 +695,7 @@ Format: q1||q2||q3||q4||q5`;
       setChatInput('');
       setLoading(false);
     },
-    [
-      chatInput,
-      loading,
-      isLocationPrompt,
-      messages.length,
-      ministryContext,
-      getRelevantLagosContext,
-      detectNeedsLocation,
-      scrollToBottom,
-      generateFollowUps,
-    ]
+    [chatInput, loading, ministryContext, scrollToBottom]
   );
 
   // ---- Clickable service component ----
@@ -1029,7 +743,8 @@ Format: q1||q2||q3||q4||q5`;
   // keep the thinking indicator up only until the assistant's actual answer text starts arriving.
   const lastMessage = messages[messages.length - 1];
   const isAwaitingResponse =
-    loading && (!lastMessage || lastMessage.role !== 'assistant' || lastMessage.content.trim() === '');
+    loading &&
+    (!lastMessage || lastMessage.role !== 'assistant' || lastMessage.content.trim() === '');
 
   // ── Render ────────────────────────────────────────────────────────────────────
   return (
@@ -1097,12 +812,12 @@ Format: q1||q2||q3||q4||q5`;
 
               {isAwaitingResponse && (
                 <div className="thinking">
-                  <p>
-                    <div className="think_img">
+                  <div>
+                    {/* <div className="think_img">
                       <img src={think_img} alt="Think" />
-                    </div>
+                    </div> */}
                     Eko Smart is thinking
-                  </p>
+                  </div>
                   <span className="thinking-dots"></span>
                 </div>
               )}
@@ -1125,22 +840,6 @@ Format: q1||q2||q3||q4||q5`;
           </div>
 
           <div className="input-section flex flex-col gap-[10px]">
-            <div className="overflow-clip overflow-x-auto w-[calc(100%-20px)] no-scrollbar">
-              {followUps.length > 0 && (
-                <div className="followups flex-nowrap!">
-                  {followUps.map((q, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleSubmit(q)}
-                      className="followup-btn flex-shrink-0"
-                    >
-                      {q}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
             <textarea
               ref={inputRef}
               disabled={loading}
