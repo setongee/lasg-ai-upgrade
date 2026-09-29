@@ -144,7 +144,7 @@ export default function LiveForm({ onBack }) {
           className={`fixed w-screen h-screen top-0 left-0 ${currentTheme.bg} opacity-50 z-1`}
         ></div>
         <div className="max-w-2xl mx-auto relative z-2">
-          <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
+          <div className="bg-[var(--theme-page-bg,#ffffff)] rounded-xl border-2 border-gray-200 overflow-hidden">
             <div className={`px-6 py-5 bg-gradient-to-r ${currentTheme.gradient}`}>
               <h2 className="text-white font-bold text-xl">Form Submitted!</h2>
               <p className="text-white/90 text-sm mt-1">Thank you for your response.</p>
@@ -159,7 +159,7 @@ export default function LiveForm({ onBack }) {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Thank you!</h3>
+              <h3 className="text-lg font-semibold text-[var(--theme-page-text,#111827)] mb-2">Thank you!</h3>
               <p className="text-gray-600 mb-6">Your form has been successfully submitted.</p>
               {onBack && (
                 <button
@@ -204,7 +204,7 @@ export default function LiveForm({ onBack }) {
             </span>
           </div>
         )}
-        <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
+        <div className="bg-[var(--theme-page-bg,#ffffff)] rounded-xl border-2 border-gray-200 overflow-hidden">
           {/* Header */}
           <div className={`px-6 py-5 bg-gradient-to-r ${currentTheme.gradient}`}>
             <h2 className="text-white font-bold text-xl">{form.title}</h2>
@@ -215,7 +215,7 @@ export default function LiveForm({ onBack }) {
           <div className="p-6 space-y-6">
             {(form.fields || []).map((field) => (
               <div key={field.id}>
-                <label className="block text-sm font-medium text-gray-800 mb-1.5">
+                <label className="block text-sm font-medium text-[var(--theme-page-text,#1f2937)] mb-1.5">
                   {field.label}
                   {field.required && <span className="text-red-500 ml-0.5">*</span>}
                 </label>
@@ -243,7 +243,7 @@ export default function LiveForm({ onBack }) {
                   <select
                     value={vals[field.id] || ''}
                     onChange={(e) => setVal(field.id, e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 ${currentTheme.focus} ${errors[field.id] ? 'border-red-400' : 'border-gray-300'}`}
+                    className={`w-full px-3 py-2 border rounded-lg text-sm bg-[var(--theme-page-bg,#ffffff)] focus:outline-none focus:ring-2 ${currentTheme.focus} ${errors[field.id] ? 'border-red-400' : 'border-gray-300'}`}
                   >
                     <option value="">Select an option</option>
                     {(field.options || []).map((o, i) => (
@@ -265,7 +265,7 @@ export default function LiveForm({ onBack }) {
                           Array.from(e.target.selectedOptions, (o) => o.value)
                         )
                       }
-                      className={`w-full px-3 py-2 border rounded-lg text-sm bg-white focus:outline-none focus:ring-2 ${currentTheme.focus} ${errors[field.id] ? 'border-red-400' : 'border-gray-300'}`}
+                      className={`w-full px-3 py-2 border rounded-lg text-sm bg-[var(--theme-page-bg,#ffffff)] focus:outline-none focus:ring-2 ${currentTheme.focus} ${errors[field.id] ? 'border-red-400' : 'border-gray-300'}`}
                       style={{ minHeight: 90 }}
                     >
                       {(field.options || []).map((o, i) => (
@@ -346,7 +346,7 @@ export default function LiveForm({ onBack }) {
                             {uploadingFiles[field.id].progress}%
                           </span>
                         </div>
-                        <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                        <div className="w-full bg-[var(--theme-section-bg,#f3f4f6)] rounded-full h-1.5 overflow-hidden">
                           <div
                             className={`h-full transition-all duration-300 ease-out ${
                               uploadingFiles[field.id].status === 'failed'

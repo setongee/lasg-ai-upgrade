@@ -11,7 +11,7 @@ const TabStripHeader = ({ fullname }) => {
   const mdaData = useThemeStore((state) => state.mdaData);
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-[#fff] border-b border-[#e7e7e7]">
+    <header className="fixed top-0 w-full z-50 bg-[var(--theme-page-bg,#fff)] border-b border-[#e7e7e7]">
       {isLargeScreen && (
         <InfoBar data={mdaData?.landingPage?.infoBar} fullname={mdaData?.fullname} />
       )}

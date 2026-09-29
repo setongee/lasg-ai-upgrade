@@ -1,7 +1,7 @@
 .badger {
   a {
     line-height: 23px;
-    color: #000;
+    color: var(--theme-page-text, #000);
   }
 }
 
@@ -10,11 +10,10 @@
 }
 
 .footer__mda {
-  background-color: #f8fff9;
-  background-color: #f8f8f8;
+  background-color: var(--theme-page-bg, #f8f8f8);
   position: relative;
   margin-top: 0px;
-  color: #000;
+  color: var(--theme-page-text, #000);
   z-index: 99;
   bottom: 0;
 
@@ -24,7 +23,7 @@
 
     .topPart {
       /* border-top: 1px solid #0000001b; */
-      border-bottom: 1px solid #0000001b;
+      border-bottom: 1px solid color-mix(in srgb, var(--theme-page-text, #000) 10%, transparent);
       padding: 50px 0;
       /* padding-bottom: 0px; */
       display: flex;
@@ -48,7 +47,7 @@
         cursor: pointer;
 
         .icon {
-          color: #000;
+          color: var(--theme-page-text, #000);
 
           &:hover {
             color: #009c3e;
@@ -84,7 +83,7 @@
             display: flex;
             gap: 7px;
             align-items: center;
-            color: #000;
+            color: var(--theme-page-text, #000);
             text-transform: uppercase;
             font-size: 12px;
             letter-spacing: 2px;

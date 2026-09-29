@@ -13,7 +13,7 @@ const CoreServices = ({
 
   return (
     <section
-      className={`bg-[#e6edef] md:py-20 py-16 pb-10 ${
+      className={`bg-[var(--theme-section-bg,#e6edef)] md:py-20 py-16 pb-10 ${
         isEdit && viewMode === 'edit'
           ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
           : ''

@@ -1,6 +1,7 @@
 import { ArrowUpRight, Check } from 'iconoir-react';
 import { useState } from 'react';
-import { isDarkBackground } from '../../shared/utils/backgroundContrast';
+import { isDarkBackground, resolveCustomBackground } from '../../shared/utils/backgroundContrast';
+import { useThemeStore } from '../../stores/theme.store';
 import Modal from '../../shared/modal/Modal';
 import Wrapper from '../../shared/Wrapper/Wrapper';
 
@@ -14,11 +15,13 @@ const CoreInformation = ({
   onComponentClick = () => {},
 }) => {
   const [activeCardIndex, setActiveCardIndex] = useState(null);
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
 
   if (!data) return null;
 
-  const hasCustomBackground = !!data?.backgroundColor;
-  const backgroundColor = data?.backgroundColor || DEFAULT_BACKGROUND;
+  const customBackground = resolveCustomBackground(data?.backgroundColor, isDarkMode);
+  const hasCustomBackground = !!customBackground;
+  const backgroundColor = customBackground || DEFAULT_BACKGROUND;
   const onDark = hasCustomBackground ? isDarkBackground(backgroundColor) : null;
 
   const activeCard = activeCardIndex !== null ? data?.cards?.[activeCardIndex] : null;
@@ -26,7 +29,7 @@ const CoreInformation = ({
   return (
     <section
       style={{ backgroundColor }}
-      className={`lg:py-[30px] mb-[80px] py-[0px] coreInformationSection ${
+      className={`lg:py-[30px] mb-[40px] py-[0px] coreInformationSection ${
         isEdit && viewMode === 'edit'
           ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
           : ''
@@ -48,11 +51,11 @@ const CoreInformation = ({
             return (
               <div
                 key={index}
-                className="card__blaze bg-gray-50 p-6 rounded-[8px] flex flex-col gap-8"
+                className="card__blaze bg-[var(--theme-page-bg,#f9fafb)] border border-[color-mix(in_srgb,var(--theme-page-text,#111827)_15%,transparent)] p-6 rounded-[8px] flex flex-col gap-8"
               >
                 <div className="text__container flex flex-col flex-1">
                   <div className="w-[80%] text-[16px] font-semibold mb-3">{card.title}</div>
-                  <p className="text-[15px] leading-[170%] mb-8 line-clamp-3 h-[78px] overflow-hidden text-gray-500">
+                  <p className="text-[15px] leading-[170%] mb-8 line-clamp-3 h-[78px] overflow-hidden opacity-60">
                     {card.description}
                   </p>
 
@@ -101,7 +104,7 @@ const CoreInformation = ({
       <Modal
         open={activeCardIndex !== null}
         onClose={() => setActiveCardIndex(null)}
-        contentStyling="max-w-2xl mx-auto mt-20 bg-white rounded-[8px] p-8 max-h-[75vh] overflow-y-auto"
+        contentStyling="max-w-2xl mx-auto mt-20 bg-[var(--theme-page-bg,#ffffff)] rounded-[8px] p-8 max-h-[75vh] overflow-y-auto"
       >
         {activeCard && (
           <div>

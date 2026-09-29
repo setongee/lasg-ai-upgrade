@@ -6,6 +6,7 @@ import Footer from '../../shared/footer/Footer';
 import LiveForm from '../../shared/forms/LiveForm';
 import Gallery from '../../shared/gallery/Gallery';
 import News_Events from '../../shared/news_events/News_Events';
+import DarkModeToggle from '../../shared/darkModeToggle/DarkModeToggle';
 import Resources from '../../shared/resources/resources';
 import { themeCssVars } from '../../shared/utils/colorTheme';
 import { useThemeStore } from '../../stores/theme.store';
@@ -17,7 +18,8 @@ import Home from './home/home';
 const MistTheme = ({ isEdit }) => {
   const { page } = useParams();
   const data = useThemeStore((state) => state.mdaData);
-  const themeVars = themeCssVars(data?.colorTheme);
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
+  const themeVars = themeCssVars(data?.colorTheme, isDarkMode);
 
   useEffect(() => {
     const footer = document.querySelector('.footer');
@@ -60,6 +62,7 @@ const MistTheme = ({ isEdit }) => {
         <HeaderEdit fullname={data?.fullname} />
         {renderPage()}
         <Footer data={data} />
+        <DarkModeToggle />
       </div>
     );
   }
@@ -69,6 +72,7 @@ const MistTheme = ({ isEdit }) => {
       <Header fullname={data?.fullname} />
       {renderPage()}
       <Footer data={data} />
+      <DarkModeToggle />
     </div>
   );
 };

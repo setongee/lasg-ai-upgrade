@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router';
 import { getAlbumsForMda } from '../../../../api/read/gallery.req';
-import { isDarkBackground } from '../../shared/utils/backgroundContrast';
+import { isDarkBackground, resolveCustomBackground } from '../../shared/utils/backgroundContrast';
+import { useThemeStore } from '../../stores/theme.store';
 import Wrapper from '../../shared/Wrapper/Wrapper';
 
 const DEFAULT_BACKGROUND = 'var(--theme-section-bg, #ffffff)';
@@ -14,6 +15,7 @@ const GalleryPreview = ({
   onComponentClick = () => {},
 }) => {
   const { mda } = useParams();
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
 
   const { data } = useQuery({
     queryKey: ['gallery-preview', mda],
@@ -23,8 +25,9 @@ const GalleryPreview = ({
 
   const albums = (data?.data || []).slice(0, 3);
 
-  const resolvedBackground = backgroundColor || DEFAULT_BACKGROUND;
-  const onDark = backgroundColor ? isDarkBackground(resolvedBackground) : null;
+  const customBackground = resolveCustomBackground(backgroundColor, isDarkMode);
+  const resolvedBackground = customBackground || DEFAULT_BACKGROUND;
+  const onDark = customBackground ? isDarkBackground(resolvedBackground) : null;
 
   if (!isEdit && albums.length === 0) return null;
 
@@ -57,7 +60,7 @@ const GalleryPreview = ({
               <a
                 key={album._id}
                 href={`/${mda}/gallery/${album._id}`}
-                className="rounded-2xl overflow-hidden h-[220px] bg-gray-100 block"
+                className="rounded-2xl overflow-hidden h-[220px] bg-[var(--theme-section-bg,#f3f4f6)] block"
               >
                 {album.coverImage && (
                   <img src={album.coverImage} alt="" className="w-full h-full object-cover" />

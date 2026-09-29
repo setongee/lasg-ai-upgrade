@@ -7,14 +7,14 @@ import Agencies from './Agency/Agency';
 import People from './People/People';
 
 const NAV_LINK_CLASS =
-  'uppercase text-[11px] tracking-[2px] font-medium border-r border-[#bdbdbd] pr-5 !text-[#131313] last:border-none last:pr-0 max-[1000px]:min-w-max max-[1000px]:px-5 max-[1000px]:py-[10px] max-[1000px]:rounded-full max-[1000px]:bg-[#eee] max-[1000px]:border max-[1000px]:border-[#e7e7e7] [&.active-scroll-spy]:!text-[var(--theme-accent,#108a00)]';
+  'uppercase text-[11px] tracking-[2px] font-medium border-r border-[color-mix(in_srgb,var(--theme-page-text,#000)_15%,transparent)] pr-5 !text-[var(--theme-page-text,#131313)] last:border-none last:pr-0 max-[1000px]:min-w-max max-[1000px]:px-5 max-[1000px]:py-[10px] max-[1000px]:rounded-full max-[1000px]:bg-[var(--theme-section-bg,#eee)] max-[1000px]:border max-[1000px]:border-[color-mix(in_srgb,var(--theme-page-text,#000)_10%,transparent)] [&.active-scroll-spy]:!text-[var(--theme-accent,#108a00)]';
 
 const About = () => {
   const data = useThemeStore((state) => state.mdaData);
 
   return (
     <div className="mt-[115px] max-[1000px]:mt-[190px] max-[700px]:mt-[185px]">
-      <div className="w-full fixed bg-white top-[114px] py-5 border-b border-[#eee] z-40 max-[1000px]:top-[90px] max-[1000px]:py-[10px] max-[1000px]:border-none max-[1000px]:bg-transparent">
+      <div className="w-full fixed bg-[var(--theme-page-bg,#ffffff)] top-[114px] py-5 border-b border-[color-mix(in_srgb,var(--theme-page-text,#000)_10%,transparent)] z-40 max-[1000px]:top-[90px] max-[1000px]:py-[10px] max-[1000px]:border-none max-[1000px]:bg-transparent">
         <Wrapper>
           <div className="flex gap-5 justify-center max-[1000px]:gap-[10px] max-[1000px]:justify-start max-[1000px]:overflow-hidden max-[1000px]:overflow-x-auto max-[1000px]:[scrollbar-width:none] max-[1000px]:[-ms-overflow-style:none] max-[1000px]:[&::-webkit-scrollbar]:hidden">
             <a href="#history" data-to-scrollspy-id="history" className={NAV_LINK_CLASS}>
@@ -99,15 +99,15 @@ const About = () => {
 
         {/* responsibilities */}
         <section
-          className="!bg-[#e6edef] py-20 my-20 max-[1000px]:pt-[50px] max-[1000px]:pb-0 max-[1000px]:my-[30px]"
+          className="!bg-[var(--theme-section-bg,#e6edef)] py-20 my-20 max-[1000px]:pt-[50px] max-[1000px]:pb-0 max-[1000px]:my-[30px]"
           id="responsibility"
         >
           <Wrapper>
             <div className="flex items-center justify-between max-[1000px]:!w-4/5 max-[1000px]:flex-col max-[1000px]:items-center max-[1000px]:justify-center max-[1000px]:mx-auto max-[700px]:!w-full">
-              <h1 className="!text-[#131313] text-[40px] leading-[130%] font-semibold w-[800px] max-[1000px]:text-[32px] max-[1000px]:w-full max-[1000px]:text-center max-[1000px]:mb-5 max-[700px]:text-[26px] max-[700px]:w-full">
+              <h1 className="!text-[var(--theme-page-text,#131313)] text-[40px] leading-[130%] font-semibold w-[800px] max-[1000px]:text-[32px] max-[1000px]:w-full max-[1000px]:text-center max-[1000px]:mb-5 max-[700px]:text-[26px] max-[700px]:w-full">
                 Roles and Responsibilities: Understanding Core Functions, Duties, and Key Roles
               </h1>
-              <span className="!text-[#555555] w-[300px] leading-[180%] max-[1000px]:w-4/5 max-[1000px]:text-center max-[700px]:w-full">
+              <span className="!text-[var(--theme-page-text,#555555)] w-[300px] leading-[180%] max-[1000px]:w-4/5 max-[1000px]:text-center max-[700px]:w-full">
                 A clear guide to the core functions, duties, and key roles that drive effective
                 operations and accountability.
               </span>
@@ -117,7 +117,7 @@ const About = () => {
 
             <RichTextContent
               html={data?.responsibilities}
-              className="flex flex-col gap-5 [&>p:first-child]:mb-[10px] [&>p]:leading-[190%] !text-[#131313]"
+              className="flex flex-col gap-5 [&>p:first-child]:mb-[10px] [&>p]:leading-[190%] !text-[var(--theme-page-text,#131313)]"
             />
           </Wrapper>
         </section>

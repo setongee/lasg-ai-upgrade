@@ -15,7 +15,7 @@ const ServicesListPage = () => {
   });
 
   return (
-    <div className="bg-white mt-[170px] max-[1000px]:mt-[140px] pb-20">
+    <div className="bg-[var(--theme-page-bg,#ffffff)] mt-[170px] max-[1000px]:mt-[140px] pb-20">
       <Wrapper>
         <div className="flex flex-col items-center text-center gap-5 pb-10">
           <h1 className="font-[650] tracking-[-0.5px] leading-[1.15] text-[40px] max-[600px]:text-[26px]">

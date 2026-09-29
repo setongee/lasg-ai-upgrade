@@ -1,0 +1,31 @@
+.darkModeToggle {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 99;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: var(--theme-page-bg, #ffffff);
+  color: var(--theme-page-text, #111827);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease;
+}
+
+.darkModeToggle:hover {
+  transform: scale(1.06);
+}
+
+@media (max-width: 800px) {
+  .darkModeToggle {
+    left: 14px;
+    bottom: 14px;
+    width: 40px;
+    height: 40px;
+  }
+}

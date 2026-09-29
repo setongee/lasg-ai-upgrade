@@ -1,5 +1,6 @@
 import { ArrowUpRight } from 'iconoir-react';
-import { isDarkBackground } from '../../shared/utils/backgroundContrast';
+import { isDarkBackground, resolveCustomBackground } from '../../shared/utils/backgroundContrast';
+import { useThemeStore } from '../../stores/theme.store';
 import Wrapper from '../../shared/Wrapper/Wrapper';
 import pdfIcon from '../../shared/assets/sectionsIcons/pdf.png';
 
@@ -12,12 +13,14 @@ const DocumentShowcase = ({
   selectedComponent = '',
   onComponentClick = () => {},
 }) => {
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const documents = data?.documents || [];
 
   if (!isEdit && documents.length === 0) return null;
 
-  const hasCustomBackground = !!data?.backgroundColor;
-  const backgroundColor = data?.backgroundColor || DEFAULT_BACKGROUND;
+  const customBackground = resolveCustomBackground(data?.backgroundColor, isDarkMode);
+  const hasCustomBackground = !!customBackground;
+  const backgroundColor = customBackground || DEFAULT_BACKGROUND;
   const onDark = hasCustomBackground ? isDarkBackground(backgroundColor) : null;
   const textClass = onDark === null ? '' : onDark ? 'text-white' : 'text-gray-900';
   const mutedTextClass =
@@ -51,10 +54,10 @@ const DocumentShowcase = ({
               target="_blank"
               rel="noreferrer"
               download
-              className="flex-none sm:w-[300px] bg-white overflow-hidden sm:group"
+              className="flex-none sm:w-[300px] bg-[var(--theme-page-bg,#ffffff)] overflow-hidden sm:group"
               onClick={(e) => (isEdit || !doc.url) && e.preventDefault()}
             >
-              <div className="w-full sm:h-[400px] bg-gray-100 flex items-center justify-center overflow-hidden">
+              <div className="w-full sm:h-[400px] bg-[var(--theme-section-bg,#f3f4f6)] flex items-center justify-center overflow-hidden">
                 <img
                   src={doc.thumbnail || pdfIcon}
                   alt=""
@@ -66,10 +69,10 @@ const DocumentShowcase = ({
                 />
               </div>
               <div className="flex py-3 items-center justify-between gap-2 group-hover:px-3 transition-all duration-700">
-                <span className="text-[14px] leading-[1.3] sm:text-[16px] w-[85%] sm:leading-[1.4] font-semibold text-gray-800 line-clamp-2">
+                <span className="text-[14px] leading-[1.3] sm:text-[16px] w-[85%] sm:leading-[1.4] font-semibold text-[var(--theme-page-text,#1f2937)] line-clamp-2">
                   {doc.name || 'Untitled document'}
                 </span>
-                <ArrowUpRight className="text-gray-700 shrink-0" width={16} />
+                <ArrowUpRight className="text-[var(--theme-page-text,#374151)] shrink-0" width={16} />
               </div>
             </a>
           ))}

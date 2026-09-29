@@ -41,7 +41,7 @@ const EventRsvp = ({ eventId }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-2xl bg-gray-50 p-6 flex flex-col gap-4 mt-4"
+      className="rounded-2xl bg-[var(--theme-section-bg,#f9fafb)] p-6 flex flex-col gap-4 mt-4"
     >
       <h3 className="font-semibold text-[16px]">RSVP for this event</h3>
 
@@ -53,7 +53,7 @@ const EventRsvp = ({ eventId }) => {
           value={form.name}
           onChange={handleChange}
           required
-          className="flex-1 p-4 text-[14px] border-none outline-none bg-white rounded-lg"
+          className="flex-1 p-4 text-[14px] border-none outline-none bg-[var(--theme-page-bg,#ffffff)] rounded-lg"
         />
         <input
           type="email"
@@ -62,7 +62,7 @@ const EventRsvp = ({ eventId }) => {
           value={form.email}
           onChange={handleChange}
           required
-          className="flex-1 p-4 text-[14px] border-none outline-none bg-white rounded-lg"
+          className="flex-1 p-4 text-[14px] border-none outline-none bg-[var(--theme-page-bg,#ffffff)] rounded-lg"
         />
       </div>
 

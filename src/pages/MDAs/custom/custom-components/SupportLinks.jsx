@@ -1,5 +1,6 @@
 import { ArrowUpRight, Link as LinkIcon, Mail, Phone } from 'iconoir-react';
-import { isDarkBackground } from '../../shared/utils/backgroundContrast';
+import { isDarkBackground, resolveCustomBackground } from '../../shared/utils/backgroundContrast';
+import { useThemeStore } from '../../stores/theme.store';
 import Wrapper from '../../shared/Wrapper/Wrapper';
 
 const DEFAULT_BACKGROUND = 'var(--theme-section-bg, #ffffff)';
@@ -36,12 +37,14 @@ const SupportLinks = ({
   selectedComponent = '',
   onComponentClick = () => {},
 }) => {
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const links = data || [];
 
   if (!isEdit && links.length === 0) return null;
 
-  const resolvedBackground = backgroundColor || DEFAULT_BACKGROUND;
-  const onDark = backgroundColor ? isDarkBackground(resolvedBackground) : null;
+  const customBackground = resolveCustomBackground(backgroundColor, isDarkMode);
+  const resolvedBackground = customBackground || DEFAULT_BACKGROUND;
+  const onDark = customBackground ? isDarkBackground(resolvedBackground) : null;
 
   return (
     <section
@@ -66,7 +69,7 @@ const SupportLinks = ({
                 href={getFormattedLink(supportLink)}
                 target={!supportLink.linkType || supportLink.linkType === 'page' ? '_blank' : undefined}
                 rel="noopener noreferrer"
-                className="flex items-center justify-between bg-white rounded-[8px] p-5 hover:shadow-md transition-shadow"
+                className="flex items-center justify-between bg-[var(--theme-page-bg,#ffffff)] rounded-[8px] p-5 hover:shadow-md transition-shadow"
                 onClick={(e) => isEdit && e.preventDefault()}
               >
                 <div className="flex items-center gap-3">

@@ -1,8 +1,8 @@
 .serviceCardItem {
-  background-color: #fff;
-  border: 1px solid #e9e9e9;
+  background-color: var(--theme-page-bg, #fff);
+  border: 1px solid color-mix(in srgb, var(--theme-page-text, #111827) 15%, transparent);
   border-radius: 10px;
-  color: var(--dark);
+  color: var(--theme-page-text, #131414);
   cursor: pointer;
   display: flex;
   flex-direction: column;

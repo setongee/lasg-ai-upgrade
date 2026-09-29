@@ -1,6 +1,6 @@
 .news_body{
 
-    background-color: #FDFDFD;
+    background-color: var(--theme-page-bg, #FDFDFD);
 
     .tweets{
         background-color: red;

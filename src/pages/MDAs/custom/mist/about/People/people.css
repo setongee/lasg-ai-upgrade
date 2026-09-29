@@ -32,7 +32,7 @@
     .name__card {
       width: 85%;
       /* // height: 100px; */
-      background-color: #fff;
+      background-color: var(--theme-page-bg, #fff);
       box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.08);
       position: absolute;
       bottom: 0;
@@ -44,7 +44,7 @@
       p {
         font-size: 18px;
         font-weight: 600;
-        color: #131313;
+        color: var(--theme-page-text, #131313);
         margin-top: 12px;
       }
 
@@ -52,7 +52,7 @@
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 2px;
-        color: #555;
+        color: var(--theme-page-text, #555);
         font-weight: 500;
       }
     }

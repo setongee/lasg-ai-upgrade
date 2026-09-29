@@ -23,7 +23,7 @@ export default function ResourcesType2() {
     return (
       <div className="resources">
         <Wrapper>
-          <div className="about-heading flex gap-4! mb-4 text-gray-900!">
+          <div className="about-heading flex gap-4! mb-4 text-[var(--theme-page-text,#111827)]!">
             <div className="w-full">
               <div className="cursor-pointer" onClick={() => navigate(`/${mda}/resources/`)}>
                 <ArrowLeft fontSize={20} />

@@ -15,7 +15,7 @@ const HeaderLg = ({ customClass, fullname, mdaData }) => {
         <div className="logo overflow-hidden w-12 h-12">
           <img src={logo ? logo : lasg__logo} alt={`Lagos State ${fullname}`} />
         </div>
-        <p className="text-[11px] uppercase tracking-[2px] w-[250px] !text-[#131313]">{fullname}</p>
+        <p className="text-[11px] uppercase tracking-[2px] w-[250px] !text-[var(--theme-page-text,#131313)]">{fullname}</p>
       </div>
 
       <div
@@ -23,46 +23,62 @@ const HeaderLg = ({ customClass, fullname, mdaData }) => {
       >
         <div
           className={
-            page === '' || page === undefined ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'
+            page === '' || page === undefined
+              ? '!text-[var(--theme-accent,#2e7d32)] font-bold'
+              : '!text-[var(--theme-page-text,#2d2d2d)]'
           }
           onClick={() => navigate(`/${mda}`)}
         >
           Home
         </div>
         <div
-          className={page === 'about' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
+          className={
+            page === 'about' ? '!text-[var(--theme-accent,#2e7d32)] font-bold' : '!text-[var(--theme-page-text,#2d2d2d)]'
+          }
           onClick={() => navigate(`/${mda}/about`)}
         >
           About
         </div>
         <div
-          className={page === 'news' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
+          className={
+            page === 'news' ? '!text-[var(--theme-accent,#2e7d32)] font-bold' : '!text-[var(--theme-page-text,#2d2d2d)]'
+          }
           onClick={() => navigate(`/${mda}/news?page=1`)}
         >
           Newsroom
         </div>
         <div
-          className={page === 'events' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
+          className={
+            page === 'events' ? '!text-[var(--theme-accent,#2e7d32)] font-bold' : '!text-[var(--theme-page-text,#2d2d2d)]'
+          }
           onClick={() => navigate(`/${mda}/events`)}
         >
           Events
         </div>
         <div
-          className={page === 'gallery' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
+          className={
+            page === 'gallery' ? '!text-[var(--theme-accent,#2e7d32)] font-bold' : '!text-[var(--theme-page-text,#2d2d2d)]'
+          }
           onClick={() => navigate(`/${mda}/gallery`)}
         >
           Gallery
         </div>
         {mdaData?.resources?.length > 0 && (
           <div
-            className={page === 'resources' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
+            className={
+              page === 'resources'
+                ? '!text-[var(--theme-accent,#2e7d32)] font-bold'
+                : '!text-[var(--theme-page-text,#2d2d2d)]'
+            }
             onClick={() => navigate(`/${mda}/resources`)}
           >
             Resources
           </div>
         )}
         <div
-          className={page === 'contact' ? '!text-[#2e7d32] font-bold' : '!text-[#2d2d2d]'}
+          className={
+            page === 'contact' ? '!text-[var(--theme-accent,#2e7d32)] font-bold' : '!text-[var(--theme-page-text,#2d2d2d)]'
+          }
           onClick={() => navigate(`/${mda}/contact`)}
         >
           Contact

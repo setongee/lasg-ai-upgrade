@@ -1,6 +1,7 @@
 import { ArrowUpRight } from 'iconoir-react';
 import { useNavigate, useParams } from 'react-router';
-import { isDarkBackground } from '../../shared/utils/backgroundContrast';
+import { isDarkBackground, resolveCustomBackground } from '../../shared/utils/backgroundContrast';
+import { useThemeStore } from '../../stores/theme.store';
 import Wrapper from '../../shared/Wrapper/Wrapper';
 
 const DEFAULT_BACKGROUND = 'var(--theme-section-bg, #ffffff)';
@@ -14,12 +15,14 @@ const QuickDocuments = ({
 }) => {
   const navigate = useNavigate();
   const { mda } = useParams();
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const documents = data?.documents || [];
 
   if (!isEdit && documents.length === 0) return null;
 
-  const hasCustomBackground = !!data?.backgroundColor;
-  const backgroundColor = data?.backgroundColor || DEFAULT_BACKGROUND;
+  const customBackground = resolveCustomBackground(data?.backgroundColor, isDarkMode);
+  const hasCustomBackground = !!customBackground;
+  const backgroundColor = customBackground || DEFAULT_BACKGROUND;
   const onDark = hasCustomBackground ? isDarkBackground(backgroundColor) : null;
   const textClass = onDark === null ? '' : onDark ? 'text-white' : 'text-gray-900';
   const mutedTextClass = onDark === null ? 'opacity-70' : onDark ? 'text-white/70' : 'text-gray-500';

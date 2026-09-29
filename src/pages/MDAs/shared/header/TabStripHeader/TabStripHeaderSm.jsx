@@ -59,14 +59,14 @@ const TabStripHeaderSm = ({ customClass, fullname, mdaData, isEdit = false }) =>
       )}
 
       {open && (
-        <div className="fixed inset-0 top-[90px] bg-white z-40 flex flex-col overflow-y-auto">
+        <div className="fixed inset-0 top-[90px] bg-[var(--theme-page-bg,#ffffff)] z-40 flex flex-col overflow-y-auto">
           {items.map((item) =>
             item.children ? (
               <div key={item.key} className="border-b border-[#eee]">
                 <div
                   className={`px-6 py-4 text-[13px] uppercase tracking-[2px] flex items-center justify-between ${
                     item.children.some((child) => child.key === page)
-                      ? 'text-[#108a00] font-bold'
+                      ? 'text-[var(--theme-accent,#108a00)] font-bold'
                       : ''
                   }`}
                   onClick={() => setOpenGroup(openGroup === item.key ? null : item.key)}
@@ -78,12 +78,12 @@ const TabStripHeaderSm = ({ customClass, fullname, mdaData, isEdit = false }) =>
                   />
                 </div>
                 {openGroup === item.key && (
-                  <div className="flex flex-col bg-[#fafafa]">
+                  <div className="flex flex-col bg-[var(--theme-section-bg,#fafafa)]">
                     {item.children.map((child) => (
                       <div
                         key={child.key}
                         className={`px-10 py-3 text-[12px] uppercase tracking-[2px] ${
-                          page === child.key ? 'text-[#108a00] font-bold' : ''
+                          page === child.key ? 'text-[var(--theme-accent,#108a00)] font-bold' : ''
                         }`}
                         onClick={() => go(child.path)}
                       >
@@ -98,7 +98,7 @@ const TabStripHeaderSm = ({ customClass, fullname, mdaData, isEdit = false }) =>
                 key={item.key}
                 className={`px-6 py-4 border-b border-[#eee] text-[13px] uppercase tracking-[2px] ${
                   (item.key === '' ? page === '' || page === undefined : page === item.key)
-                    ? 'text-[#108a00] font-bold'
+                    ? 'text-[var(--theme-accent,#108a00)] font-bold'
                     : ''
                 }`}
                 onClick={() => go(item.path)}

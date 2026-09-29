@@ -24,7 +24,7 @@ const Header = ({ fullname }) => {
         <InfoBar data={mdaData?.landingPage?.infoBar} fullname={mdaData?.fullname} />
       )}
 
-      <div className="bg-white border-b border-[#eee]">
+      <div className="bg-[var(--theme-page-bg,#ffffff)] border-b border-[#eee]">
         <Wrapper
           style={{
             margin: '0 auto',

@@ -1,6 +1,6 @@
 .resources {
   margin-top: 170px;
-  background-color: #fff !important;
+  background-color: var(--theme-page-bg, #fff) !important;
 
   .about-heading {
     align-items: center;
@@ -31,7 +31,7 @@
     display: flex;
     gap: 40px;
     padding: 20px;
-    color: #131313;
+    color: var(--theme-page-text, #131313);
 
     .doc__icon {
       width: 45px;
@@ -60,7 +60,7 @@
     text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: 600;
-    background-color: #f9f9f9;
+    background-color: var(--theme-section-bg, #f9f9f9);
     align-items: center;
 
     .doc__icon {

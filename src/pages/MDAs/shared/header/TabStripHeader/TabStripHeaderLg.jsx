@@ -37,19 +37,19 @@ const TabStripHeaderLg = ({ customClass, fullname, mdaData, isEdit = false }) =>
       {!isMdaTypeService && (
         <div className="h-full flex items-center flex-1 justify-end">
           <div
-            className={`${NAV_LINK_CLASS} ${isActive('') ? 'text-[#108a00] font-bold' : ''}`}
+            className={`${NAV_LINK_CLASS} ${isActive('') ? 'text-[var(--theme-accent,#108a00)] font-bold' : ''}`}
             onClick={() => go('')}
           >
             Home
           </div>
           <div
-            className={`${NAV_LINK_CLASS} ${isActive('about') ? 'text-[#108a00] font-bold' : ''}`}
+            className={`${NAV_LINK_CLASS} ${isActive('about') ? 'text-[var(--theme-accent,#108a00)] font-bold' : ''}`}
             onClick={() => go('about')}
           >
             About
           </div>
           <div
-            className={`${NAV_LINK_CLASS} ${isActive('news') ? 'text-[#108a00] font-bold' : ''}`}
+            className={`${NAV_LINK_CLASS} ${isActive('news') ? 'text-[var(--theme-accent,#108a00)] font-bold' : ''}`}
             onClick={() => go('news?page=1')}
           >
             Newsroom
@@ -57,16 +57,16 @@ const TabStripHeaderLg = ({ customClass, fullname, mdaData, isEdit = false }) =>
           <div className="relative group h-full">
             <div
               className={`${NAV_LINK_CLASS} gap-1.5 ${
-                isActive('events') || isActive('gallery') ? 'text-[#108a00] font-bold' : ''
+                isActive('events') || isActive('gallery') ? 'text-[var(--theme-accent,#108a00)] font-bold' : ''
               }`}
             >
               Media
               <NavArrowDown width={12} className="transition-transform group-hover:rotate-180" />
             </div>
-            <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-white border border-[#e7e7e7] shadow-lg min-w-[160px] z-50">
+            <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-[var(--theme-page-bg,#ffffff)] border border-[#e7e7e7] shadow-lg min-w-[160px] z-50">
               <div
                 className={`px-5 py-3 text-[11px] uppercase tracking-[2px] hover:bg-[#eee] cursor-pointer ${
-                  isActive('events') ? 'text-[#108a00] font-bold' : ''
+                  isActive('events') ? 'text-[var(--theme-accent,#108a00)] font-bold' : ''
                 }`}
                 onClick={() => go('events')}
               >
@@ -74,7 +74,7 @@ const TabStripHeaderLg = ({ customClass, fullname, mdaData, isEdit = false }) =>
               </div>
               <div
                 className={`px-5 py-3 text-[11px] uppercase tracking-[2px] hover:bg-[#eee] cursor-pointer ${
-                  isActive('gallery') ? 'text-[#108a00] font-bold' : ''
+                  isActive('gallery') ? 'text-[var(--theme-accent,#108a00)] font-bold' : ''
                 }`}
                 onClick={() => go('gallery')}
               >
@@ -84,7 +84,7 @@ const TabStripHeaderLg = ({ customClass, fullname, mdaData, isEdit = false }) =>
           </div>
           {mdaData?.resources?.length > 0 && (
             <div
-              className={`${NAV_LINK_CLASS} ${isActive('resources') ? 'text-[#108a00] font-bold' : ''}`}
+              className={`${NAV_LINK_CLASS} ${isActive('resources') ? 'text-[var(--theme-accent,#108a00)] font-bold' : ''}`}
               onClick={() => go('resources')}
             >
               Resources

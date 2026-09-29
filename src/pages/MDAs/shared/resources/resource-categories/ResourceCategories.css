@@ -74,7 +74,7 @@
   }
 
   .naming {
-    background-color: #fff;
+    background-color: var(--theme-page-bg, #fff);
     position: absolute;
     z-index: 8;
     bottom: 50px;
@@ -97,7 +97,7 @@
     span {
       line-height: 21px;
       font-size: 15px;
-      color: #333;
+      color: var(--theme-page-text, #333);
     }
 
     .butt {

@@ -54,7 +54,7 @@ const EventsList = ({ events, mda }) => (
               href={`/${mda}/events/${event._id}`}
               className="flex flex-col rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow"
             >
-              <div className="h-[180px] w-full bg-gray-100">
+              <div className="h-[180px] w-full bg-[var(--theme-section-bg,#f3f4f6)]">
                 {event.photo && (
                   <img src={event.photo} alt="" className="w-full h-full object-cover" />
                 )}
@@ -71,7 +71,7 @@ const EventsList = ({ events, mda }) => (
           ))}
         </div>
       ) : (
-        <div className="text-gray-800 text-[15px] text-center bg-gray-100/90 sm:min-h-[40vh] min-h-[20vh] mt-6 flex items-center justify-center">
+        <div className="text-[var(--theme-page-text,#1f2937)] text-[15px] text-center bg-[var(--theme-section-bg,#f3f4f6)]/90 sm:min-h-[40vh] min-h-[20vh] mt-6 flex items-center justify-center">
           No events have been posted yet.
         </div>
       )}

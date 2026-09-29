@@ -7,7 +7,7 @@ import twitter from './icons/twitter.png';
 import youtube from './icons/youtube.png';
 import './youtube.scss';
 
-export default function YoutubeSocials({ id, viewMode }) {
+export default function YoutubeSocials({ id, viewMode, textClass = '' }) {
   const playerRef = useRef(null);
   const socials = useThemeStore((state) => state.mdaData)?.contact?.socials;
 
@@ -46,7 +46,7 @@ export default function YoutubeSocials({ id, viewMode }) {
   return (
     <div className="social-section flex flex-col items-center w-full gap-[60px] px-4 sm:px-6 md:px-8">
       {/* Section title */}
-      <div className="social-section-title text-[24px] sm:text-[32px] md:text-[40px] font-semibold max-w-[90%] md:w-[700px] text-center capitalize leading-[130%]">
+      <div className={`social-section-title text-[24px] sm:text-[32px] md:text-[40px] font-semibold max-w-[90%] md:w-[700px] text-center capitalize leading-[130%] ${textClass}`}>
         Stay informed. Follow our social channels for updates.
       </div>
 
@@ -64,7 +64,7 @@ export default function YoutubeSocials({ id, viewMode }) {
 
       {/* Other socials */}
       <div className="flex flex-col items-center mt-[20px] gap-[24px] md:gap-[30px]">
-        <div className="social-label font-semibold text-[11px] sm:text-[12px] md:text-[13px] uppercase tracking-[2px] text-center">
+        <div className={`social-label font-semibold text-[11px] sm:text-[12px] md:text-[13px] uppercase tracking-[2px] text-center ${textClass}`}>
           Visit some of our social media profiles
         </div>
 

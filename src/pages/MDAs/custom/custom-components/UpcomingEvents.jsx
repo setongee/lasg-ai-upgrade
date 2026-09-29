@@ -3,7 +3,8 @@ import { Calendar } from 'iconoir-react';
 import { useParams } from 'react-router';
 import { getEventsForMda } from '../../../../api/read/events.req';
 import { convertToTitleCase, formatDate2 } from '../../../../middleware/middleware';
-import { isDarkBackground } from '../../shared/utils/backgroundContrast';
+import { isDarkBackground, resolveCustomBackground } from '../../shared/utils/backgroundContrast';
+import { useThemeStore } from '../../stores/theme.store';
 import Wrapper from '../../shared/Wrapper/Wrapper';
 
 const DEFAULT_BACKGROUND = 'var(--theme-section-bg, #ffffff)';
@@ -16,6 +17,7 @@ const UpcomingEvents = ({
   onComponentClick = () => {},
 }) => {
   const { mda } = useParams();
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
 
   const { data } = useQuery({
     queryKey: ['events-preview', mda],
@@ -24,8 +26,9 @@ const UpcomingEvents = ({
   });
 
   const events = (data?.data || []).slice(0, 3);
-  const resolvedBackground = backgroundColor || DEFAULT_BACKGROUND;
-  const onDark = backgroundColor ? isDarkBackground(resolvedBackground) : null;
+  const customBackground = resolveCustomBackground(backgroundColor, isDarkMode);
+  const resolvedBackground = customBackground || DEFAULT_BACKGROUND;
+  const onDark = customBackground ? isDarkBackground(resolvedBackground) : null;
 
   if (!isEdit && events.length === 0) return null;
 
@@ -58,9 +61,9 @@ const UpcomingEvents = ({
               <a
                 key={event._id}
                 href={`/${mda}/events/${event._id}`}
-                className="flex flex-col rounded-2xl overflow-hidden bg-white border border-gray-100"
+                className="flex flex-col rounded-2xl overflow-hidden bg-[var(--theme-page-bg,#ffffff)] border border-gray-100"
               >
-                <div className="h-[150px] w-full bg-gray-100">
+                <div className="h-[150px] w-full bg-[var(--theme-section-bg,#f3f4f6)]">
                   {event.photo && (
                     <img src={event.photo} alt="" className="w-full h-full object-cover" />
                   )}

@@ -7,6 +7,7 @@ import LiveForm from '../../shared/forms/LiveForm';
 import Gallery from '../../shared/gallery/Gallery';
 import News_Events from '../../shared/news_events/News_Events';
 import ResourcesType2 from '../../shared/resources/resources-type-2';
+import DarkModeToggle from '../../shared/darkModeToggle/DarkModeToggle';
 import { themeCssVars } from '../../shared/utils/colorTheme';
 import { useThemeStore } from '../../stores/theme.store';
 import About from './about/About';
@@ -17,7 +18,8 @@ import Home from './home/home';
 const MepbTheme = ({ isEdit }) => {
   const { page } = useParams();
   const data = useThemeStore((state) => state.mdaData);
-  const themeVars = themeCssVars(data?.colorTheme);
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
+  const themeVars = themeCssVars(data?.colorTheme, isDarkMode);
 
   useEffect(() => {
     const footer = document.querySelector('.footer');
@@ -60,6 +62,7 @@ const MepbTheme = ({ isEdit }) => {
         <HeaderEdit fullname={data?.fullname} />
         {renderPage()}
         <Footer data={data} />
+        <DarkModeToggle />
       </div>
     );
   }
@@ -69,6 +72,7 @@ const MepbTheme = ({ isEdit }) => {
       <Header fullname={data?.fullname} />
       {renderPage()}
       <Footer data={data} />
+      <DarkModeToggle />
     </div>
   );
 };

@@ -1,3 +1,5 @@
+import { isDarkBackground, resolveCustomBackground } from '../../shared/utils/backgroundContrast';
+import { useThemeStore } from '../../stores/theme.store';
 import Divider from '../../shared/divider/Divider';
 import Wrapper from '../../shared/Wrapper/Wrapper';
 import YoutubeSocials from '../../shared/youtubePlayer/YoutubeSocials';
@@ -11,9 +13,15 @@ const YoutubePlayer = ({
   selectedComponent = '',
   onComponentClick = () => {},
 }) => {
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
+
   if (!data) return null;
 
-  const backgroundColor = data?.backgroundColor || DEFAULT_BACKGROUND;
+  const customBackground = resolveCustomBackground(data?.backgroundColor, isDarkMode);
+  const hasCustomBackground = !!customBackground;
+  const backgroundColor = customBackground || DEFAULT_BACKGROUND;
+  const onDark = hasCustomBackground ? isDarkBackground(backgroundColor) : null;
+  const textClass = onDark === null ? '' : onDark ? 'text-white' : 'text-[#111827]';
 
   return (
     <section
@@ -27,7 +35,7 @@ const YoutubePlayer = ({
     >
       <Wrapper>
         <Divider customClass="sm:mb-[80px] mb-[40px]" />
-        <YoutubeSocials id={data?.id} viewMode={viewMode} />
+        <YoutubeSocials id={data?.id} viewMode={viewMode} textClass={textClass} />
       </Wrapper>
     </section>
   );

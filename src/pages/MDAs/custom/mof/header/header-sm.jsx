@@ -22,7 +22,7 @@ const HeaderSm = ({ customClass, fullname, mdaData }) => {
           <div className="logo overflow-hidden w-12 h-12">
             <img src={logo ? logo : lasg__logo} alt={`Lagos State ${fullname}`} />
           </div>
-          <p className="text-[11px] uppercase tracking-[2px] !text-[#131313]">{fullname}</p>
+          <p className="text-[11px] uppercase tracking-[2px] !text-[var(--theme-page-text,#131313)]">{fullname}</p>
         </div>
 
         <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -36,46 +36,46 @@ const HeaderSm = ({ customClass, fullname, mdaData }) => {
         >
           <div
             className={
-              page === '' || page === undefined ? '!text-[#fbbf24] font-bold' : '!text-white'
+              page === '' || page === undefined ? '!text-[var(--theme-accent,#fbbf24)] font-bold' : '!text-white'
             }
             onClick={() => navigate(`/${mda}`)}
           >
             Home
           </div>
           <div
-            className={page === 'about' ? '!text-[#fbbf24] font-bold' : '!text-white'}
+            className={page === 'about' ? '!text-[var(--theme-accent,#fbbf24)] font-bold' : '!text-white'}
             onClick={() => navigate(`/${mda}/about`)}
           >
             About
           </div>
           <div
-            className={page === 'news' ? '!text-[#fbbf24] font-bold' : '!text-white'}
+            className={page === 'news' ? '!text-[var(--theme-accent,#fbbf24)] font-bold' : '!text-white'}
             onClick={() => navigate(`/${mda}/news`)}
           >
             Newsroom
           </div>
           <div
-            className={page === 'events' ? '!text-[#fbbf24] font-bold' : '!text-white'}
+            className={page === 'events' ? '!text-[var(--theme-accent,#fbbf24)] font-bold' : '!text-white'}
             onClick={() => navigate(`/${mda}/events`)}
           >
             Events
           </div>
           <div
-            className={page === 'gallery' ? '!text-[#fbbf24] font-bold' : '!text-white'}
+            className={page === 'gallery' ? '!text-[var(--theme-accent,#fbbf24)] font-bold' : '!text-white'}
             onClick={() => navigate(`/${mda}/gallery`)}
           >
             Gallery
           </div>
           {mdaData?.resources?.length > 0 && (
             <div
-              className={page === 'resources' ? '!text-[#fbbf24] font-bold' : '!text-white'}
+              className={page === 'resources' ? '!text-[var(--theme-accent,#fbbf24)] font-bold' : '!text-white'}
               onClick={() => navigate(`/${mda}/resources`)}
             >
               Resources
             </div>
           )}
           <div
-            className={page === 'contact' ? '!text-[#fbbf24] font-bold' : '!text-white'}
+            className={page === 'contact' ? '!text-[var(--theme-accent,#fbbf24)] font-bold' : '!text-white'}
             onClick={() => navigate(`/${mda}/contact`)}
           >
             Contact

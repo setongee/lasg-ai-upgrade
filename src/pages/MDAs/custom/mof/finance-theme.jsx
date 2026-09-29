@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
 import Connect from '../../shared/connect/connect';
+import DarkModeToggle from '../../shared/darkModeToggle/DarkModeToggle';
 import Events from '../../shared/events/Events';
 import Footer from '../../shared/footer/Footer';
 import LiveForm from '../../shared/forms/LiveForm';
@@ -17,7 +18,8 @@ import Home from './home/home';
 const FinanceTheme = ({ isEdit }) => {
   const { page } = useParams();
   const data = useThemeStore((state) => state.mdaData);
-  const themeVars = themeCssVars(data?.colorTheme);
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
+  const themeVars = themeCssVars(data?.colorTheme, isDarkMode);
 
   useEffect(() => {
     const footer = document.querySelector('.footer');
@@ -60,6 +62,7 @@ const FinanceTheme = ({ isEdit }) => {
         <HeaderEdit fullname={data?.fullname} />
         {renderPage()}
         <Footer data={data} />
+        <DarkModeToggle />
       </div>
     );
   }
@@ -69,6 +72,7 @@ const FinanceTheme = ({ isEdit }) => {
       <Header fullname={data?.fullname} isEdit={isEdit || false} />
       {renderPage()}
       <Footer data={data} />
+      <DarkModeToggle />
     </div>
   );
 };

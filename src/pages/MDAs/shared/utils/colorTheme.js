@@ -98,13 +98,28 @@ export const deriveDarkSurface = (hex, { saturation = 0.4, lightness = 0.12 } = 
 // Turns a saved `colorTheme` ({ mode, color, gradientEnd, appearance }) into
 // the concrete values every consumer needs: a solid accent, readable text for
 // that accent, a pastel tint and a dark surface tint for section backgrounds
-// (whichever matches `appearance`), a darker shade for buttons-on-accent, a
+// (whichever matches `isDarkMode`), a darker shade for buttons-on-accent, a
 // page-level background/text pair for the light/dark canvas itself, and
 // (gradient mode only) a CSS gradient string for decorative use.
-export const deriveThemeVars = (colorTheme) => {
+//
+// `isDarkMode` is passed in explicitly rather than read from
+// `colorTheme.appearance` here: the admin's `appearance` choice is only the
+// site's stored default (previewed as-is in the admin Appearance panel) —
+// the live public site instead uses a visitor-controlled light/dark toggle
+// (see `stores/theme.store.js`), which callers resolve and pass in.
+export const deriveThemeVars = (colorTheme, isDarkMode = false) => {
   const accent = colorTheme?.color || DEFAULT_ACCENT;
   const onDark = isDarkBackground(accent);
-  const isDarkMode = colorTheme?.appearance === 'dark';
+
+  // Dark mode's page canvas: near-black but tinted with the site's own accent
+  // hue (rather than neutral gray-black) so the whole page reads as one
+  // cohesive dark-green-tinted surface instead of clashing with the
+  // already-accent-tinted `sectionBg`. `pageBg` stays a single solid color
+  // (every `var(--theme-page-bg, ...)` call site across the app is a plain
+  // `background-color`, which can't take a gradient); `pageBgGradient` is a
+  // second, subtle two-stop version of the same tint for the page root only.
+  const darkPageBg = deriveDarkSurface(accent, { saturation: 0.45, lightness: 0.045 });
+  const darkPageBgGradient = `linear-gradient(160deg, ${deriveDarkSurface(accent, { saturation: 0.45, lightness: 0.03 })}, ${deriveDarkSurface(accent, { saturation: 0.45, lightness: 0.07 })})`;
 
   return {
     accent,
@@ -113,7 +128,8 @@ export const deriveThemeVars = (colorTheme) => {
     darkSurface: deriveDarkSurface(accent),
     shade: deriveShade(accent),
     isDarkMode,
-    pageBg: isDarkMode ? '#0a0a0a' : '#ffffff',
+    pageBg: isDarkMode ? darkPageBg : '#ffffff',
+    pageBgGradient: isDarkMode ? darkPageBgGradient : null,
     pageText: isDarkMode ? '#f5f5f5' : '#111827',
     sectionBg: isDarkMode ? deriveDarkSurface(accent) : derivePastel(accent),
     gradientCss:
@@ -131,8 +147,8 @@ export const deriveThemeVars = (colorTheme) => {
 // this up automatically, and an element WITH one (an admin's explicit
 // per-section choice) naturally keeps it, satisfying "reverse everything
 // except what's been customized" for free.
-export const themeCssVars = (colorTheme) => {
-  const vars = deriveThemeVars(colorTheme);
+export const themeCssVars = (colorTheme, isDarkMode = false) => {
+  const vars = deriveThemeVars(colorTheme, isDarkMode);
   return {
     '--theme-accent': vars.accent,
     '--theme-accent-text': vars.accentText,
@@ -142,8 +158,20 @@ export const themeCssVars = (colorTheme) => {
     '--theme-page-bg': vars.pageBg,
     '--theme-page-text': vars.pageText,
     '--theme-section-bg': vars.sectionBg,
-    backgroundColor: 'var(--theme-page-bg)',
+    // `background` only (not also `backgroundColor`) — React warns against
+    // mixing the shorthand with a longhand for the same box on one style
+    // object, since re-render ordering between the two isn't guaranteed.
+    // `var(--theme-page-bg)` alone is a valid `background` value too, so this
+    // covers both the plain light-mode color and the dark-mode gradient.
+    background: vars.pageBgGradient || 'var(--theme-page-bg)',
     color: 'var(--theme-page-text)',
+    // Without this, a child's own top margin (e.g. a home page's root
+    // `mt-[...]` offset for the fixed header) collapses straight through
+    // this plain block div and pushes its own painted background down with
+    // it — leaving a gap of bare (unstyled, effectively white) page above
+    // it. `flow-root` gives this box its own block-formatting context so
+    // child margins stay contained, with no other visual side effect.
+    display: 'flow-root',
   };
 };
 

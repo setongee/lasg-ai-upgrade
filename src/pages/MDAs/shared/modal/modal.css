@@ -5,7 +5,8 @@
   overflow-y: auto;
 
   .modal_content {
-    background-color: #fff;
+    background-color: var(--theme-page-bg, #fff);
+    color: var(--theme-page-text, #131313);
     padding: 40px;
     width: 700px;
     height: max-content;

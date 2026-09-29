@@ -1,4 +1,5 @@
-import { isDarkBackground } from '../../shared/utils/backgroundContrast';
+import { isDarkBackground, resolveCustomBackground } from '../../shared/utils/backgroundContrast';
+import { useThemeStore } from '../../stores/theme.store';
 import Wrapper from '../../shared/Wrapper/Wrapper';
 
 const DEFAULT_BACKGROUND = 'var(--theme-section-bg, #ffffff)';
@@ -10,17 +11,20 @@ const CommissionerZone = ({
   selectedComponent = '',
   onComponentClick = () => {},
 }) => {
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
+
   if (!data) return null;
 
-  const hasCustomBackground = !!data?.backgroundColor;
-  const backgroundColor = data?.backgroundColor || DEFAULT_BACKGROUND;
+  const customBackground = resolveCustomBackground(data?.backgroundColor, isDarkMode);
+  const hasCustomBackground = !!customBackground;
+  const backgroundColor = customBackground || DEFAULT_BACKGROUND;
   const onDark = hasCustomBackground ? isDarkBackground(backgroundColor) : null;
   const textClass = onDark === null ? '' : onDark ? 'text-white' : 'text-gray-900';
 
   return (
     <section
       style={{ backgroundColor }}
-      className={`bg-[#fff] flex commisioners-zone md:py-[120px] py-[50px] ${
+      className={`bg-[var(--theme-page-bg,#fff)] flex commisioners-zone md:py-[120px] py-[50px] ${
         isEdit && viewMode === 'edit'
           ? 'border-[3px] border-transparent cursor-pointer hover:border-green-500'
           : ''
@@ -30,7 +34,7 @@ const CommissionerZone = ({
       <Wrapper>
         <div className="flex wrapped lg:gap-[100px] gap-[30px] items-center justify-center flex-wrap lg:flex-nowrap">
           <div className="commissioner-container md:w-[600px] md:h-[580px] w-[500px] sm:h-[480px] h-[380px] relative">
-            <div className="backdrop-photo w-[100%] h-[100%] sm:h-[80%] bg-[#eee]"></div>
+            <div className="backdrop-photo w-[100%] h-[100%] sm:h-[80%] bg-[var(--theme-section-bg,#eee)]"></div>
             <div className="commissioner-image h-[calc(100%_-_20px)] w-[calc(100%_-_20px)] sm:w-[calc(100%_-_100px)] sm:h-[500px] md:w-[calc(100%_-_150px)] overflow-hidden absolute bottom-[10px] sm:bottom-0 left-[50%] transform-[translateX(-50%)]">
               <img
                 src={data?.commissionerImage}

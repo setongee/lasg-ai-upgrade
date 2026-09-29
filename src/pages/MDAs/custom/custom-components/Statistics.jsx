@@ -1,4 +1,5 @@
-import { isDarkBackground } from '../../shared/utils/backgroundContrast';
+import { isDarkBackground, resolveCustomBackground } from '../../shared/utils/backgroundContrast';
+import { useThemeStore } from '../../stores/theme.store';
 import Wrapper from '../../shared/Wrapper/Wrapper';
 
 const DEFAULT_BACKGROUND = 'var(--theme-section-bg, #ffffff)';
@@ -12,13 +13,15 @@ const Statistics = ({
   selectedComponent = '',
   onComponentClick = () => {},
 }) => {
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
   const items = data?.items || [];
   const resolvedStyle = STATISTICS_STYLES.includes(style) ? style : 'style1';
 
   if (!isEdit && items.length === 0) return null;
 
-  const hasCustomBackground = !!data?.backgroundColor;
-  const backgroundColor = data?.backgroundColor || DEFAULT_BACKGROUND;
+  const customBackground = resolveCustomBackground(data?.backgroundColor, isDarkMode);
+  const hasCustomBackground = !!customBackground;
+  const backgroundColor = customBackground || DEFAULT_BACKGROUND;
   const onDark = hasCustomBackground ? isDarkBackground(backgroundColor) : null;
 
   const valueClass = `font-bold ${onDark === null ? '' : onDark ? 'text-white' : 'text-[#1C3F3A]'}`;

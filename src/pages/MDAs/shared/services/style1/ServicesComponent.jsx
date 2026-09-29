@@ -12,12 +12,12 @@ const ServicesComponent = ({ data, name, viewAllLink, totalCount, disableCap = f
 
   return (
     <Wrapper>
-      <div className="flex flex-col items-center  text-gray-900">
+      <div className="flex flex-col items-center  text-[var(--theme-page-text,#111827)]">
         <div
           className="font-semibold w-[100%] text-center flex flex-col items-center gap-[20px] container-builder"
           ref={sectionRef}
         >
-          <p className="text-[24px] sm:text-[32px] md:text-[35px] md:w-[700px] text-center leading-9 md:leading-[140%] text-gray-900">
+          <p className="text-[24px] sm:text-[32px] md:text-[35px] md:w-[700px] text-center leading-9 md:leading-[140%] text-[var(--theme-page-text,#111827)]">
             Discover and Access {name} Online Services
           </p>
           <span className="text-[#666] text-base font-normal w-full !leading-[150%] ">

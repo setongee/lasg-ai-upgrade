@@ -16,7 +16,7 @@ const Appearance = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
 
-  const vars = deriveThemeVars(colorTheme);
+  const vars = deriveThemeVars(colorTheme, colorTheme?.appearance === 'dark');
 
   const handleChange = (next) => {
     setColorTheme(next);

@@ -220,7 +220,7 @@ const Home = ({ isEdit }) => {
 
       {/* Services */}
       {landingPage?.enabledSections?.services && (
-        <section className="bg-[#e6edef] md:py-20 py-5 pb-10">
+        <section className="bg-[var(--theme-section-bg,#e6edef)] md:py-20 py-5 pb-10">
           <ServicesSection
             style={landingPage?.services_style}
             data={services?.data}

@@ -14,3 +14,17 @@ export const isDarkBackground = (hex) => {
 
   return luminance < 0.45;
 };
+
+// Section builder color pickers default an unset field to plain white, so a
+// stored "#ffffff" is almost always that untouched default rather than a
+// deliberate admin choice — across every MDA's data, seen far more often than
+// a genuine white pick. In dark mode, honoring it verbatim leaves a jarring
+// white island on an otherwise dark page, so it's treated as "not customized"
+// there and the caller falls back to its own theme-aware default instead.
+// Any other stored color (including a deliberate white the admin re-picks
+// after this) is left alone.
+export const resolveCustomBackground = (customColor, isDarkMode) => {
+  if (!customColor) return null;
+  if (isDarkMode && customColor.toLowerCase() === '#ffffff') return null;
+  return customColor;
+};

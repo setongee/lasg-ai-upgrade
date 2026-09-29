@@ -1,3 +1,5 @@
+import { resolveCustomBackground } from '../../shared/utils/backgroundContrast';
+import { useThemeStore } from '../../stores/theme.store';
 import QuickServices from '../../shared/quick_services/QuickServices';
 
 const DEFAULT_BACKGROUND = 'var(--theme-section-bg, #e6edef)';
@@ -12,9 +14,11 @@ const QuickServicesSection = ({
   selectedComponent = '',
   onComponentClick = () => {},
 }) => {
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
+
   if (!data || data.length === 0) return null;
 
-  const resolvedBackground = backgroundColor || DEFAULT_BACKGROUND;
+  const resolvedBackground = resolveCustomBackground(backgroundColor, isDarkMode) || DEFAULT_BACKGROUND;
 
   return (
     <section

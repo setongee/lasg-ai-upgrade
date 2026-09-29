@@ -94,7 +94,7 @@ const Home = ({ isEdit }) => {
     <div
       data-mda="mist"
       className={`landingPage-version mx-auto my-0 ${
-        isEdit ? 'mt-0' : isMdaTypeService ? 'lg:mt-[120px] mt-[80px]' : 'lg:mt-[120px] mt-[5px]'
+        isEdit ? 'mt-0' : isMdaTypeService ? 'lg:mt-[120px] mt-[80px]' : 'lg:mt-[110px] mt-[5px]'
       }`}
       ref={componentRef}
     >
@@ -224,7 +224,7 @@ const Home = ({ isEdit }) => {
 
       {/* Core MDA specific services */}
       {landingPage?.enabledSections?.services && (
-        <section className="bg-[#e6edef] md:py-20 py-16 pb-10">
+        <section className="bg-[var(--theme-section-bg,#e6edef)] md:py-20 py-16 pb-10">
           <ServicesSection
             style={landingPage?.services_style}
             data={services?.data}

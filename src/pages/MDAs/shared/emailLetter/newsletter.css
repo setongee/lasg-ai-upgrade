@@ -1,3 +1,17 @@
+/* The input always sits on the section's own accent-colored background
+   (not the page canvas), so it needs its own always-legible look regardless
+   of the site's accent color or light/dark mode — a plain frosted-white
+   field with dark text reads correctly against any accent. */
+.newsletter-input {
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #111827;
+}
+
+.newsletter-input::placeholder {
+  color: #6b7280;
+}
+
 /* ===============================
    NEWSLETTER – BUILDER RESPONSIVE
    =============================== */

@@ -216,7 +216,7 @@ const HeroSection = ({
             className={`relative w-full flex flex-col sm:block gap-6 ${isEdit ? 'sm:mt-10' : 'sm:mt-[120px] lg:mt-[160px]'} sm:mb-[42px] mt-[105px] sm:h-[500px] md:h-[600px]`}
           >
             {/* Text: stacked above the image on mobile, overlaid on top of it from sm up */}
-            <div className="sm:absolute sm:inset-0 sm:z-[1] flex flex-col justify-center sm:py-[6%] sm:px-[7%] sm:max-w-[100%] md:max-w-[80%] lg:max-w-[60%] text-[#131313] sm:text-white">
+            <div className="sm:absolute sm:inset-0 sm:z-[1] flex flex-col justify-center sm:py-[6%] sm:px-[7%] sm:max-w-[100%] md:max-w-[80%] lg:max-w-[60%] text-[var(--theme-page-text,#131313)] sm:text-white">
               <h1 className="font-[650] tracking-[-0.5px] leading-[1.1] text-[32px] sm:text-[40px] lg:text-[54px] mb-4 sm:mb-6">
                 {title}
               </h1>
@@ -329,10 +329,10 @@ const HeroSection = ({
           </div>
           <div className="relative overflow-hidden max-[600px]:mt-4">
             <div className="max-[600px]:w-[calc(100%-100px)] max-[600px]:mx-auto overflow-hidden">
-              <div className="max-[1200px]:hidden max-[600px]:block max-[600px]:w-[250px] max-[600px]:h-[270px] 2xl:w-[400px] lg:w-[350px] mr-[175px] h-[420px] bg-gray-100 rounded-tr-[45%] overflow-hidden z-[1]">
+              <div className="max-[1200px]:hidden max-[600px]:block max-[600px]:w-[250px] max-[600px]:h-[270px] 2xl:w-[400px] lg:w-[350px] mr-[175px] h-[420px] bg-[var(--theme-section-bg,#f3f4f6)] rounded-tr-[45%] overflow-hidden z-[1]">
                 <HeroImage images={imageList} slideshowEnabled={slideshowEnabled} />
               </div>
-              <div className="max-[1200px]:hidden max-[600px]:block max-[600px]:w-[250px] relative max-[600px]:h-[270px] 2xl:w-[400px] lg:w-[350px] bg-gray-100 max-[600px]:mr-[0px] -mt-50 h-[420px] rounded-tl-[45%] max-[600px]:border-[10px] border-[15px] border-white overflow-hidden z-[2] float-right">
+              <div className="max-[1200px]:hidden max-[600px]:block max-[600px]:w-[250px] relative max-[600px]:h-[270px] 2xl:w-[400px] lg:w-[350px] bg-[var(--theme-section-bg,#f3f4f6)] max-[600px]:mr-[0px] -mt-50 h-[420px] rounded-tl-[45%] max-[600px]:border-[10px] border-[15px] border-white overflow-hidden z-[2] float-right">
                 <HeroImage
                   images={secondaryImage ? [secondaryImage] : []}
                   slideshowEnabled={false}

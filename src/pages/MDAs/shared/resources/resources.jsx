@@ -10,7 +10,7 @@ export default function Resources() {
   return (
     <div className="resources">
       <Wrapper>
-        <div className="about-heading flex text-gray-900!">
+        <div className="about-heading flex text-[var(--theme-page-text,#111827)]!">
           <h1>Knowledge Vault : Explore Resources & Archives</h1>
 
           <span>Discover a treasure trove of resources for learning, growth, and innovation.</span>
