@@ -21,7 +21,7 @@
       min-width: 800px;
       width: 800px;
       height: 400px;
-      background-color: #eee;
+      background-color: var(--bg-muted);
       overflow: hidden;
       border-radius: 10px;
 
@@ -36,7 +36,7 @@
       min-width: 320px;
       width: 320px;
       height: 500px;
-      background-color: #eee;
+      background-color: var(--bg-muted);
       overflow: hidden;
       border-radius: 10px;
 

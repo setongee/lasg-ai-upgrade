@@ -13,13 +13,13 @@ const Homepage = () => {
 
   return (
     <div className="home">
-      <div className="bg-[#f0f7f673]">
+      <div className="bg-[#fff]">
         <HeroSection />
       </div>
       <Stat darkmode={darkmode} />
       <QuickCheck darkmode={darkmode} />
       <NewQuick />
-      <Services bgColor="#f0f7f6" location="home" data_limit={100} />
+      <Services bgColor="var(--bg-subtle)" location="home" data_limit={100} />
       <NewsCarrier />
     </div>
   );

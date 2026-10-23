@@ -65,6 +65,8 @@ const Chatbot = ({ pageContext }) => {
   const [loading, setLoading] = useState(false);
   const [initialSuggestions, setInitialSuggestions] = useState([]);
   const [welcomeSuggestions, setWelcomeSuggestions] = useState([]);
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
   const chatWindowRef = useRef(null);
   const inputRef = useRef(null);
   const setSuggestions = useApp((state) => state.setSuggestions);
@@ -191,92 +193,49 @@ const Chatbot = ({ pageContext }) => {
       );
     });
 
-    // Group MDAs by type
-    const ministries = allMdas.filter((m) => m.type === 'ministry');
-    const agencies = allMdas.filter((m) => m.type === 'agency');
-    const parastatals = allMdas.filter((m) => m.type === 'parastatal');
-    const otherMdas = allMdas.filter((m) => !['ministry', 'agency', 'parastatal'].includes(m.type));
+    // MDAs are NOT dumped in full (that was ~11k tokens on every request) —
+    // just a compact name index so the model knows what exists; details
+    // (description, contact info) come from the find_mda tool on demand.
+    const mdaIndex = allMdas
+      .map((m) => `${(m.name || '').trim()}${m.subdomain ? ` (${m.subdomain})` : ''}`)
+      .filter(Boolean)
+      .join('; ');
 
     return `
 🏛️ LAGOS STATE GOVERNMENT — CURRENT LIVE DATA (always prefer this over any document for people and leadership)
-══════════════════════════════════════════════════════════
 
-📌 EXECUTIVE LEADERSHIP:
-${governor ? `• Governor: ${governor.name}` : ''}
-${deputyGovernor ? `• Deputy Governor: ${deputyGovernor.name}` : ''}
-${chiefOfStaff ? `• Chief of Staff: ${chiefOfStaff.name}` : ''}
-${deputyChiefOfStaff ? `• Deputy Chief of Staff: ${deputyChiefOfStaff.name}` : ''}
-${ssg ? `• Secretary to the State Government (SSG): ${ssg.name}` : ''}
-${headOfService ? `• Head of Service: ${headOfService.name}` : ''}
-
-📌 COMMISSIONERS (${commissioners.length} total):
-${
-  commissioners.length > 0
-    ? commissioners.map((m) => `• ${m.name} — ${m.position}`).join('\n')
-    : '- Loading...'
-}
-
-📌 SPECIAL ADVISERS:
+EXECUTIVE LEADERSHIP:
+${governor ? `• Governor: ${governor.name}\n` : ''}${deputyGovernor ? `• Deputy Governor: ${deputyGovernor.name}\n` : ''}${chiefOfStaff ? `• Chief of Staff: ${chiefOfStaff.name}\n` : ''}${deputyChiefOfStaff ? `• Deputy Chief of Staff: ${deputyChiefOfStaff.name}\n` : ''}${ssg ? `• Secretary to the State Government (SSG): ${ssg.name}\n` : ''}${headOfService ? `• Head of Service: ${headOfService.name}\n` : ''}
+COMMISSIONERS (${commissioners.length}):
+${commissioners.length > 0 ? commissioners.map((m) => `• ${m.name} — ${m.position}`).join('\n') : '- not loaded'}
 ${
   specialAdvisers.length > 0
-    ? specialAdvisers.map((m) => `• ${m.name} — ${m.position}`).join('\n')
-    : '- None listed'
+    ? `\nSPECIAL ADVISERS:\n${specialAdvisers.map((m) => `• ${m.name} — ${m.position}`).join('\n')}`
+    : ''
 }
 ${
   others.length > 0
-    ? `\n📌 OTHER COUNCIL MEMBERS:\n${others.map((m) => `• ${m.name} — ${m.position}`).join('\n')}`
+    ? `\nOTHER COUNCIL MEMBERS:\n${others.map((m) => `• ${m.name} — ${m.position}`).join('\n')}`
     : ''
 }
 
-══════════════════════════════════════════════════════════
-🏢 GOVERNMENT MINISTRIES (${ministries.length}):
-${
-  ministries.length > 0
-    ? ministries
-        .map(
-          (m) =>
-            `• ${m.name}${m.subdomain ? ` [${m.subdomain}]` : ''}${m.description ? ` — ${m.description}` : ''}${m.email ? ` | ${m.email}` : ''}`
-        )
-        .join('\n')
-    : '- Loading...'
-}
+MDA DIRECTORY (${allMdas.length}) — names only. For description, email, phone or address of any of these, call the find_mda tool; never guess them:
+${mdaIndex || '- not loaded'}
 
-🏢 AGENCIES (${agencies.length}):
-${
-  agencies.length > 0
-    ? agencies
-        .map(
-          (m) =>
-            `• ${m.name}${m.subdomain ? ` [${m.subdomain}]` : ''}${m.description ? ` — ${m.description}` : ''}${m.email ? ` | ${m.email}` : ''}${m.address ? ` | ${m.address}` : ''}`
-        )
-        .join('\n')
-    : '- Loading...'
-}
-${
-  parastatals.length > 0
-    ? `\n🏢 PARASTATALS (${parastatals.length}):\n${parastatals.map((m) => `• ${m.name}${m.subdomain ? ` [${m.subdomain}]` : ''}${m.description ? ` — ${m.description}` : ''}`).join('\n')}`
-    : ''
-}
-${
-  otherMdas.length > 0
-    ? `\n🏢 OTHER MDAs:\n${otherMdas.map((m) => `• ${m.name}${m.description ? ` — ${m.description}` : ''}`).join('\n')}`
-    : ''
-}
-
-══════════════════════════════════════════════════════════
-⚙️ SERVICES: Use the search_lagos_services tool to find services relevant to
-what the user is asking — do not guess or list services from memory.
-
-Official Portal: https://lagosstate.gov.ng
+SERVICES: use search_lagos_services — do not list services from memory.
+Official portal: https://lagosstate.gov.ng
 `;
   }, [isGeneralPage, executiveCouncil, allMdas]);
 
   // ── Memoized system prompt ────────────────────────────────────────────────────
   const ministryContext = useMemo(() => {
-    const history = messages
-      .slice(-6)
-      .map((m) => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`)
-      .join('\n');
+    const today = new Date().toLocaleDateString('en-NG', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'Africa/Lagos',
+    });
 
     const languageInstruction =
       languagePreference !== 'en'
@@ -358,27 +317,12 @@ You are assisting a user on the "${safePage || 'Lagos State Government'}" sectio
 
 ${contextBlock}
 
-🧭 BEHAVIOURAL RULES:
-- You have tools available: search_lagos_services, search_knowledge_base, and web search. Call a tool only when you actually need information you don't already have — never for greetings, thanks, or anything already answered by the live data above.
-- Use search_lagos_services when the user is asking how to access, apply for, or use a specific citizen service.
-- CRITICAL: For questions about current leadership, commissioners, governor, deputy governor, chief of staff, SSG, head of service, or any government personnel — ALWAYS use the live data provided above in this system context. NEVER call search_knowledge_base for personnel/leadership questions, since uploaded documents may be outdated.
-- Uploaded knowledge base documents (via search_knowledge_base) are ONLY authoritative for policies, budgets, financial reports, procedures, and non-personnel content.
-- If neither the live data above nor your tools give you a confident answer, use web search — prefer official Lagos State / government sources, and clearly say when information comes from the web.
-- If the user asks something that depends on their location (e.g. "nearest office", "services near me") and you don't already know their Local Government Area (LGA) from the conversation, ask them which LGA they're in before answering instead of guessing.
-- When citing a document, note its title and year if available, and remind the user that personnel/leadership information in that document may no longer be current.
-- Answer questions with verified Lagos-specific details.
-- When answering from knowledge base documents, mention the document name.
-- Include official links where applicable.
-- Redirect politely if unrelated to Lagos State.
+Today's date: ${today} (Africa/Lagos). Treat anything before this as past; don't present expired events as upcoming.
 ${languageInstruction}
-
-📚 Recent Conversation:
-${history}
 `;
   }, [
     safePage,
     ministryInfo,
-    messages,
     languagePreference,
     mdaData,
     currentMda,
@@ -644,6 +588,14 @@ ${history}
 
       setLoading(true);
 
+      // Real conversation turns (not a pasted blob in the system prompt): skip
+      // the canned welcome message and empty placeholders, keep the last 8,
+      // and clip long past answers so history stays cheap.
+      const history = messagesRef.current
+        .filter((m, i) => m.content && !(i === 0 && m.role === 'assistant'))
+        .slice(-8)
+        .map((m) => ({ role: m.role, content: m.content.slice(0, 1500) }));
+
       setMessages((prev) => [...prev, { role: 'user', content: input }]);
       scrollToBottom();
 
@@ -653,11 +605,12 @@ ${history}
         const { content, downloadSources, truncated } = await agentChatStream(
           [
             { role: 'system', content: ministryContext },
+            ...history,
             { role: 'user', content: input },
           ],
           {
             webSearch: true,
-            maxTokens: 4096,
+            maxTokens: 1800,
             temperature: 0.7,
             onToken: (_delta, fullSoFar) => {
               setMessages((prev) => {

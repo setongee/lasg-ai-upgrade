@@ -1,6 +1,6 @@
 .news_body{
 
-    background-color: #FDFDFD;
+    background-color: var(--bg);
 
     .tweets{
         background-color: red;
@@ -20,7 +20,7 @@
             align-items: center;
             gap: 40px;
             z-index: 99;
-            background-color: #fff;
+            background-color: var(--bg);
             overflow-x: auto;
             scrollbar-width: none;
             cursor: pointer;
@@ -79,7 +79,7 @@
             font-size: 12px;
 
             span{
-                color: #009C3E;
+                color: var(--brand-green);
                 font-weight: 500;
             }
 
@@ -217,7 +217,7 @@
         }
 
         .holderNewsBar{
-            background-color: #fff;
+            background-color: var(--bg);
             position: relative;
             padding-bottom: 50px;
             padding-top: 50px;
@@ -238,7 +238,7 @@
                 gap: 30px;
 
                 a{
-                    color: #000;
+                    color: var(--text);
                 }
 
                 .noNewNews{
@@ -251,7 +251,7 @@
                     font-size: 12px;
 
                     span{
-                        color: #009C3E;
+                        color: var(--brand-green);
                         font-weight: 500;
                     }
                 }
@@ -269,7 +269,7 @@
 
                         width: 100%;
                         height: 200px;
-                        background-color: #eee;
+                        background-color: var(--bg-muted);
                         overflow: hidden;
                         border-radius: 10px;
 
@@ -309,7 +309,7 @@
                     .news_body_content{
         
                         margin-top: 15px;
-                        color: #000;
+                        color: var(--text);
 
                         .date{
                             font-size: 13px;
@@ -404,7 +404,7 @@
                 align-items: center;
                 gap: 40px;
                 z-index: 99;
-                background-color: #fff;
+                background-color: var(--bg);
                 overflow-x: auto;
                 scrollbar-width: none;
                 cursor: pointer;

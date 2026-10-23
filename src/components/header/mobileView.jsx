@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react'
 import { NavArrowDown, Xmark, ArrowUpRight } from 'iconoir-react'
 import { useNavigate } from 'react-router'
 import lasgLogo from '../../assets/navBar/lasg__logo.png'
+import ThemeToggle from '../theme/ThemeToggle'
 
 export default function MobileView({closeModal}) {
 
@@ -35,6 +36,8 @@ export default function MobileView({closeModal}) {
               <div className="title" onClick={ () => { navigate('/'); closeModal(); window.scrollTo(0,0) } } > <img src={lasgLogo} alt="Lagos State Official Digital Logo" /> </div>
               <div className="close" onClick={ () => closeModal(false) } > <Xmark width={45} height={45} strokeWidth={1}/> </div>
           </div>
+
+          <div className="menu_sm" style={{ display: 'flex', alignItems: 'center', gap: 12 }}> Appearance <ThemeToggle /> </div>
 
           <div className="menu_sm dropdown"> 
 

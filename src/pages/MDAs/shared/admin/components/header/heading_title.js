@@ -17,5 +17,6 @@ export const HeadingTitle = {
   forms: 'Form Builder',
   messages: 'Messages',
   subscribers: 'Subscribers',
+  learn: 'Learning',
   settings: 'Settings',
 };

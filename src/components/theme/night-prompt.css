@@ -1,0 +1,113 @@
+.nightPrompt {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(2, 7, 18, 0.55);
+  backdrop-filter: blur(4px);
+  animation: nightPromptFade 0.3s ease both;
+}
+
+.nightPrompt__card {
+  width: min(420px, 100%);
+  padding: 32px 28px 26px;
+  border-radius: 22px;
+  text-align: center;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.5);
+  animation: nightPromptRise 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.nightPrompt__icon {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #ffe9b0;
+  background: linear-gradient(160deg, #0b1a2b, #1c3f3a);
+}
+
+.nightPrompt__icon--day {
+  color: #7a4a00;
+  background: linear-gradient(160deg, #ffe9b0, #ffc65c);
+}
+
+.nightPrompt__time {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.nightPrompt__card h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.nightPrompt__text {
+  margin: 0 0 22px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.nightPrompt__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nightPrompt__actions button {
+  height: 46px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.15s ease, background-color 0.15s ease;
+}
+
+.nightPrompt__actions .primary {
+  background: #108a00;
+  color: #fff;
+}
+
+.nightPrompt__actions .primary:hover {
+  filter: brightness(1.08);
+}
+
+.nightPrompt__actions .ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--border-strong);
+}
+
+.nightPrompt__actions .ghost:hover {
+  background: var(--bg-muted);
+}
+
+@keyframes nightPromptFade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes nightPromptRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+}

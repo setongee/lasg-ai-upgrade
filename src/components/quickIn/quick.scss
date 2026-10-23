@@ -45,7 +45,7 @@
                 position: relative;
                 cursor: pointer;
                 font-size: 18px;
-                background-color: #fff;
+                background-color: var(--bg);
     
                 .abs{
                     position: absolute;
@@ -132,12 +132,12 @@
                 color: #fff;
 
                 &.active{
-                    border: 3px solid #fff;
+                    border: 3px solid var(--bg);
                 }
 
                 &:hover{
-                    background-color: #fff;
-                    color: #009C3E;
+                    background-color: var(--bg);
+                    color: var(--brand-green);
                 }
 
                 p{
@@ -199,7 +199,7 @@
 
     .quick{
 
-        background-color: #f0f7f6;
+        background-color: var(--bg-subtle);
         border-radius: 0;
         padding: 0;
 
@@ -240,7 +240,7 @@
                     line-height: 37px;
                     text-shadow: none;
                     letter-spacing: -.5px;
-                    color: #131313;
+                    color: var(--text);
                     margin: 30px 0;
                     margin-bottom: 50px;
                 }
@@ -251,7 +251,7 @@
                     margin-bottom: 30px;
                     font-size: 18px;
                     display: none;
-                    color: #131313;
+                    color: var(--text);
                 }
 
             }

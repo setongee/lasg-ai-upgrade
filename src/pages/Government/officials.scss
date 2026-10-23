@@ -8,9 +8,9 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    background-color: #fff;
-    border-top: 1px solid #dadada;
-    border-bottom: 1px solid #dadada;
+    background-color: var(--bg);
+    border-top: 1px solid var(--border-strong);
+    border-bottom: 1px solid var(--border-strong);
     z-index: 99;
     padding: 15px;
     scrollbar-width: none;
@@ -46,7 +46,7 @@
     margin: 0px 0;
     display: flex;
     flex-direction: column;
-    background-color: #fff;
+    background-color: var(--bg);
     padding-bottom: 80px;
 
     &.bagElect{
@@ -181,7 +181,7 @@
 
                     width: 85%;
             // height: 100px;
-            background-color: #fff;
+            background-color: var(--bg);
             box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.08);
             position: absolute;
             bottom: 0;
@@ -193,7 +193,7 @@
             .fullname{
                 font-size: 18px;
                 font-weight: 600;
-                color: #131313;
+                color: var(--text);
                 margin-top: 12px;
                 
             }
@@ -202,7 +202,7 @@
                 font-size: 11px;
                 text-transform: uppercase;
                 letter-spacing: 2px;
-                color: #555;
+                color: var(--text-muted);
                 font-weight: 500;
                 line-height: 18px;
             }
@@ -265,7 +265,7 @@
 
         width: 700px;
         height: 600px;
-        background-color: #eee;
+        background-color: var(--bg-muted);
         margin-top: 50px;
         border-radius: 20px;
         overflow: hidden;
@@ -320,7 +320,7 @@
             .highlight{
                 height: 200px;
                 min-width: 300px;
-                background-color: #f9f9f9;
+                background-color: var(--bg-subtle);
                 overflow: hidden;
                 border-radius: 10px;
 
@@ -387,7 +387,7 @@
                 height: 100%;
                 border-radius: 10px;
                 overflow: hidden;
-                background-color: #f9f9f9;
+                background-color: var(--bg-subtle);
                 display: flex;
 
                 img{
@@ -415,9 +415,9 @@
         align-items: center;
         justify-content: flex-start;
         width: 100%;
-        background-color: #fff;
-        border-top: 1px solid #dadada;
-        border-bottom: 1px solid #dadada;
+        background-color: var(--bg);
+        border-top: 1px solid var(--border-strong);
+        border-bottom: 1px solid var(--border-strong);
         padding: 15px 30px;
         overflow-x: scroll;
     
@@ -710,9 +710,9 @@
         align-items: center;
         justify-content: flex-start;
         width: 100%;
-        background-color: #fff;
-        border-top: 1px solid #dadada;
-        border-bottom: 1px solid #dadada;
+        background-color: var(--bg);
+        border-top: 1px solid var(--border-strong);
+        border-bottom: 1px solid var(--border-strong);
         padding: 15px 30px;
         overflow-x: scroll;
     

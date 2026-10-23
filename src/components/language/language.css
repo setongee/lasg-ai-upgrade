@@ -2,8 +2,8 @@
   position: absolute;
   bottom: 70px;
   left: 20px;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
   border-radius: 21px;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -23,7 +23,7 @@
   width: 100%;
   padding: 12px 16px;
   border: none;
-  background: white;
+  background: var(--bg);
   cursor: pointer;
   font-size: 14px;
   text-align: left;
@@ -32,7 +32,7 @@
 }
 
 .language-option:hover {
-  background: #f5f5f5;
+  background: var(--bg-subtle);
 }
 
 .language-option.active {

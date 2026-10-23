@@ -1,7 +1,7 @@
 .search__component{
 
-    background-color: #fafffc;
-    background-color: #f9f9f9;
+    background-color: var(--bg-subtle);
+    background-color: var(--bg-subtle);
     height: 100vh;
     z-index: 999999;
     position: fixed;
@@ -40,7 +40,7 @@
     padding-bottom: 40px;
     
     span{
-        color: #108a00;
+        color: var(--brand-green);
     }
 
     .top{
@@ -87,7 +87,7 @@
     position: fixed;
     bottom: 0;
     left: 0;
-    background-color: #f9f9f9;
+    background-color: var(--bg-subtle);
     background: rgb(249,249,249);
     background: -moz-linear-gradient(180deg, rgba(249,249,249,0) 0%, rgba(249,249,249,1) 31%, rgba(249,249,249,1) 100%);
     background: -webkit-linear-gradient(180deg, rgba(249,249,249,0) 0%, rgba(249,249,249,1) 31%, rgba(249,249,249,1) 100%);
@@ -226,7 +226,7 @@
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 2px;
-    color: #333;
+    color: var(--text);
 
 }
 
@@ -262,9 +262,9 @@
 
     .result__card{
 
-            background-color: #f6f6f6;
-            background-color: #fff;
-            border: 1px solid #eee;
+            background-color: var(--bg-subtle);
+            background-color: var(--bg);
+            border: 1px solid var(--border);
             color: var(--dark);
             width: calc(33% - 25px);
             display: flex;
@@ -296,7 +296,7 @@
             font-size: 11px;
             letter-spacing: 2px;
             font-weight: 600;
-            color: #108a00;
+            color: var(--brand-green);
             width: 100%;
             white-space: nowrap;
             overflow: hidden;
@@ -357,7 +357,7 @@
         .result__card{
     
             width: calc(50% - 25px);
-            background-color: #fff;
+            background-color: var(--bg);
             box-shadow: 2px 5px 20px rgba($color: #000000, $alpha: .04);
             padding: 20px;
             border-radius: 7px;
@@ -447,15 +447,15 @@
         .result__card{
     
             &:hover{
-                color: #000;
-                background-color: #fff;
+                color: var(--text);
+                background-color: var(--bg);
     
                 .subtitle{
-                    color: #000;
+                    color: var(--text);
                 }
     
                 .themeArea{
-                    color: #108a00;
+                    color: var(--brand-green);
                 }
             }
 

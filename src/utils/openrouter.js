@@ -6,6 +6,34 @@ import { env } from '../api/read/environment';
 
 const AI_BASE_URL = `${env}/ai`;
 
+// The backend requires a login for raw model access (chat/image/embeddings) —
+// those are only used by the admin/web-builder tools. Both admin logins keep
+// their JWT in localStorage; the public chatbot sends it too when present so
+// usage is budgeted per user instead of per shared IP.
+const authHeaders = () => {
+  for (const key of ['MDA__TOKEN', 'lasg_token']) {
+    try {
+      const token = JSON.parse(window.localStorage.getItem(key) || 'null')?.token;
+      if (token) return { Authorization: `Bearer ${token}` };
+    } catch {
+      // ignore malformed storage
+    }
+  }
+  return {};
+};
+
+/**
+ * Starter-question chips. Public endpoint — generated once an hour on the
+ * server and shared by everyone, so this is effectively free.
+ * @returns {Promise<string[]>}
+ */
+export const fetchSuggestions = async () => {
+  const res = await fetch(`${AI_BASE_URL}/suggestions`);
+  if (!res.ok) throw new Error(`AI suggestions error ${res.status}`);
+  const data = await res.json();
+  return data.suggestions || [];
+};
+
 /**
  * Non-streaming chat completion.
  *
@@ -31,11 +59,11 @@ export const openRouterComplete = async (messages, options = {}) => {
 
   const res = await fetch(`${AI_BASE_URL}/chat`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({
       messages,
       models,
-      max_tokens: maxTokens,
+      maxTokens,
       temperature,
       webSearch,
       responseFormat,
@@ -68,7 +96,7 @@ export const agentChat = async (messages, options = {}) => {
 
   const res = await fetch(`${AI_BASE_URL}/agent-chat`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ messages, webSearch, maxTokens, temperature, reasoningEffort }),
   });
 
@@ -85,16 +113,18 @@ export const agentChat = async (messages, options = {}) => {
  * final round streams real text, so `onToken` only starts firing once the
  * model is actually answering, not while it's "thinking".
  * @param {Array<{role: string, content: string}>} messages
- * @param {{webSearch?: boolean, maxTokens?: number, temperature?: number, onToken?: (delta: string, fullTextSoFar: string) => (void|Promise<void>)}} [options]
+ * `scope` ({mdas: string[], categories: string[]}) narrows the chat to the selected MDA ids / category formattedNames; `signal` aborts the request.
+ * @param {{webSearch?: boolean, maxTokens?: number, temperature?: number, scope?: {mdas: string[], categories: string[]}, signal?: AbortSignal, onToken?: (delta: string, fullTextSoFar: string) => (void|Promise<void>)}} [options]
  * @returns {Promise<{content: string, services: Array, downloadSources: Array<{name: string, url: string}>, webSources: Array<{title: string, url: string}>, truncated: boolean}>}
  */
 export const agentChatStream = async (messages, options = {}) => {
-  const { webSearch = true, maxTokens = 4096, temperature = 0.7, reasoningEffort, onToken } = options;
+  const { webSearch = true, maxTokens = 4096, temperature = 0.7, reasoningEffort, onToken, scope, signal } = options;
 
   const res = await fetch(`${AI_BASE_URL}/agent-chat/stream`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages, webSearch, maxTokens, temperature, reasoningEffort }),
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ messages, webSearch, maxTokens, temperature, reasoningEffort, scope }),
+    signal,
   });
 
   if (!res.ok || !res.body) {
@@ -155,7 +185,7 @@ export const generateAiImage = async (prompt, options = {}) => {
 
   const res = await fetch(`${AI_BASE_URL}/image`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ prompt, model, aspectRatio }),
   });
 

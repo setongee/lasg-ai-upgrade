@@ -6,43 +6,23 @@ import Container from '../../container/container';
 import SearchQuery from '../../search/searchQuery';
 
 // filters Background
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpRight,
-  Language,
-  NavArrowDown,
-  NavArrowLeft,
-  NavArrowRight,
-  SendDiagonalSolid,
-} from 'iconoir-react';
+import { ArrowDown, ArrowUp, ArrowUpRight, NavArrowLeft, NavArrowRight } from 'iconoir-react';
 import grain from '../../../assets/background/filters/ grain.png';
 import { useApp } from '../../../stores/app.store';
 import LasgIllustrations from '../lasg_landingpage_illustrations';
 
 import greenFilter from '../../../assets/background/filters/blur__gradient.png';
 import orangeFilter from '../../../assets/background/filters/blur__gradient__orange.png';
+import { startChat } from '../../ai-search/chatEngine';
+import HeroAsk from '../../ai-search/HeroAsk';
+import HeroGreeting from '../../ai-search/HeroGreeting';
 import { useChatStore } from '../../../stores/chat.store';
-import LanguageModal from '../../language/LanguageModal';
 
 export default function HeroSection() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [openEmergency, setOpenEmergency] = useState(false);
-  const setCheckIsChatOpen = useChatStore((state) => state.setCheckIsChatOpen);
-  const setLanguagePreference = useChatStore((state) => state.setLanguagePreference);
   const languagePreference = useChatStore((state) => state.languagePreference);
-  const addMessage = useChatStore((state) => state.addMessage);
-  const [chatInput, setChatInput] = useState('');
-  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-
-  const LANGUAGES = {
-    en: { name: 'English', code: 'en' },
-    yo: { name: 'Yorùbá', code: 'yo' },
-    pcm: { name: 'Nigerian Pidgin', code: 'pcm' },
-    ig: { name: 'Igbo', code: 'ig' },
-    ha: { name: 'Hausa', code: 'ha' },
-  };
 
   const darkmode = useApp((state) => state.darkmode);
 
@@ -142,31 +122,10 @@ export default function HeroSection() {
     });
   };
 
-  const handleSendMessage = () => {
-    if (chatInput === '') return;
-    addMessage(chatInput);
-    setCheckIsChatOpen(true);
-    setChatInput('');
-  };
-
   const handleClickSuggestion = (message) => {
     if (message === '') return;
-    addMessage(message);
-    setCheckIsChatOpen(true);
-    setChatInput('');
+    startChat({ text: message, language: languagePreference });
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (showLanguageMenu && !event.target.closest('.language-preference')) {
-        setShowLanguageMenu(false);
-      }
-    };
-
-    // Use click instead of mousedown to avoid conflict with language selector
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, [showLanguageMenu]);
 
   return (
     <div className={`slider home ${darkmode ? 'dark' : 'light'}`}>
@@ -188,57 +147,10 @@ export default function HeroSection() {
       <Container customStyle="">
         <div className="photo_container">
           <div className="home__content">
-            <div className="text__area">A Smarter, Simpler Way to Access Lagos State Services</div>
-            {/* <p>Empowering citizens with easier access to state services and opportunities.</p> */}
+            <HeroGreeting />
           </div>
           <div className={`lasg-ai-chatbot`}>
-            <div className="chat-textarea">
-              <div className="hero-type"></div>
-
-              <textarea
-                name="chatInput"
-                id="chatInput"
-                placeholder="Ask Eko Smart about Lagos State services..."
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }
-                }}
-              ></textarea>
-              <button className="send-chat" onClick={() => handleSendMessage()}>
-                <SendDiagonalSolid strokeWidth={2} />
-              </button>
-
-              <div
-                className="language-preference flex items-center gap-[6px]"
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setShowLanguageMenu(true);
-                }}
-              >
-                <div>
-                  <Language className="text-[12px]" />
-                </div>
-                <p className="font-medium">{LANGUAGES[languagePreference].name}</p>
-                <div>
-                  <NavArrowDown className="text-[12px]" />
-                </div>
-              </div>
-
-              {showLanguageMenu ? (
-                <LanguageModal
-                  closeModal={() => setShowLanguageMenu(false)}
-                  language={languagePreference}
-                  setLanguage={setLanguagePreference}
-                  setShowLanguageMenu={setShowLanguageMenu}
-                  LANGUAGES={LANGUAGES}
-                />
-              ) : null}
-            </div>
+            <HeroAsk />
 
             {suggestions?.length > 0 && (
               <div className="suggestions-wrapper">
@@ -255,13 +167,13 @@ export default function HeroSection() {
                 <div className="suggestions" ref={suggestionsScrollRef}>
                   {suggestions.map((item, index) => (
                     <div
-                      className="suggestion"
+                      className="suggestion bg-green-950"
                       key={index}
                       onClick={() => handleClickSuggestion(item)}
                     >
                       <p className="flex items-center gap-2">
                         {item}{' '}
-                        <ArrowUpRight fontSize={8} className="text-amber-300" strokeWidth={2} />
+                        <ArrowUpRight fontSize={9} className="text-yellow-200" strokeWidth={2} />
                       </p>
                     </div>
                   ))}

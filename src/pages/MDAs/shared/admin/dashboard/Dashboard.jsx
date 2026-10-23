@@ -22,6 +22,7 @@ import Subscribers from '../pages/subscribers/subscribers';
 import Vision from '../pages/vision/Vision';
 import Appearance from '../pages/web-templates/appearance/Appearance';
 import Drafts from '../pages/web-templates/drafts/Drafts';
+import Learn from '../pages/learn/Learn';
 import Library from '../pages/web-templates/library/Library';
 import Published from '../pages/web-templates/published/Published';
 
@@ -44,7 +45,7 @@ const Dashboard = () => {
 
   const getPage = () => {
     // Define allowed routes for different MDA types
-    const serviceTypeRoutes = ['services', 'forms', 'settings'];
+    const serviceTypeRoutes = ['services', 'forms', 'learn', 'settings'];
     const fullTypeRoutes = [
       'dashboard',
       'vision',
@@ -63,6 +64,7 @@ const Dashboard = () => {
       'services',
       'subscribers',
       'forms',
+      'learn',
       'settings',
     ];
 
@@ -98,6 +100,8 @@ const Dashboard = () => {
     if (id == 'services') return <Services />;
     if (id == 'subscribers') return <Subscribers />;
     if (id == 'forms') return <FormsZone />;
+
+    if (id == 'learn') return <Learn />;
 
     // Settings
     if (id == 'settings') return <SettingsAdmin />;

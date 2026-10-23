@@ -28,7 +28,7 @@
             transform: translate(-50%, -50%);
             margin-top: 3px;
             transition: all .2s ease-in-out;
-            color: #1c3f3a;
+            color: var(--brand-ink);
         }
 
         &.abs1:hover{

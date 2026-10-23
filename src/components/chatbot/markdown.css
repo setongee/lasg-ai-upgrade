@@ -73,7 +73,7 @@
 
 /* Code blocks */
 .markdown-body pre {
-  background: #f6f8fa;
+  background: var(--bg-subtle);
   padding: 1rem;
   border-radius: 6px;
   overflow-x: auto;
@@ -89,7 +89,7 @@
   border-left: 4px solid #d0d7de;
   padding-left: 1rem;
   margin: 1rem 0;
-  color: #555;
+  color: var(--text-muted);
 }
 
 /* Tables */
@@ -104,7 +104,7 @@
   padding: 0.5rem;
 }
 .markdown-body th {
-  background: #f3f4f6;
+  background: var(--bg-subtle);
   font-weight: 600;
 }
 

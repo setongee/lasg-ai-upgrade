@@ -4,8 +4,11 @@ import ReactGA from 'react-ga';
 import { Toaster } from 'react-hot-toast';
 import { useLocation } from 'react-router';
 import './App.css';
+import AskEko from './components/ai-search/AskEko';
 import Chatbot from './components/chatbot/Chatbot';
 import Footer from './components/footer/footer';
+import DayPrompt from './components/theme/DayPrompt';
+import NightPrompt from './components/theme/NightPrompt';
 import Header from './components/header/header';
 import Loader from './components/loader/loader';
 import Cookie from './cookie';
@@ -26,6 +29,12 @@ function App() {
   const location = useLocation();
   const currentPage = location.pathname.replace('/', ''); // e.g. "health"
   const { isPublicRoute, isAdminRoute } = useRouteType();
+  const darkmode = useApp((state) => state.darkmode);
+
+  // Dark theme belongs to the main site only; MDA microsites and admin run their own theming.
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', isPublicRoute && darkmode ? 'dark' : 'light');
+  }, [isPublicRoute, darkmode]);
 
   // MDA microsite pages log their own visits (with the real siteName) from
   // Page.jsx — this only covers the fixed routes on the main site.
@@ -90,7 +99,7 @@ function App() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#fff',
+          backgroundColor: 'var(--bg)',
           zIndex: 999999,
         }}
       >
@@ -125,8 +134,15 @@ function App() {
         }}
       />
 
-      {/* Chatbot */}
-      {!isAdminRoute && <Chatbot pageContext={currentPage || 'general'} />}
+      {/* Assistant: main site gets the ask bar + chat workspace; MDA microsites keep the classic bubble */}
+      {isPublicRoute && <AskEko />}
+      {!isAdminRoute && !isPublicRoute && <Chatbot pageContext={currentPage || 'general'} />}
+
+      {/* Evening in Lagos: offer the night-life hero once cookie consent is out of the way */}
+      {cookies && pathname === '/' && <NightPrompt />}
+
+      {/* Daytime in Lagos with dark mode on: offer to switch back to the light theme */}
+      {cookies && pathname === '/' && <DayPrompt />}
 
       {/* Cookie Consent */}
       {!cookies && <Cookie cookieStatus={setCookieStatus} />}

@@ -21,6 +21,7 @@ import Top__header from './top__header';
 // analytics
 import ReactGA from 'react-ga';
 import { useApp } from '../../stores/app.store';
+import ThemeToggle from '../theme/ThemeToggle';
 
 export default function Header() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -217,7 +218,7 @@ export default function Header() {
 
           {/* main navigation links */}
 
-          <div className="navigation" style={{ background: '#fff' }}>
+          <div className="navigation" style={{ background: 'var(--bg)' }}>
             <Container>
               <div className="menuForm">
                 {/* Site Branding Information */}
@@ -333,7 +334,7 @@ export default function Header() {
                 {/* <div className="button__search"><div className="parentName searching" onClick={ () => openModal() } > <Search height={17} width={17} strokeWidth={2.4}/> Search </div></div> */}
 
                 <div className="button__search">
-                  {/* <div className="parentName searching">Search</div> */}
+                  <ThemeToggle />
                 </div>
               </div>
             </Container>

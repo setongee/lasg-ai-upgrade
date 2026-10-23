@@ -1,7 +1,7 @@
 .connect{
 
     a{
-        color: #131313;
+        color: var(--text);
     }
 
     padding-top: 200px;
@@ -38,7 +38,7 @@
                     margin-top: 20px;
                     width: 70%;
                     line-height: 23px;
-                    color: #777;
+                    color: var(--text-muted);
                     text-align: center;
 
                 }
@@ -52,11 +52,11 @@
                 display: flex;
                 align-items: center;
                 flex-direction: column;
-                border: 1px solid #eee;
+                border: 1px solid var(--border);
                 width: 700px;
                 padding: 50px 0;
                 border-radius: 20px;
-                background-color: #fff;
+                background-color: var(--bg);
                 box-shadow: 1px 0px 30px rgba($color: #000000, $alpha: 0.03);
                 
             }
@@ -76,7 +76,7 @@
                 }
 
                 a{
-                    color: #108a00;
+                    color: var(--brand-green);
                     font-size: 15px;
                     text-decoration: underline;
                 }

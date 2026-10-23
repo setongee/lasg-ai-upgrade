@@ -89,7 +89,7 @@ export default function QuickCheck({ darkmode }) {
 
   return (
     <div
-      className={`${darkmode ? 'quickCheck darkmode' : 'quickCheck'} bg-gray-50!`}
+      className={`${darkmode ? 'quickCheck darkmode' : 'quickCheck'} bg-(--bg-subtle)!`}
       id="quickCheck"
     >
       {/* <Controls target="scrollX" /> */}
@@ -120,7 +120,7 @@ export default function QuickCheck({ darkmode }) {
               {quickCheckCards.map((card) => (
                 <div
                   key={card.id}
-                  className="p-5 bg-white rounded-[16px] flex flex-col max-w-110 md:max-w-full mx-auto"
+                  className="p-5 bg-(--bg) rounded-[16px] flex flex-col max-w-110 md:max-w-full mx-auto"
                 >
                   <img
                     src={card.image}
@@ -130,7 +130,7 @@ export default function QuickCheck({ darkmode }) {
                   <h3 className="text-[17px] font-semibold w-full xl:w-[75%] leading-[1.45] mt-4">
                     {card.title}
                   </h3>
-                  <p className="text-[15px] text-gray-600! mt-2 leading-[1.5]">
+                  <p className="text-[15px] text-(--text-muted)! mt-2 leading-[1.5]">
                     {card.description}
                   </p>
                   <a
@@ -145,9 +145,9 @@ export default function QuickCheck({ darkmode }) {
             </div>
           </IconoirProvider>
 
-          <div className="linkServices mt-1 bg-white py-3 px-6 rounded-[10px] shadow-gray-100 shadow-lg border border-gray-100 text-[15px] flex gap-2 items-center">
+          <div className="linkServices mt-1 bg-(--bg) py-3 px-6 rounded-[10px] shadow-(--overlay-shadow) shadow-lg border border-(--border) text-[15px] flex gap-2 items-center">
             Ready to explore?{' '}
-            <a className="font-semibold! text-gray-700!" onClick={handleServices}>
+            <a className="font-semibold! text-(--text)!" onClick={handleServices}>
               Browse all services
             </a>
             <ArrowDown className="text-[10px] ml-1 mt-[2px]" strokeWidth={2.5} />

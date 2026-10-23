@@ -141,7 +141,7 @@ export default function ServicesPage() {
 
       {query === '' ? (
         <div className="servicesSide">
-          <Services bgColor="#fdfdfd" location="services" data_limit={1000} />
+          <Services bgColor="var(--bg)" location="services" data_limit={1000} />
         </div>
       ) : null}
     </div>

@@ -15,6 +15,56 @@
   --white: #fff;
 
   --Theme2: #3168ff;
+
+  /* Semantic theme tokens: use these for neutrals instead of hex values. */
+  --bg: #fff;
+  --bg-subtle: #f9f9f9;
+  --bg-muted: #eee;
+  --text: #131313;
+  --text-muted: #555;
+  --text-faint: #777;
+  --border: #eee;
+  --border-strong: #dadada;
+  --brand-ink: #1c3f3a;
+  --brand-ink-2: #0f3d20;
+  --brand-green: #108a00;
+  --brand-tint: #e0f2e8;
+  --overlay-shadow: rgba(0, 0, 0, 0.08);
+  --scroll-track: #f1f1f1;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #0d1110;
+  --bg-subtle: #141918;
+  --bg-muted: #1e2523;
+  --text: #eaf0ec;
+  --text-muted: #a8b4ae;
+  --text-faint: #8a9690;
+  --border: #29312e;
+  --border-strong: #37413d;
+  --brand-ink: #8fd3a8;
+  --brand-ink-2: #9fe0b4;
+  --brand-green: #3fcf4f;
+  --brand-tint: #17261d;
+  --overlay-shadow: rgba(0, 0, 0, 0.5);
+  --scroll-track: #141918;
+
+  --primary: #8fd3a8;
+  --primary25: #5fc29a;
+  --primary75: #7fcba0;
+  --secondary: #1d1b12;
+  --secondary2: #17150d;
+  --bgLime: #101a12;
+  --white: #0d1110;
+  --dark: #eaf0ec;
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: var(--bg);
+  color: var(--text);
 }
 
 * a {
@@ -99,7 +149,7 @@ body {
 
   /* Track */
   &::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--scroll-track);
   }
 
   /* Handle */
@@ -137,7 +187,7 @@ body {
 }
 
 .loaderPage {
-  background-color: #fff;
+  background-color: var(--bg);
   height: 100vh;
   display: flex;
   align-items: center;

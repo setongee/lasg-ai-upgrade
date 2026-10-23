@@ -1,6 +1,6 @@
 .notFound{
     height: 100%;
-    background-color: #f2f7f2;
+    background-color: var(--bg-subtle);
     padding: 170px 0;
     padding-bottom: 100px;
     overflow: clip;
@@ -15,7 +15,7 @@
 
             span{
 
-                color: #444;
+                color: var(--text-muted);
          
                 a{
                     color: green;
@@ -41,14 +41,14 @@
 
             .serviceSideItem{
 
-                background-color: #fff;
+                background-color: var(--bg);
                 width: 420px;
                 flex-shrink: 0;
 
                 .photoYarn{
 
                     height: 180px;
-                    background-color: #eee;
+                    background-color: var(--bg-muted);
                     width: 100%;
                     overflow: hidden;
 
@@ -90,7 +90,7 @@
                         margin: 25px 0;
                         font-size: 15px;
                         line-height: 23px;
-                        color: #777;
+                        color: var(--text-muted);
                         border-bottom: 1px solid #e3e2e2;
                         padding-bottom: 25px;
 

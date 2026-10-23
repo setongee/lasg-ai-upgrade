@@ -13,6 +13,7 @@ import {
   GraduationCapSolid,
   HeartSolid,
   Journal,
+  GraduationCap,
   MediaImage,
   MultiBubbleSolid,
   PocketSolid,
@@ -27,6 +28,7 @@ export const NAV_SECTION_LABELS = {
   templates: 'Templates',
   content: 'Content',
   utilities: 'Utilities',
+  learn: 'Learning',
   settings: 'Settings',
 };
 
@@ -68,6 +70,15 @@ export const getAdminNavSections = (baseurl, mdaType) => {
           },
         ];
 
+  const learn = [
+    {
+      name: 'Learning',
+      href: `${baseurl}/learn`,
+      icon: <GraduationCap />,
+      id: 'learn-admin',
+    },
+  ];
+
   const settings = [
     {
       name: 'General Settings',
@@ -78,7 +89,7 @@ export const getAdminNavSections = (baseurl, mdaType) => {
   ];
 
   if (mdaType !== 'full') {
-    return { utilities, settings };
+    return { utilities, learn, settings };
   }
 
   return {
@@ -173,11 +184,18 @@ export const getAdminNavSections = (baseurl, mdaType) => {
       },
     ],
     utilities,
+    learn,
     settings,
   };
 };
 
 export const getCommsNavLinks = (baseurl) => [
+  {
+    name: 'Learning',
+    href: `${baseurl}/learn`,
+    icon: <GraduationCap />,
+    id: 'learn-admin',
+  },
   {
     name: 'Resources',
     href: `${baseurl}/resources`,

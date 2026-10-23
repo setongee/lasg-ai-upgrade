@@ -21,7 +21,7 @@
     align-items: center;
     gap: 0px;
     position: relative;
-    background-color: #fff;
+    background-color: var(--bg);
     width: 100%;
     padding: 25px 40px;
 
@@ -36,7 +36,7 @@
       }
 
       a {
-        color: #108a00;
+        color: var(--brand-green);
         font-weight: 600;
         text-decoration: underline;
       }
@@ -76,8 +76,8 @@
         cursor: pointer;
 
         &.deny {
-          background-color: #fff;
-          color: #108a00;
+          background-color: var(--bg);
+          color: var(--brand-green);
           border: 1px solid #108a00;
         }
       }

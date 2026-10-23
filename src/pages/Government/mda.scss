@@ -15,7 +15,7 @@
 
         .modal{
 
-            background-color: #fff;
+            background-color: var(--bg);
             width: 700px;
             padding: 50px;
             display: flex;
@@ -50,7 +50,7 @@
                 letter-spacing: 2px;
                 font-weight: 500;
                 margin-bottom: 40px;
-                color: #777;
+                color: var(--text-muted);
 
             }
 
@@ -70,7 +70,7 @@
                 font-size: 15px;
                 line-height: 23px;
                 margin-bottom: 30px;
-                color: #777;
+                color: var(--text-muted);
                 text-transform: capitalize;
             }
 
@@ -145,16 +145,16 @@
                 }
 
                 .target__map{
-                    background-color: #fff;
+                    background-color: var(--bg);
                     border: 1px solid #1c3f3a;
-                    color: #1c3f3a;
+                    color: var(--brand-ink);
                     
                     p{
-                        color: #1c3f3a;
+                        color: var(--brand-ink);
                     }
 
                     &:hover{
-                        background-color: #fff;
+                        background-color: var(--bg);
                     }
                 }
             }
@@ -168,7 +168,7 @@
     margin: 0px 0;
     display: flex;
     flex-direction: column;
-    background-color: #fdfdfd;
+    background-color: var(--bg);
 
     .topArea{
 
@@ -189,7 +189,7 @@
                 text-align: center;
 
                 span{
-                    color: #009C3E;
+                    color: var(--brand-green);
                 }
 
             }
@@ -218,7 +218,7 @@
         .mdas_index{
             height: 40px;
             width: 40px;
-            background-color: #fff;
+            background-color: var(--bg);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -231,14 +231,14 @@
 
                 background-color: #009C3E;
                 color: #fff;
-                border-color: #fff;
+                border-color: var(--bg);
 
             }
 
             &:hover{
                 background-color: #009C3E;
                 color: #fff;
-                border-color: #fff;
+                border-color: var(--bg);
             }
         }
 
@@ -250,9 +250,9 @@
         position: fixed;
         top: 120px;
         left: 0;
-        background-color: #fff;       
-        border-top: 1px solid #dadada;
-        border-bottom: 1px solid #dadada;
+        background-color: var(--bg);       
+        border-top: 1px solid var(--border-strong);
+        border-bottom: 1px solid var(--border-strong);
         z-index: 99;
         padding: 20px 0;
         z-index: 99;
@@ -274,7 +274,7 @@
                 height: 40px;
                 min-width: 40px;
                 font-size: 15px;
-                background-color: #fff;
+                background-color: var(--bg);
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -287,14 +287,14 @@
 
                     background-color: #009C3E;
                     color: #fff;
-                    border-color: #fff;
+                    border-color: var(--bg);
     
                 }
     
                 &:hover{
                     background-color: #009C3E;
                     color: #fff;
-                    border-color: #fff;
+                    border-color: var(--bg);
                 }
             }
     
@@ -328,7 +328,7 @@
             position: relative;
             z-index: 5;
             padding: 0 20px;
-            border: 1px solid #dadada;
+            border: 1px solid var(--border-strong);
             border-radius: 4px;
         }
 
@@ -336,14 +336,14 @@
 
             position: absolute;
             width: 70%;
-            background: #fff;
+            background: var(--bg);
             z-index: 3;
             height: 100%;
             display: flex;
             align-items: center;
             padding: 0 20px;
             font-size: 14px;
-            color: #777;
+            color: var(--text-muted);
 
             .Typewriter__cursor{
                 display: none;
@@ -392,9 +392,9 @@
 
         .mda_card{
 
-            background-color: #f6f6f6;
-            background-color: #fff;
-            border: 1px solid #eee;
+            background-color: var(--bg-subtle);
+            background-color: var(--bg);
+            border: 1px solid var(--border);
             color: var(--dark);
             width: calc(33% - 25px);
             display: flex;
@@ -439,7 +439,7 @@
                 font-size: 14px;
                 line-height: 22px;
                 margin-top: 10px;
-                color: #777;
+                color: var(--text-muted);
             }
 
             .arrowMai{
@@ -479,7 +479,7 @@
 
                 .mda_name{
                     text-decoration: underline;
-                    color: #009C3E;
+                    color: var(--brand-green);
                 }
 
             }
@@ -796,7 +796,7 @@
     
             .modal{
     
-                background-color: #fff;
+                background-color: var(--bg);
                 width: 90%;
                 padding: 70px;
                 display: flex;
@@ -832,7 +832,7 @@
                     letter-spacing: 2px;
                     font-weight: 500;
                     margin-bottom: 40px;
-                    color: #777;
+                    color: var(--text-muted);
     
                 }
     
@@ -851,7 +851,7 @@
                     font-size: 15px;
                     line-height: 23px;
                     margin-bottom: 30px;
-                    color: #777;
+                    color: var(--text-muted);
                     width: 70%;
                 }
     
@@ -937,7 +937,7 @@
     
             .modal{
     
-                background-color: #fff;
+                background-color: var(--bg);
                 width: 100%;
                 padding: 60px 35px;
                 display: flex;
@@ -974,7 +974,7 @@
                     letter-spacing: 2px;
                     font-weight: 500;
                     margin-bottom: 40px;
-                    color: #777;
+                    color: var(--text-muted);
     
                 }
     
@@ -993,7 +993,7 @@
                     font-size: 15px;
                     line-height: 23px;
                     margin-bottom: 30px;
-                    color: #777;
+                    color: var(--text-muted);
                     width: 80%;
                 }
     
@@ -1098,7 +1098,7 @@
     
             .modal{
     
-                background-color: #fff;
+                background-color: var(--bg);
                 width: 100%;
                 padding: 60px 35px;
                 display: flex;
@@ -1137,7 +1137,7 @@
                     letter-spacing: 2px;
                     font-weight: 500;
                     margin-bottom: 30px;
-                    color: #777;
+                    color: var(--text-muted);
     
                 }
     
@@ -1156,7 +1156,7 @@
                     font-size: 15px;
                     line-height: 23px;
                     margin-bottom: 30px;
-                    color: #777;
+                    color: var(--text-muted);
                     width: 100%;
                 }
     

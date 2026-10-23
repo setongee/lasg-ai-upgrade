@@ -13,7 +13,7 @@
     }
 
     .pagination__controls{
-        background-color: #fff;
+        background-color: var(--bg);
         height: 40px;
         width: 40px;
         display: flex;
@@ -80,7 +80,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             font-size: 12px;
-            background-color: #eee;
+            background-color: var(--bg-muted);
         }
     }
     
